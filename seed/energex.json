@@ -1,0 +1,62 @@
+{
+  "dnsps": [
+    {
+      "code": "energex",
+      "name": "Energex",
+      "state": "QLD",
+      "timezone": "Australia/Brisbane"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "energex",
+      "code": "T12A",
+      "name": "Residential Demand (ToU + Demand)",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.1282,
+      "source_url": "https://www.energex.com.au/home/our-services/pricing-And-tariffs/pricing-publications",
+      "last_verified": "2026-07-19T00:00:00+10:00",
+      "verified_by": "manual",
+      "demand": {
+        "rate": 7.434,
+        "window_start": "16:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_avg",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.02367,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.04868,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.00476,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}
