@@ -1,0 +1,415 @@
+{
+  "metadata": {
+    "source": "Essential Energy Network Price List and Explanatory Notes 2026-27",
+    "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-20",
+    "notes": "Prices exclude GST. PSO-Int (interval meter): Peak 15:00-17:00 & 07:00-10:00 weekdays (but simplified as peak/shoulder/off-peak in rates). Demand: $/kVA/month. Sun Soaker tariffs have peak at 7am-10am & 3pm-10pm."
+  },
+  "dnsps": [
+    {
+      "code": "essential",
+      "name": "Essential Energy",
+      "state": "NSW",
+      "timezone": "Australia/Sydney"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "essential",
+      "code": "BLNRSS2",
+      "name": "LV Residential ToU - Sun Soaker",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.4704,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.17957,
+          "start_time": "07:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.17957,
+          "start_time": "15:00",
+          "end_time": "22:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.06327,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BLND1AR",
+      "name": "LV Residential ToU Demand",
+      "tariff_class": "residential",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.4704,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 5.1925,
+        "window_start": "15:00",
+        "window_end": "17:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.1084,
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.07371,
+          "start_time": "07:00",
+          "end_time": "15:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.04381,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BLNC1AU",
+      "name": "Controlled Load 1 (5-9 hrs)",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.1338,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.03505,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BLNC2AU",
+      "name": "Controlled Load 2 (10-19 hrs)",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.1338,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.07001,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BLNBSS1",
+      "name": "LV Small Business ToU - Sun Soaker",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.3784,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.18974,
+          "start_time": "07:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.18974,
+          "start_time": "15:00",
+          "end_time": "22:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.08599,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BLND1AB",
+      "name": "LV Small Business ToU Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.3784,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 9.7035,
+        "window_start": "15:00",
+        "window_end": "17:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.14632,
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1035,
+          "start_time": "07:00",
+          "end_time": "15:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.06101,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BLND3AO",
+      "name": "LV Large Business Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 22.3346,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 12.039,
+        "window_start": "15:00",
+        "window_end": "17:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.0702,
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.05614,
+          "start_time": "07:00",
+          "end_time": "15:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.03645,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BHND3AO",
+      "name": "HV Business Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 27.4319,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 11.5026,
+        "window_start": "15:00",
+        "window_end": "17:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.05228,
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.04224,
+          "start_time": "07:00",
+          "end_time": "15:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.03472,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "essential",
+      "code": "BSSD3AO",
+      "name": "Subtransmission Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 27.2302,
+      "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 4.4388,
+        "window_start": "15:00",
+        "window_end": "17:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.06741,
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.03979,
+          "start_time": "07:00",
+          "end_time": "15:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.03296,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}

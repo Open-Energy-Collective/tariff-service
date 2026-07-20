@@ -1,0 +1,698 @@
+{
+  "metadata": {
+    "source": "Endeavour Energy Network Price List: Network Tariffs 2026-2027",
+    "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-20",
+    "notes": "Prices exclude GST. Peak: 16:00-20:00 business days only. Solar Soak: 10:00-14:00 all days. High season: Nov-Mar. Low season: Apr-Oct. Demand: highest 30-min in peak window, \u00a2/kW/day \u00d7 days in month."
+  },
+  "dnsps": [
+    {
+      "code": "endeavour",
+      "name": "Endeavour Energy",
+      "state": "NSW",
+      "timezone": "Australia/Sydney"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "endeavour",
+      "code": "N70",
+      "name": "Residential Flat",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.70192,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.12035,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N71",
+      "name": "Residential Seasonal ToU",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.70192,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.23447,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.15204,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.04535,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.11734,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N72",
+      "name": "Residential Demand",
+      "tariff_class": "residential",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.70192,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 5.454,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "solar_soak",
+          "rate": 0.04535,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "anytime",
+          "rate": 0.10147,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N73",
+      "name": "Residential Demand Transitional",
+      "tariff_class": "residential",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.70192,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 4.908,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "solar_soak",
+          "rate": 0.04535,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "anytime",
+          "rate": 0.10906,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N50",
+      "name": "Controlled Load 1",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.11872,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.04819,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N54",
+      "name": "Controlled Load 2",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.11872,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.07381,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N90",
+      "name": "General Supply Block",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.98882,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "block_1",
+          "rate": 0.12575,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "block_2",
+          "rate": 0.1501,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N91",
+      "name": "General Supply Seasonal ToU",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.98882,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.25155,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.16912,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.0517,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.13442,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N92",
+      "name": "General Supply Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.98882,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 7.254,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "solar_soak",
+          "rate": 0.0517,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "anytime",
+          "rate": 0.1281,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N93",
+      "name": "General Supply Demand Transitional",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.98882,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 6.528,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "solar_soak",
+          "rate": 0.0517,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "anytime",
+          "rate": 0.1333,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N19",
+      "name": "LV Seasonal ToU Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 24.14,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 15.933,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.06102,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.05528,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.04243,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N29",
+      "name": "HV Seasonal ToU Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 84.65,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 12.588,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.02941,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.02873,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.02723,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N39",
+      "name": "ST Seasonal ToU Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 136.77,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 11.22,
+        "window_start": "16:00",
+        "window_end": "20:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.0233,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.02266,
+          "start_time": "16:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.02124,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "endeavour",
+      "code": "N99",
+      "name": "Unmetered Supply",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.13328,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}
