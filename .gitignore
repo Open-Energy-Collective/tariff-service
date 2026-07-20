@@ -12,3 +12,4 @@ dist/
 venv/
 .aws-sam/
 .pyright/
+*.postman_collection.json
