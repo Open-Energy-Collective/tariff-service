@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import calculate, dnsps, tariffs
+from app.routers import calculate, dnsps, docs, tariffs
 
 app = FastAPI(
     title="OEC Tariff Data Service",
@@ -32,6 +32,7 @@ app.add_middleware(
 app.include_router(dnsps.router)
 app.include_router(tariffs.router)
 app.include_router(calculate.router)
+app.include_router(docs.router)
 
 
 @app.get("/api/v1/health", tags=["Health"])
