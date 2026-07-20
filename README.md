@@ -56,3 +56,4 @@ Tariff data is seeded from JSON files in `seed/`. To update:
 ## License
 
 MIT — Open Energy Collective Pty Ltd (ACN 700 429 429)
+# Test deploy trigger
