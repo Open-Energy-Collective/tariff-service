@@ -1,0 +1,240 @@
+{
+  "metadata": {
+    "source": "Evoenergy Final Schedule of Electricity Network Charges 2026-27",
+    "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-21",
+    "notes": "Prices exclude GST. Rates include LFiT (ACT Large-scale Feed-in Tariff) adjustment of 3.035 c/kWh. All times in AEST. ACT uses Australia/Sydney timezone (with daylight saving)."
+  },
+  "dnsps": [
+    {
+      "code": "evoenergy",
+      "name": "Evoenergy",
+      "state": "ACT",
+      "timezone": "Australia/Sydney"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "evoenergy",
+      "code": "017",
+      "name": "New Residential TOU",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.39331,
+      "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.19084,
+          "start_time": "07:00",
+          "end_time": "09:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.19084,
+          "start_time": "17:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.04814,
+          "start_time": "11:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.07386,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "evoenergy",
+      "code": "023",
+      "name": "New Residential Demand",
+      "tariff_class": "residential",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.39391,
+      "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 6.5424,
+        "window_start": "17:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "all",
+        "season_months": [
+          6,
+          7,
+          8
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "solar_soak",
+          "rate": 0.04665,
+          "start_time": "11:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.06569,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "evoenergy",
+      "code": "060",
+      "name": "Controlled Load 1",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.05,
+      "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.08291,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "evoenergy",
+      "code": "090",
+      "name": "General TOU",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.73453,
+      "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.22955,
+          "start_time": "07:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.16031,
+          "start_time": "17:00",
+          "end_time": "22:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0891,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "evoenergy",
+      "code": "101",
+      "name": "LV TOU kVA Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.82761,
+      "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 13.2651,
+        "window_start": "07:00",
+        "window_end": "17:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.11236,
+          "start_time": "07:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.07558,
+          "start_time": "17:00",
+          "end_time": "22:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.04892,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}
