@@ -2,6 +2,60 @@
 
 Metadata file tracking where tariff data comes from. Updated as new sources are found.
 
+## Ausgrid (NSW)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **Ausgrid Network Price List 2026-27 (AUTHORITATIVE)** | https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674 | Official AER-approved network tariff schedule. PDF. Ex GST. Effective 1 Jul 2026. Updated Apr 27, 2026. |
+| Ausgrid network prices page (links to above) | https://www.ausgrid.com.au/prices | Landing page where price list is published. Check annually for updates. |
+| Ausgrid ToU pricing explainer | https://www.ausgrid.com.au/your-energy-use/smarter-energy-use/understanding-network-tariffs/time-of-use-pricing | Official peak/off-peak window definitions. |
+| Ausgrid demand pricing explainer | https://ausgrid.com.au/your-energy-use/smarter-energy-use/understanding-network-tariffs/demand-pricing | Official demand measurement methodology. |
+| Local copy of price list | ~/hass/ai-inputs/Ausgrid Network Price List 2026-27 (1).pdf | Downloaded 2026-07-20 |
+
+### Tariff Codes (Ausgrid)
+
+Ausgrid uses codes prefixed with "EA" (e.g., EA025, EA116).
+
+#### Residential
+
+| Code | Name | Type |
+|------|------|------|
+| EA010 | Residential Flat (closed) | flat |
+| EA025 | Residential ToU | tou |
+| EA111 | Residential Demand (Introductory) | tou_demand |
+| EA116 | Residential Demand | tou_demand |
+| EA029 | Small Customer Export Tariff | tou_export |
+| EA030 | Controlled Load 1 | controlled_load |
+| EA040 | Controlled Load 2 | controlled_load |
+
+#### Business
+
+| Code | Name | Type |
+|------|------|------|
+| EA050 | Small Business Flat (closed) | flat |
+| EA225 | Small Business ToU | tou |
+| EA251 | Small Business Demand (Introductory) | tou_demand |
+| EA256 | Small Business Demand | tou_demand |
+| EA302 | LV 100-160 MWh | tou_demand |
+| EA305 | LV 160-750 MWh (System) | tou_demand |
+| EA310 | LV > 750 MWh (System) | tou_demand |
+| EA370 | HV Connection (System) | tou_demand |
+| EA390 | ST Connection (System) | tou_demand |
+
+### Time Windows (Ausgrid)
+
+Ausgrid uses **seasonal** peak pricing (no shoulder period):
+- **Peak**: 3pm–9pm (15:00–21:00)
+  - Residential: all days
+  - Small business: working weekdays only
+- **Off-peak**: All other times
+- **High season**: June–August (winter) and November–March (summer)
+- **No peak**: April, May, September, October (all off-peak)
+- **Demand window**: Same as peak (15:00–21:00, high season only)
+- **Demand measurement**: Maximum 30-minute interval in the peak window per month
+
+---
+
 ## Energex (QLD)
 
 | Source | URL | Notes |
