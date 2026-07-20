@@ -16,11 +16,15 @@ Before committing and pushing any feature branch, verify ALL of the following:
 - Follow conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `security:`, `release:`
 - Include DNSP name and tariff count in commit body when adding seed data
 
-## Branch Strategy
-- Always work on a feature branch (never commit directly to main)
-- PR title should be concise (<70 chars)
+## Branching Strategy
+- Use **long-lived feature branches** for related work (e.g., `feat/seed-data-round-2`)
+- Multiple commits on the branch are fine — push as you go
+- Only create a **single PR when the work is complete and tested**
+- Do NOT rapid-fire multiple PRs in quick succession (triggers GitHub anti-abuse flags)
 - Squash merge to main
+- No `--admin` bypass unless absolutely necessary
 
 ## Deploy
-- After merge, manually deploy if GitHub Actions is down
+- Can deploy manually from feature branch for testing before merge
+- After merge to main, deploy (manually until GitHub Actions is restored)
 - Verify the live API returns expected data after deploy
