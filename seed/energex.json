@@ -1,4 +1,11 @@
 {
+  "metadata": {
+    "source": "Energex 2026-27 Network Price List (Updated for Schedule 8)",
+    "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+    "effective_from": "2026-07-01",
+    "notes": "NUOS rates (total network charges). Excluding GST. Demand window 4pm-9pm, 30-min avg measurement.",
+    "last_verified": "2026-07-20"
+  },
   "dnsps": [
     {
       "code": "energex",
@@ -10,17 +17,62 @@
   "tariffs": [
     {
       "dnsp": "energex",
-      "code": "T12A",
-      "name": "Residential Demand (ToU + Demand)",
+      "code": "6900",
+      "name": "Residential ToU Energy",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.774,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.19533,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.06069,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.00434,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "3900",
+      "name": "Residential ToU Demand & Energy",
+      "tariff_class": "residential",
       "tariff_type": "tou_demand",
       "effective_from": "2026-07-01",
       "effective_to": null,
-      "daily_supply_charge": 1.1282,
-      "source_url": "https://www.energex.com.au/home/our-services/pricing-And-tariffs/pricing-publications",
-      "last_verified": "2026-07-19T00:00:00+10:00",
-      "verified_by": "manual",
+      "daily_supply_charge": 0.574,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
       "demand": {
-        "rate": 7.434,
+        "rate": 7.0,
         "window_start": "16:00",
         "window_end": "21:00",
         "measurement_method": "30min_avg",
@@ -30,7 +82,7 @@
       "rates": [
         {
           "period_name": "peak",
-          "rate": 0.02367,
+          "rate": 0.02533,
           "start_time": "16:00",
           "end_time": "21:00",
           "days": "all",
@@ -39,7 +91,7 @@
         },
         {
           "period_name": "shoulder",
-          "rate": 0.04868,
+          "rate": 0.06069,
           "start_time": "21:00",
           "end_time": "00:00",
           "days": "all",
@@ -48,7 +100,7 @@
         },
         {
           "period_name": "off_peak",
-          "rate": 0.00476,
+          "rate": 0.00434,
           "start_time": "00:00",
           "end_time": "16:00",
           "days": "all",
@@ -57,6 +109,496 @@
         }
       ],
       "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "8400",
+      "name": "Residential Flat",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.994,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "closed_to_new_customers": true,
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.09391,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "9100",
+      "name": "Economy (Controlled Load)",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "controlled_load",
+          "rate": 0.02675,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "9000",
+      "name": "Super Economy (Controlled Load)",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "controlled_load",
+          "rate": 0.02675,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "6800",
+      "name": "Small Business ToU Energy",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.344,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.26318,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.07695,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01627,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "3800",
+      "name": "Small Business ToU Demand & Energy",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.986,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 7.0,
+        "window_start": "16:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_avg",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.02318,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.0822,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01627,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "8500",
+      "name": "Business Flat",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.347,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "closed_to_new_customers": true,
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.10760,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "5700",
+      "name": "Small Business Primary Load Control",
+      "tariff_class": "business",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.986,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "controlled_load",
+          "rate": 0.05586,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "7200",
+      "name": "Large ToU Demand & Energy",
+      "tariff_class": "large",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 9.257,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 15.459,
+        "window_start": "16:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_avg",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.01876,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.02947,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01627,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "8300",
+      "name": "Demand Small",
+      "tariff_class": "large",
+      "tariff_type": "demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 10.44,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 13.913,
+        "window_start": "00:00",
+        "window_end": "00:00",
+        "measurement_method": "30min_avg",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.03365,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "6700",
+      "name": "Large Business Energy",
+      "tariff_class": "large",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 8.882,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.11191,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "94300",
+      "name": "Large ToU Energy",
+      "tariff_class": "large",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 7.9,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.25876,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1954,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01627,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "5800",
+      "name": "Large Business Primary Load Control",
+      "tariff_class": "large",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 9.257,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "controlled_load",
+          "rate": 0.06987,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "5900",
+      "name": "Large Business Secondary Load Control",
+      "tariff_class": "large",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "controlled_load",
+          "rate": 0.06987,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "energex",
+      "code": "96200",
+      "name": "Residential Two-Way Tariff Trial",
+      "tariff_class": "residential",
+      "tariff_type": "tou_export",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.651,
+      "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.19533,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.06069,
+          "start_time": "21:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.00434,
+          "start_time": "00:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": [
+        {
+          "credit_rate": 0.12195,
+          "credit_window_start": "16:00",
+          "credit_window_end": "21:00",
+          "credit_season_months": null,
+          "charge_rate": 0.0221,
+          "charge_window_start": "00:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": null,
+          "days": "all"
+        }
+      ]
     }
   ]
 }
