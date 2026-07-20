@@ -1,0 +1,228 @@
+{
+  "metadata": {
+    "source": "AusNet Services Network Tariff Schedule 2026-27",
+    "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-21",
+    "notes": "Prices exclude GST. Residential ToU: Peak 4pm-9pm every day, Solar soak 11am-4pm (1c/kWh), Off-peak all other times. Standing charges $/year converted to $/day. Demand: $/kW/month."
+  },
+  "dnsps": [
+    {
+      "code": "ausnet",
+      "name": "AusNet Services",
+      "state": "VIC",
+      "timezone": "Australia/Melbourne"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "ausnet",
+      "code": "NEE11",
+      "name": "Residential Single Rate",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.3981,
+      "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.1343,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausnet",
+      "code": "NASS11",
+      "name": "Residential Time of Use",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.3981,
+      "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.26956,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.01,
+          "start_time": "11:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0533,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausnet",
+      "code": "RCER11",
+      "name": "Residential CER (Export)",
+      "tariff_class": "residential",
+      "tariff_type": "tou_export",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.3981,
+      "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.26956,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.01,
+          "start_time": "11:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0533,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausnet",
+      "code": "NEE33",
+      "name": "Dedicated Circuit 24hr",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.049,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausnet",
+      "code": "NAST12",
+      "name": "Small Business Time of Use",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.40805,
+      "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.20773,
+          "start_time": "07:00",
+          "end_time": "23:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.04879,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausnet",
+      "code": "NASN12",
+      "name": "Small Business Single Rate Demand",
+      "tariff_class": "business",
+      "tariff_type": "demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.40805,
+      "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 11.473,
+        "window_start": "00:00",
+        "window_end": "00:00",
+        "measurement_method": "monthly_peak",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.1343,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}

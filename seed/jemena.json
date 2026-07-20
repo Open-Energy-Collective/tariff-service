@@ -1,0 +1,237 @@
+{
+  "metadata": {
+    "source": "Jemena Electricity Networks (VIC) Ltd - Network Tariffs 2026-27",
+    "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-21",
+    "notes": "Prices exclude GST. Residential: Peak 4pm-9pm every day, Solar soak 11am-4pm, Off-peak all other times. Business: Peak 7am-11pm weekdays (or 9am-9pm). Standing charges are $/customer/year converted to $/day."
+  },
+  "dnsps": [
+    {
+      "code": "jemena",
+      "name": "Jemena",
+      "state": "VIC",
+      "timezone": "Australia/Melbourne"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "jemena",
+      "code": "A100",
+      "name": "Residential Single Rate",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.33089,
+      "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.09486,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "jemena",
+      "code": "A130",
+      "name": "Residential Daytime Saver",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.33083,
+      "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.18208,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.01,
+          "start_time": "11:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.04551,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "jemena",
+      "code": "A10E",
+      "name": "Residential Export",
+      "tariff_class": "residential",
+      "tariff_type": "tou_export",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.33155,
+      "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.18208,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.01,
+          "start_time": "11:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.04551,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "jemena",
+      "code": "A180",
+      "name": "Off-peak Dedicated Circuit",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.02321,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "jemena",
+      "code": "A210",
+      "name": "Small Business ToU Weekdays",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.68547,
+      "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.1702,
+          "start_time": "09:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.03713,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "jemena",
+      "code": "A230",
+      "name": "Small Business ToU Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.35469,
+      "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+      "last_verified": "2026-07-21T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 6.49075,
+        "window_start": "00:00",
+        "window_end": "00:00",
+        "measurement_method": "rolling_12month_max",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.09809,
+          "start_time": "07:00",
+          "end_time": "23:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.03442,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}

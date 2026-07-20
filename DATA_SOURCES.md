@@ -10,7 +10,6 @@ Metadata file tracking where tariff data comes from. Updated as new sources are 
 | Ausgrid network prices page (links to above) | https://www.ausgrid.com.au/prices | Landing page where price list is published. Check annually for updates. |
 | Ausgrid ToU pricing explainer | https://www.ausgrid.com.au/your-energy-use/smarter-energy-use/understanding-network-tariffs/time-of-use-pricing | Official peak/off-peak window definitions. |
 | Ausgrid demand pricing explainer | https://ausgrid.com.au/your-energy-use/smarter-energy-use/understanding-network-tariffs/demand-pricing | Official demand measurement methodology. |
-| Local copy of price list | ~/hass/ai-inputs/Ausgrid Network Price List 2026-27 (1).pdf | Downloaded 2026-07-20 |
 
 ### Tariff Codes (Ausgrid)
 
@@ -61,7 +60,6 @@ Ausgrid uses **seasonal** peak pricing (no shoulder period):
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Endeavour Energy Network Price List 2026-27 (AUTHORITATIVE)** | https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers | Official AER-approved NUOS price list. PDF. Ex GST. Effective 1 Jul 2026. Version 1.0, 28 Apr 2026. |
-| Local copy of price list | ~/hass/ai-inputs/dnsp-tariffs/NUOS-Price-List.pdf | Downloaded 2026-07-20 |
 
 ### Tariff Codes (Endeavour Energy)
 
@@ -107,7 +105,6 @@ Endeavour uses codes prefixed with "N" (e.g., N70, N71).
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Essential Energy Price List & Explanatory Notes 2026-27 (AUTHORITATIVE)** | https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx | Official AER-approved price list. PDF. Ex GST. Effective 1 Jul 2026. |
-| Local copy of price list | ~/hass/ai-inputs/dnsp-tariffs/PriceListAndExplanatoryNotes2026-27.ashx | Downloaded 2026-07-20 |
 
 ### Tariff Codes (Essential Energy)
 
@@ -150,7 +147,6 @@ Sun Soaker (SS) tariffs:
 | Source | URL | Notes |
 |--------|-----|-------|
 | **SA Power Networks Annual Pricing Proposal Overview 2026-27 (AUTHORITATIVE)** | https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/ | Official AER-approved NUoS schedule. PDF. Ex GST. Effective 1 Jul 2026. |
-| Local copy | ~/hass/ai-inputs/dnsp-tariffs/SA Power Networks – 2026–27 – Customer Overview Document – 10 April 2026.pdf | Downloaded 2026-07-20 |
 
 ### Tariff Codes (SA Power Networks)
 
@@ -185,12 +181,76 @@ SAPN uses short codes (e.g., RSR, RTOU, RESELE).
 
 ---
 
+## Jemena (VIC)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **Jemena Electricity Networks Network Tariffs 2026-27 (AUTHORITATIVE)** | https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf | Official AER-approved tariff schedule. PDF. Ex GST. Effective 1 Jul 2026. |
+
+### Tariff Codes (Jemena)
+
+| Code | Name | Type |
+|------|------|------|
+| A100 | Residential Single Rate | flat |
+| A130 | Residential Daytime Saver | tou |
+| A10E | Residential Export | tou_export |
+| A180 | Off-peak Dedicated Circuit | controlled_load |
+| A210 | Small Business ToU Weekdays | tou |
+| A230 | Small Business ToU Demand | tou_demand |
+
+### Time Windows (Jemena)
+
+Residential (A130, A10E):
+- **Peak**: 4pm–9pm every day
+- **Solar Soak**: 11am–4pm every day
+- **Off-peak**: All other times
+
+Business (A210):
+- **Peak**: 9am–9pm weekdays
+- **Off-peak**: All other times
+
+Business Demand (A230):
+- **Peak**: 7am–11pm weekdays
+- **Off-peak**: All other times
+- **Demand**: Rolling 12-month max at any time
+
+---
+
+## AusNet Services (VIC)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **AusNet Services Network Tariff Schedule 2026-27 (AUTHORITATIVE)** | https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs | Official AER-approved tariff schedule. Excel. Ex GST. Effective 1 Jul 2026. Standing charges in $/year. |
+
+### Tariff Codes (AusNet Services)
+
+| Code | Name | Type |
+|------|------|------|
+| NEE11 | Residential Single Rate | flat |
+| NASS11 | Residential Time of Use | tou |
+| RCER11 | Residential CER (Export) | tou_export |
+| NEE33 | Dedicated Circuit 24hr | controlled_load |
+| NAST12 | Small Business Time of Use | tou |
+| NASN12 | Small Business Single Rate Demand | demand |
+
+### Time Windows (AusNet Services)
+
+Residential ToU (NASS11, RCER11):
+- **Peak**: 4pm–9pm every day
+- **Solar Soak**: 11am–4pm every day (1 c/kWh)
+- **Off-peak**: All other times
+
+Business ToU (NAST12):
+- **Peak**: 7am–11pm weekdays
+- **Off-peak**: All other times
+
+---
+
 ## Evoenergy (ACT)
 
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Evoenergy Schedule of Electricity Network Charges 2026-27 (AUTHORITATIVE)** | https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs | Official AER-approved schedule. PDF. Ex GST. Effective 1 Jul 2026. Includes LFiT adjustment (3.035 c/kWh). |
-| Local copy of price list | ~/hass/ai-inputs/dnsp-tariffs/Evoenergy 2026-27 Schedule of Charges June 2026.pdf | Downloaded 2026-07-21 |
 
 ### Tariff Codes (Evoenergy)
 
@@ -229,7 +289,6 @@ Business (090, 101):
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Power and Water Corporation Power Services 2026-27 Network Tariffs (AUTHORITATIVE)** | https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf | Official SCS network price list. PDF. Ex GST. Effective 1 Jul 2026. |
-| Local copy of price list | ~/hass/ai-inputs/dnsp-tariffs/Standard-control-service-network-tariffs-2026-27.pdf | Downloaded 2026-07-21 |
 
 ### Tariff Codes (Power and Water)
 
@@ -265,7 +324,6 @@ Demand tariffs (T5, T6):
 | Energex network pricing page (links to above) | https://www.energex.com.au/our-network/network-pricing-and-tariffs | Landing page where price list is published. Check annually for updates. |
 | Amber Electric FY 26-27 tariff rates (CROSS-REFERENCE ONLY) | https://help.amber.com.au/hc/en-us/articles/360060072251-FY-26-27-tariff-rates | Amber's retail pass-through view. Useful for mapping Amber tariff codes to NTCs. NOT authoritative for rates. |
 | Energex residential tariffs (descriptions) | https://www.energex.com.au/manage-your-energy/ways-to-save-for-businesses-and-farms/tariffs/residential-tariffs | Tariff descriptions, time windows, eligibility. |
-| Local copy of price list | ~/hass/ai-inputs/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx | Downloaded 2026-07-20 |
 
 ## Tariff Code Mapping
 
