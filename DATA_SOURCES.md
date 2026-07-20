@@ -185,6 +185,78 @@ SAPN uses short codes (e.g., RSR, RTOU, RESELE).
 
 ---
 
+## Evoenergy (ACT)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **Evoenergy Schedule of Electricity Network Charges 2026-27 (AUTHORITATIVE)** | https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs | Official AER-approved schedule. PDF. Ex GST. Effective 1 Jul 2026. Includes LFiT adjustment (3.035 c/kWh). |
+| Local copy of price list | ~/hass/ai-inputs/dnsp-tariffs/Evoenergy 2026-27 Schedule of Charges June 2026.pdf | Downloaded 2026-07-21 |
+
+### Tariff Codes (Evoenergy)
+
+Evoenergy uses numeric codes (e.g., 017, 023, 090).
+
+| Code | Name | Type |
+|------|------|------|
+| 017 | New Residential TOU | tou |
+| 023 | New Residential Demand | tou_demand |
+| 060 | Controlled Load 1 | controlled_load |
+| 090 | General TOU | tou |
+| 101 | LV TOU kVA Demand | tou_demand |
+
+### Time Windows (Evoenergy)
+
+Tariff 017 (New Residential TOU):
+- **Peak**: 7am–9am and 5pm–9pm every day
+- **Solar Soak**: 11am–3pm every day
+- **Off-peak**: All other times
+
+Tariff 023 (New Residential Demand):
+- **Demand (High)**: 5pm–9pm every day during winter (Jun-Aug)
+- **Demand (Low)**: 5pm–9pm every day during non-winter
+- **Solar Soak**: 11am–3pm every day
+- **Off-peak**: All other times
+
+Business (090, 101):
+- **Peak**: 7am–5pm weekdays
+- **Shoulder**: 5pm–10pm weekdays
+- **Off-peak**: All other times
+
+---
+
+## Power and Water Corporation (NT)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **Power and Water Corporation Power Services 2026-27 Network Tariffs (AUTHORITATIVE)** | https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf | Official SCS network price list. PDF. Ex GST. Effective 1 Jul 2026. |
+| Local copy of price list | ~/hass/ai-inputs/dnsp-tariffs/Standard-control-service-network-tariffs-2026-27.pdf | Downloaded 2026-07-21 |
+
+### Tariff Codes (Power and Water)
+
+| Code | Name | Type |
+|------|------|------|
+| T1 | Residential Tariff | flat |
+| T2 | Non-residential Tariff | flat |
+| T3A | LV Smart Meter (Residential 0-160MWh) | tou |
+| T3B | LV Smart Meter (Non-Residential 0-160MWh) | tou |
+| T3C | LV Smart Meter (160-750MWh) | tou |
+| T5 | LV Majors (Above 750MWh) | demand |
+| T6 | HV Smart Meter | demand |
+
+### Time Windows (Power and Water)
+
+Smart meter tariffs (T3A/B/C):
+- **High Period (Peak)**: 3pm–9pm weekdays, October–March only
+- **Low Period (Super Off-Peak/Solar Soak)**: 9am–3pm every day, all year
+- **Mid Period (Off-Peak)**: All other times
+
+Demand tariffs (T5, T6):
+- **On Season demand**: 3pm–9pm weekdays, October–March
+- **Off Season demand**: 3pm–9pm weekdays, April–September
+- **Note**: NT uses UTC+9:30, no daylight saving
+
+---
+
 ## Energex (QLD)
 
 | Source | URL | Notes |

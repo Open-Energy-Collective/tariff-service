@@ -1,0 +1,305 @@
+{
+  "metadata": {
+    "source": "Power and Water Corporation Power Services 2026-27 Network Tariffs",
+    "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-21",
+    "notes": "Prices exclude GST. Rates in $/kWh and $/NMI/day. Smart meter tariffs have: High Period (Peak) 3pm-9pm weekdays Oct-Mar, Low Period (Super Off-Peak) 9am-3pm all days all year, Mid Period (Off-Peak) all other times. NT uses UTC+9:30 (no daylight saving)."
+  },
+  "dnsps": [
+    {
+      "code": "powerwater",
+      "name": "Power and Water Corporation",
+      "state": "NT",
+      "timezone": "Australia/Darwin"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "powerwater",
+      "code": "T1",
+      "name": "Residential Tariff",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.4599,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.0659,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "powerwater",
+      "code": "T2",
+      "name": "Non-residential Tariff",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.4596,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.0758,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "powerwater",
+      "code": "T3A",
+      "name": "LV Smart Meter (Residential 0-160MWh)",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.4596,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.1968,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.0592,
+          "start_time": "09:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0592,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "powerwater",
+      "code": "T3B",
+      "name": "LV Smart Meter (Non-Residential 0-160MWh)",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.9516,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.2607,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.0645,
+          "start_time": "09:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0645,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "powerwater",
+      "code": "T3C",
+      "name": "LV Smart Meter (160-750MWh)",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 9.3466,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.3271,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "solar_soak",
+          "rate": 0.1042,
+          "start_time": "09:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.1042,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "powerwater",
+      "code": "T5",
+      "name": "LV Majors (Above 750MWh)",
+      "tariff_class": "business",
+      "tariff_type": "demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 108.0677,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 501.042,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          10,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.0295,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "powerwater",
+      "code": "T6",
+      "name": "HV Smart Meter",
+      "tariff_class": "business",
+      "tariff_type": "demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 117.892,
+      "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+      "last_verified": "2026-07-21T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 265.257,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          10,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.0344,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}
