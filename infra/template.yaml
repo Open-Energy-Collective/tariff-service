@@ -2,6 +2,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: OEC Tariff Data Service
 
+Parameters:
+  JwtSecretParam:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /oec/tariff-service/jwt-secret
+    Description: SSM parameter name containing the JWT secret
+    NoEcho: true
+
 Globals:
   Function:
     Timeout: 30
@@ -10,14 +17,7 @@ Globals:
     Environment:
       Variables:
         ENV: production
-        JWT_SECRET: !Ref JwtSecret
-
-Parameters:
-  JwtSecret:
-    Type: String
-    NoEcho: true
-    Description: Secret key for JWT admin authentication
-    Default: change-me-in-production
+        JWT_SECRET: !Ref JwtSecretParam
 
 Resources:
   TariffFunction:

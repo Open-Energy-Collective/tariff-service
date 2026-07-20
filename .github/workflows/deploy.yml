@@ -70,5 +70,4 @@ jobs:
             --capabilities CAPABILITY_IAM \
             --resolve-s3 \
             --no-confirm-changeset \
-            --no-fail-on-empty-changeset \
-            --parameter-overrides "JwtSecret=${{ secrets.JWT_SECRET }}"
+            --no-fail-on-empty-changeset
