@@ -29,7 +29,9 @@ def current_rate(
     """Get the active rate for a given DNSP, tariff, and datetime."""
     tariff_obj = get_tariff_detail(db, dnsp, tariff)
     if not tariff_obj:
-        raise HTTPException(status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'")
+        raise HTTPException(
+            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+        )
 
     parsed_dt = datetime.fromisoformat(dt)
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
@@ -55,7 +57,9 @@ def demand_surcharge(
     """Calculate demand surcharge for given peak demand."""
     tariff_obj = get_tariff_detail(db, dnsp, tariff)
     if not tariff_obj:
-        raise HTTPException(status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'")
+        raise HTTPException(
+            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+        )
 
     if not tariff_obj.demand:
         raise HTTPException(

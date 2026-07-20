@@ -11,11 +11,11 @@ _test_db.close()
 os.environ["DATABASE_URL"] = f"sqlite:///{_test_db.name}"
 
 from fastapi.testclient import TestClient  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
 
 from app.database import Base, engine  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffExport, TariffRate  # noqa: E402
-from sqlalchemy.orm import Session  # noqa: E402
+from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffRate  # noqa: E402
 
 
 @pytest.fixture(autouse=True)

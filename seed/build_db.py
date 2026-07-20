@@ -12,11 +12,11 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from sqlalchemy.orm import Session
+
 from app.config import DATA_DIR, DB_PATH
 from app.database import Base, engine
 from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffExport, TariffRate
-from sqlalchemy.orm import Session
-
 
 SEED_DIR = Path(__file__).resolve().parent
 

@@ -6,7 +6,7 @@ Determines current tariff period and calculates demand surcharges.
 import json
 from datetime import datetime, time
 
-from app.models.tariff import Tariff, TariffDemand, TariffRate
+from app.models.tariff import Tariff, TariffDemand
 
 
 def parse_time(time_str: str) -> time:
