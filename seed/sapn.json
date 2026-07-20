@@ -1,0 +1,350 @@
+{
+  "metadata": {
+    "source": "SA Power Networks Annual Pricing Proposal Overview 2026-27",
+    "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-20",
+    "notes": "Prices exclude GST. Rates already in $/kWh and $/day. Peak: 17:00-21:00 all days. Solar Sponge: 10:00-15:00 all days. Shoulder: 06:00-10:00, 15:00-17:00, 21:00-01:00. Off-peak: 01:00-06:00. Demand: $/kVA/day."
+  },
+  "dnsps": [
+    {
+      "code": "sapn",
+      "name": "SA Power Networks",
+      "state": "SA",
+      "timezone": "Australia/Adelaide"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "sapn",
+      "code": "RSR",
+      "name": "Residential Single Rate",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.6553,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.1634,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "RTOU",
+      "name": "Residential Time of Use",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.6553,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.2133,
+          "start_time": "17:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1067,
+          "start_time": "06:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_sponge",
+          "rate": 0.0535,
+          "start_time": "10:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0535,
+          "start_time": "01:00",
+          "end_time": "06:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "RESELE",
+      "name": "Residential Electrify",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.6553,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.3601,
+          "start_time": "17:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1068,
+          "start_time": "06:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "solar_sponge",
+          "rate": 0.0321,
+          "start_time": "10:00",
+          "end_time": "15:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0321,
+          "start_time": "01:00",
+          "end_time": "06:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "BSR",
+      "name": "Business Single Rate",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.6645,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.1914,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "SBTOU",
+      "name": "Small Business Time of Use",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.6645,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.2872,
+          "start_time": "17:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1079,
+          "start_time": "06:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.1998,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "SBELE",
+      "name": "Small Business Electrify",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.6645,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.3636,
+          "start_time": "17:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1072,
+          "start_time": "06:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.1875,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "MBTOUD",
+      "name": "Medium Business Time of Use Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 1.5082,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 2.583,
+        "window_start": "17:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.2073,
+          "start_time": "17:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.078,
+          "start_time": "06:00",
+          "end_time": "10:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.1442,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "sapn",
+      "code": "LBAD",
+      "name": "Large LV Business Annual Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 8.6002,
+      "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+      "last_verified": "2026-07-20T00:00:00+09:30",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 10.224,
+        "window_start": "17:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "all",
+        "season_months": null
+      },
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.0637,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}
