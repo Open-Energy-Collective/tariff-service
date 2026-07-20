@@ -33,7 +33,12 @@ def current_rate(
             status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
         )
 
-    parsed_dt = datetime.fromisoformat(dt.replace(" ", "+"))
+    try:
+        parsed_dt = datetime.fromisoformat(dt.replace(" ", "+"))
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=400, detail=f"Invalid datetime format: '{dt}'. Use ISO 8601."
+        )
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
     in_window = is_in_demand_window(tariff_obj.demand, parsed_dt)
 
