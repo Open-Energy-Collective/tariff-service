@@ -13,3 +13,4 @@ venv/
 .aws-sam/
 .pyright/
 *.postman_collection.json
+data/tariffs.db
