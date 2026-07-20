@@ -1,0 +1,789 @@
+{
+  "metadata": {
+    "source": "Ausgrid Network Price List 2026-27",
+    "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+    "effective_from": "2026-07-01",
+    "effective_to": "2027-06-30",
+    "extracted_date": "2026-07-20",
+    "notes": "Prices exclude GST. Peak: 15:00-21:00 in Jun-Aug & Nov-Mar. Residential peak all days, business peak weekdays only. No peak in Apr/May/Sep/Oct. Demand measured as highest 30-min in peak window per month."
+  },
+  "dnsps": [
+    {
+      "code": "ausgrid",
+      "name": "Ausgrid",
+      "state": "NSW",
+      "timezone": "Australia/Sydney"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "ausgrid",
+      "code": "EA010",
+      "name": "Residential Flat",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "closed": true,
+      "daily_supply_charge": 0.50855,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.12703,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA025",
+      "name": "Residential ToU",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.63233,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.32516,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.05357,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA111",
+      "name": "Residential Demand (Introductory)",
+      "tariff_class": "residential",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.57295,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 0.43752,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "all",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.11801,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.11801,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA116",
+      "name": "Residential Demand",
+      "tariff_class": "residential",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.67005,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 11.8455,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "all",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.02806,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.02806,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA029",
+      "name": "Small Customer Export Tariff",
+      "tariff_class": "residential",
+      "tariff_type": "tou_export",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [],
+      "exports": [
+        {
+          "period_name": "export_charge",
+          "rate": 0.01232,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "export_reward",
+          "rate": -0.03855,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ]
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA030",
+      "name": "Controlled Load 1",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.01484,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.02966,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA040",
+      "name": "Controlled Load 2",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.05028,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.05623,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA050",
+      "name": "Small Business Flat",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "closed": true,
+      "daily_supply_charge": 2.02314,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.1133,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA225",
+      "name": "Small Business ToU",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.18647,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.39757,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.059,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA251",
+      "name": "Small Business Demand (Introductory)",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.02108,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 0.41451,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.10602,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.10602,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA256",
+      "name": "Small Business Demand",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 2.42179,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 13.35933,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.03072,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.03072,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA302",
+      "name": "LV 100-160 MWh",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 6.5337,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 14.50191,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.08823,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01968,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA305",
+      "name": "LV 160-750 MWh (System)",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 25.46537,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 17.33886,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.08235,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01846,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA310",
+      "name": "LV > 750 MWh (System)",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 51.18167,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 17.85894,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.06489,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01691,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA370",
+      "name": "HV Connection (System)",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 79.79265,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 10.38696,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.04015,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01979,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "ausgrid",
+      "code": "EA390",
+      "name": "ST Connection (System)",
+      "tariff_class": "business",
+      "tariff_type": "tou_demand",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 71.89654,
+      "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+      "last_verified": "2026-07-20T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": {
+        "rate": 2.91345,
+        "window_start": "15:00",
+        "window_end": "21:00",
+        "measurement_method": "30min_max",
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          11,
+          12
+        ]
+      },
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.02649,
+          "start_time": "15:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            11,
+            12
+          ]
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.02167,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}
