@@ -24,7 +24,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: handler.handler
-      CodeUri: .
+      CodeUri: ..
       Architectures:
         - x86_64
       Events:
@@ -70,6 +70,11 @@ Resources:
       SubjectAlternativeNames:
         - "*.openenergy.org.au"
       ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: api.openenergy.org.au
+          HostedZoneId: Z0814724GW41ZONERIE9
+        - DomainName: "*.openenergy.org.au"
+          HostedZoneId: Z0814724GW41ZONERIE9
 
   ErrorAlarm:
     Type: AWS::CloudWatch::Alarm

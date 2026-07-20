@@ -59,7 +59,16 @@ jobs:
         run: python seed/build_db.py
 
       - name: SAM Build
-        run: sam build
+        run: sam build --template-file infra/template.yaml
 
       - name: SAM Deploy
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+        run: |
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --stack-name oec-tariff-service \
+            --region ${{ env.AWS_REGION }} \
+            --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides "JwtSecret=${{ secrets.JWT_SECRET }}"
