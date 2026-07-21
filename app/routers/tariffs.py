@@ -2,7 +2,7 @@
 
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -82,7 +82,10 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
 
 
 @router.get("/{dnsp_code}", response_model=list[TariffSummaryResponse])
-def list_tariffs(dnsp_code: str, db: Session = Depends(get_db)) -> list[TariffSummaryResponse]:
+def list_tariffs(
+    dnsp_code: str = Path(..., example="energex"),
+    db: Session = Depends(get_db),
+) -> list[TariffSummaryResponse]:
     """List all active tariffs for a DNSP."""
     tariffs = get_tariffs_for_dnsp(db, dnsp_code)
     if not tariffs:
@@ -101,7 +104,9 @@ def list_tariffs(dnsp_code: str, db: Session = Depends(get_db)) -> list[TariffSu
 
 @router.get("/{dnsp_code}/{tariff_code}", response_model=TariffDetailResponse)
 def get_tariff(
-    dnsp_code: str, tariff_code: str, db: Session = Depends(get_db)
+    dnsp_code: str = Path(..., example="energex"),
+    tariff_code: str = Path(..., example="3900"),
+    db: Session = Depends(get_db),
 ) -> TariffDetailResponse:
     """Get full tariff detail (current active version)."""
     tariff = get_tariff_detail(db, dnsp_code, tariff_code)
@@ -115,7 +120,9 @@ def get_tariff(
 
 @router.get("/{dnsp_code}/{tariff_code}/history", response_model=list[TariffDetailResponse])
 def get_tariff_versions(
-    dnsp_code: str, tariff_code: str, db: Session = Depends(get_db)
+    dnsp_code: str = Path(..., example="energex"),
+    tariff_code: str = Path(..., example="3900"),
+    db: Session = Depends(get_db),
 ) -> list[TariffDetailResponse]:
     """Get all versions of a tariff (newest first)."""
     tariffs = get_tariff_history(db, dnsp_code, tariff_code)
