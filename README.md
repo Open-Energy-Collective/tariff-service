@@ -1,4 +1,4 @@
-# OEC Tariff Service
+# Tariff Data Service
 
 Open Energy Collective Tariff Data Service
 
