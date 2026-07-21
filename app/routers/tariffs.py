@@ -83,7 +83,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
 
 @router.get("/{dnsp_code}", response_model=list[TariffSummaryResponse])
 def list_tariffs(
-    dnsp_code: str = Path(..., example="energex"),
+    dnsp_code: str = Path(..., json_schema_extra={"example": "energex"}),
     db: Session = Depends(get_db),
 ) -> list[TariffSummaryResponse]:
     """List all active tariffs for a DNSP."""
@@ -104,8 +104,8 @@ def list_tariffs(
 
 @router.get("/{dnsp_code}/{tariff_code}", response_model=TariffDetailResponse)
 def get_tariff(
-    dnsp_code: str = Path(..., example="energex"),
-    tariff_code: str = Path(..., example="3900"),
+    dnsp_code: str = Path(..., json_schema_extra={"example": "energex"}),
+    tariff_code: str = Path(..., json_schema_extra={"example": "3900"}),
     db: Session = Depends(get_db),
 ) -> TariffDetailResponse:
     """Get full tariff detail (current active version)."""
@@ -120,8 +120,8 @@ def get_tariff(
 
 @router.get("/{dnsp_code}/{tariff_code}/history", response_model=list[TariffDetailResponse])
 def get_tariff_versions(
-    dnsp_code: str = Path(..., example="energex"),
-    tariff_code: str = Path(..., example="3900"),
+    dnsp_code: str = Path(..., json_schema_extra={"example": "energex"}),
+    tariff_code: str = Path(..., json_schema_extra={"example": "3900"}),
     db: Session = Depends(get_db),
 ) -> list[TariffDetailResponse]:
     """Get all versions of a tariff (newest first)."""
