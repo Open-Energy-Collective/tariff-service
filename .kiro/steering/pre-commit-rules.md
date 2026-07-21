@@ -17,11 +17,12 @@ Before committing and pushing any feature branch, verify ALL of the following:
 - Include DNSP name and tariff count in commit body when adding seed data
 
 ## Branching Strategy
-- Use **long-lived feature branches** for related work (e.g., `feat/seed-data-round-2`)
+- Use **long-lived feature branches** for related work, named `feat/{version}` (e.g., `feat/0.5.0`)
 - Multiple commits on the branch are fine — push as you go
 - Only create a **single PR when the work is complete and tested**
 - Do NOT rapid-fire multiple PRs in quick succession (triggers GitHub anti-abuse flags)
-- Squash merge to main
+- **Squash merge** to main (clean single-commit history per release)
+- Individual commit messages are preserved in the PR body on GitHub
 - No `--admin` bypass unless absolutely necessary
 
 ## Deploy
