@@ -10,7 +10,7 @@ from app.routers import calculate, dnsps, docs, tariffs
 _VERSION = (Path(__file__).resolve().parent.parent / "VERSION").read_text().strip()
 
 app = FastAPI(
-    title="OEC Tariff Data Service",
+    title="Tariff Data Service",
     description=(
         "Public REST API serving curated Australian DNSP tariff data. "
         "Free, unauthenticated, rate-limited. "

@@ -366,7 +366,7 @@ def test_openapi_spec(client):
     response = client.get("/openapi.json")
     assert response.status_code == 200
     data = response.json()
-    assert data["info"]["title"] == "OEC Tariff Data Service"
+    assert data["info"]["title"] == "Tariff Data Service"
 
 
 def test_swagger_docs(client):
