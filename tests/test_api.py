@@ -21,10 +21,9 @@ def test_list_dnsps(client):
     response = client.get("/api/v1/dnsps")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 1
-    assert data[0]["code"] == "energex"
-    assert data[0]["state"] == "QLD"
-    assert data[0]["tariff_count"] == 1
+    assert len(data) == 3
+    codes = {d["code"] for d in data}
+    assert codes == {"energex", "ausgrid", "sapn"}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -373,3 +372,153 @@ def test_openapi_spec(client):
 def test_swagger_docs(client):
     response = client.get("/docs")
     assert response.status_code == 200
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ausgrid — Seasonal Peak (only Jun-Aug & Nov-Mar)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_ausgrid_peak_in_high_season(client):
+    """July 18:00 is peak (high season, within 15:00-21:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-07-20T18:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "peak"
+    assert data["rate"] == 0.32516
+
+
+def test_ausgrid_off_peak_in_high_season(client):
+    """July 10:00 is off-peak (high season but outside 15:00-21:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-07-20T10:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "off_peak"
+    assert data["rate"] == 0.05357
+
+
+def test_ausgrid_off_peak_in_shoulder_month(client):
+    """April 18:00 is off-peak (shoulder month, no peak applies)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-04-20T18:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "off_peak"
+    assert data["rate"] == 0.05357
+
+
+def test_ausgrid_off_peak_in_may(client):
+    """May 17:00 is off-peak (May is shoulder month, no peak)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-05-15T17:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "off_peak"
+
+
+def test_ausgrid_peak_in_november(client):
+    """November 16:00 is peak (summer high season starts)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-11-15T16:00:00+11:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "peak"
+    assert data["rate"] == 0.32516
+
+
+def test_ausgrid_demand_window_high_season(client):
+    """July 18:00 — demand window active (high season)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA116", "datetime": "2026-07-20T18:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["in_demand_window"] is True
+
+
+def test_ausgrid_demand_window_shoulder_month(client):
+    """April 18:00 — demand window NOT active (shoulder month)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA116", "datetime": "2026-04-20T18:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["in_demand_window"] is False
+
+
+def test_ausgrid_demand_window_outside_hours(client):
+    """July 10:00 — demand window NOT active (outside 15:00-21:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausgrid", "tariff": "EA116", "datetime": "2026-07-20T10:00:00+10:00"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["in_demand_window"] is False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SA Power Networks — Solar Sponge + Peak 17:00-21:00
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_sapn_peak(client):
+    """19:00 should be peak (17:00-21:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T19:00:00+09:30"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "peak"
+    assert data["rate"] == 0.2133
+
+
+def test_sapn_solar_sponge(client):
+    """12:00 should be solar_sponge (10:00-15:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T12:00:00+09:30"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "solar_sponge"
+    assert data["rate"] == 0.0535
+
+
+def test_sapn_shoulder(client):
+    """08:00 should be shoulder (06:00-10:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T08:00:00+09:30"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "shoulder"
+    assert data["rate"] == 0.1067
+
+
+def test_sapn_off_peak(client):
+    """03:00 should be off-peak (01:00-06:00)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T03:00:00+09:30"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["period"] == "off_peak"
+    assert data["rate"] == 0.0535
