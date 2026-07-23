@@ -20,7 +20,7 @@ app = FastAPI(
     contact={
         "name": "Open Energy Collective",
         "url": "https://openenergy.org.au",
-        "email": "andre.zitelli@outlook.com",
+        "email": "info@openenergy.org.au",
     },
     license_info={"name": "MIT", "url": "https://opensource.org/licenses/MIT"},
 )
