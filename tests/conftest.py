@@ -177,6 +177,45 @@ def setup_db():
             )
         )
 
+        # Ausgrid demand tariff with an all-day (00:00-00:00) demand window —
+        # matches the real Jemena A230 / Energex 8300 / AusNet NASN12 convention
+        # ("applies at all other times"), regression coverage for the
+        # division-by-zero this used to cause in calculate_demand_surcharge.
+        ausgrid_alldaydemand = Tariff(
+            dnsp_id=ausgrid.id,
+            code="EA117",
+            name="Residential All-Day Demand",
+            tariff_type="tou_demand",
+            effective_from="2026-07-01",
+            effective_to=None,
+            daily_supply_charge=0.6,
+        )
+        session.add(ausgrid_alldaydemand)
+        session.flush()
+
+        session.add(
+            TariffDemand(
+                tariff_id=ausgrid_alldaydemand.id,
+                rate=11.473,
+                window_start="00:00",
+                window_end="00:00",
+                measurement_method="monthly_peak",
+                days="all",
+                season_months=None,
+            )
+        )
+        session.add(
+            TariffRate(
+                tariff_id=ausgrid_alldaydemand.id,
+                period_name="anytime",
+                rate=0.03,
+                start_time="00:00",
+                end_time="00:00",
+                days="all",
+                season="all",
+            )
+        )
+
         # ── SA Power Networks (solar sponge, peak 17:00-21:00) ──
         sapn = Dnsp(
             code="sapn", name="SA Power Networks", state="SA", timezone="Australia/Adelaide"
