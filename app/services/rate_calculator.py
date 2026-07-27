@@ -16,7 +16,13 @@ def parse_time(time_str: str) -> time:
 
 
 def is_in_time_window(current: time, start: time, end: time) -> bool:
-    """Check if current time is within a window, handling overnight spans."""
+    """Check if current time is within a window, handling overnight spans.
+
+    start == end is the seed data's "applies at all other times" convention
+    (e.g. an off-peak catch-all window of 00:00-00:00) and always matches.
+    """
+    if start == end:
+        return True
     if start <= end:
         return start <= current < end
     else:
@@ -53,6 +59,7 @@ def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float]:
     weekday = dt.weekday()
     month = dt.month
 
+    catchall_rate = None
     for rate in tariff.rates:
         if not is_day_match(rate.days, weekday):
             continue
@@ -60,8 +67,16 @@ def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float]:
             continue
         start = parse_time(rate.start_time)
         end = parse_time(rate.end_time)
+        if start == end:
+            # "Applies at all other times" catch-all — only used if no
+            # specific window matches, regardless of row iteration order.
+            catchall_rate = rate
+            continue
         if is_in_time_window(current_time, start, end):
             return rate.period_name, rate.rate
+
+    if catchall_rate is not None:
+        return catchall_rate.period_name, catchall_rate.rate
 
     # Fallback: return first rate (shouldn't happen with properly configured data)
     if tariff.rates:
@@ -100,7 +115,10 @@ def calculate_demand_surcharge(
     end = parse_time(demand.window_end)
 
     # Calculate window hours per day
-    if start <= end:
+    if start == end:
+        # "Applies at all other times" catch-all — the full day.
+        window_hours_per_day = 24.0
+    elif start <= end:
         window_hours_per_day = (end.hour + end.minute / 60) - (start.hour + start.minute / 60)
     else:
         window_hours_per_day = (24 - start.hour - start.minute / 60) + (
