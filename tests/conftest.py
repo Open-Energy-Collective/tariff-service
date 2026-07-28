@@ -289,6 +289,8 @@ def setup_db():
 
 @pytest.fixture
 def client():
-    """Create a test client."""
+    """Create a test client with rate limiting disabled (TestClient shares one source IP)."""
+    app.state.limiter.enabled = False
     with TestClient(app) as c:
         yield c
+    app.state.limiter.enabled = True

@@ -47,6 +47,9 @@ Resources:
           - DELETE
         AllowHeaders:
           - "*"
+      DefaultRouteSettings:
+        ThrottlingRateLimit: 50
+        ThrottlingBurstLimit: 100
 
   ApiDomainName:
     Type: AWS::ApiGatewayV2::DomainName

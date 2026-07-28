@@ -1,5 +1,8 @@
 """API endpoint tests."""
 
+from fastapi.testclient import TestClient
+
+from app.main import app
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Health
@@ -584,3 +587,20 @@ def test_current_rate_resolution_is_order_independent():
 
     assert get_current_rate(tariff_a, at_peak_time) == ("peak", 0.32516)
     assert get_current_rate(tariff_b, at_peak_time) == ("peak", 0.32516)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Rate limiting
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_rate_limit_enforced_per_ip():
+    """21st request within a minute from the same IP is rejected with 429."""
+    with TestClient(app) as limited_client:
+        for _ in range(20):
+            response = limited_client.get("/api/v1/health")
+            assert response.status_code == 200
+
+        response = limited_client.get("/api/v1/health")
+        assert response.status_code == 429
+        assert "retry-after" in {k.lower() for k in response.headers}
