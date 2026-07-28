@@ -19,10 +19,19 @@ router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
 
 @router.get("/current-rate", response_model=CurrentRateResponse)
 def current_rate(
-    dnsp: str = Query(..., description="DNSP code, e.g. 'energex'"),
-    tariff: str = Query(..., description="Tariff code, e.g. 'T12A'"),
+    dnsp: str = Query(
+        ..., description="DNSP code, e.g. 'energex'",
+        json_schema_extra={"example": "energex"},
+    ),
+    tariff: str = Query(
+        ..., description="Tariff code, e.g. '3900'",
+        json_schema_extra={"example": "3900"},
+    ),
     dt: str = Query(
-        ..., alias="datetime", description="ISO 8601 datetime, e.g. '2026-07-20T17:30:00+10:00'"
+        ...,
+        alias="datetime",
+        description="ISO 8601 datetime, e.g. '2026-07-20T17:30:00+10:00'",
+        json_schema_extra={"example": "2026-07-20T17:30:00+10:00"},
     ),
     db: Session = Depends(get_db),
 ) -> CurrentRateResponse:
@@ -54,9 +63,18 @@ def current_rate(
 
 @router.get("/demand-surcharge", response_model=DemandSurchargeResponse)
 def demand_surcharge(
-    dnsp: str = Query(..., description="DNSP code"),
-    tariff: str = Query(..., description="Tariff code"),
-    peak_demand_kw: float = Query(..., description="Peak demand in kW"),
+    dnsp: str = Query(
+        ..., description="DNSP code",
+        json_schema_extra={"example": "energex"},
+    ),
+    tariff: str = Query(
+        ..., description="Tariff code",
+        json_schema_extra={"example": "3900"},
+    ),
+    peak_demand_kw: float = Query(
+        ..., description="Peak demand in kW",
+        json_schema_extra={"example": 4.5},
+    ),
     db: Session = Depends(get_db),
 ) -> DemandSurchargeResponse:
     """Calculate demand surcharge for given peak demand."""

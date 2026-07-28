@@ -6,7 +6,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Andre Zitelli", email = "andre.zitelli@outlook.com"},
+    {name = "Andre Zitelli", email = "dev@openenergy.org.au"},
 ]
 dependencies = [
     "fastapi==0.115.12",
