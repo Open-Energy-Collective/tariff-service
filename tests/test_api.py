@@ -522,3 +522,65 @@ def test_sapn_off_peak(client):
     data = response.json()
     assert data["period"] == "off_peak"
     assert data["rate"] == 0.0535
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# All-day (00:00-00:00) catch-all window — regression coverage
+# ─────────────────────────────────────────────────────────────────────────────
+# Real seed data (Ausgrid EA025 off_peak, Jemena A230, Energex 8300, AusNet
+# NASN12 demand windows) uses start_time == end_time == "00:00" to mean
+# "applies at all other times" / "all day". This used to (a) never match in
+# is_in_time_window (empty window), silently falling back to whichever rate
+# SQLAlchemy happened to return first, and (b) divide by zero in
+# calculate_demand_surcharge's window-hours calculation for demand windows
+# using the same convention.
+
+
+def test_demand_surcharge_all_day_window(client):
+    """All-day (00:00-00:00) demand window must not divide by zero and must
+    treat the window as the full 24 hours."""
+    response = client.get(
+        "/api/v1/calculate/demand-surcharge",
+        params={"dnsp": "ausgrid", "tariff": "EA117", "peak_demand_kw": 5.0},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["demand_window_hours_per_month"] == 24.0 * 30
+    # 5.0 * 11.473 / 720 = 0.07967...
+    assert abs(data["surcharge_per_kwh"] - 0.07967) < 0.001
+
+
+def test_current_rate_resolution_is_order_independent():
+    """get_current_rate must resolve a specific window over the all-day
+    catch-all regardless of the order rates are returned in — the previous
+    behavior silently depended on unspecified relationship/query ordering."""
+    from datetime import datetime
+    from types import SimpleNamespace
+
+    from app.services.rate_calculator import get_current_rate
+
+    specific = SimpleNamespace(
+        period_name="peak",
+        rate=0.32516,
+        start_time="15:00",
+        end_time="21:00",
+        days="all",
+        season_months=None,
+    )
+    catchall = SimpleNamespace(
+        period_name="off_peak",
+        rate=0.05357,
+        start_time="00:00",
+        end_time="00:00",
+        days="all",
+        season_months=None,
+    )
+    at_peak_time = datetime.fromisoformat("2026-07-20T18:00:00+10:00")
+
+    # Catch-all listed first...
+    tariff_a = SimpleNamespace(rates=[catchall, specific])
+    # ...and specific window listed first.
+    tariff_b = SimpleNamespace(rates=[specific, catchall])
+
+    assert get_current_rate(tariff_a, at_peak_time) == ("peak", 0.32516)
+    assert get_current_rate(tariff_b, at_peak_time) == ("peak", 0.32516)
