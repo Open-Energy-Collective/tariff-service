@@ -4,7 +4,7 @@ Open Energy Collective Tariff Data Service
 
 ## Overview
 
-Public REST API serving curated Australian DNSP network tariff data. Free, unauthenticated, rate-limited. All data sourced from official AER-approved Network Price Lists.
+Public REST API serving curated Australian DNSP network tariff data — time-of-use rates, seasonal variations, and demand charges (including per-kW demand surcharge calculation). Free, unauthenticated, rate-limited. All data sourced from official AER-approved Network Price Lists.
 
 ## API
 
