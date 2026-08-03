@@ -18,13 +18,16 @@ Public REST API serving curated Australian DNSP network tariff data, including t
 |------|-------|---------|--------|
 | Ausgrid | NSW | 16 | 2026-27 Network Price List |
 | AusNet Services | VIC | 6 | 2026-27 Network Tariff Schedule |
+| CitiPower | VIC | 5 | 2026-27 Pricing + AER TSS Indicative Prices |
 | Endeavour Energy | NSW | 14 | 2026-27 NUOS Price List |
 | Energex | QLD | 16 | 2026-27 Network Price List |
 | Essential Energy | NSW | 9 | 2026-27 Price List & Explanatory Notes |
 | Evoenergy | ACT | 5 | 2026-27 Schedule of Charges |
 | Jemena | VIC | 6 | 2026-27 Network Tariff Schedule |
+| Powercor | VIC | 5 | 2026-27 Pricing + AER TSS Indicative Prices |
 | Power and Water Corporation | NT | 7 | 2026-27 Network Tariffs |
 | SA Power Networks | SA | 8 | 2026-27 Annual Pricing Proposal |
+| United Energy | VIC | 5 | 2026-27 Pricing + AER TSS Indicative Prices |
 
 ## Endpoints
 
