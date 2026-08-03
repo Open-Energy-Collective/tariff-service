@@ -1,0 +1,167 @@
+{
+  "metadata": {
+    "source": "CitiPower 2026-27 Pricing (structure) + AER-published TSS 2026-31 SCS Indicative Prices (rates)",
+    "source_url": "https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf",
+    "effective_from": "2026-07-01",
+    "notes": "Excluding GST. Peak 4pm-9pm all days; off_peak covers all other times (includes the structural 'Saver' 11am-4pm window, which the indicative-prices model does not price separately from off-peak for 2026-27 -- no distinct Saver rate was published, so it is not modeled as its own period here rather than guessing a value). Small business ToU peak is 9am-9pm workdays. Residential/export CER tariffs and all demand-charge tariffs (CG/CMG/CMGO21/large/HV/sub-transmission) are NOT seeded -- the only available rate source (AER TSS.01 indicative prices) leaves their demand/export components as zero/blank, and this schema's single demand-window model can't represent CitiPower's two-season (summer/non-summer) demand charge without inventing a modeling choice not made unilaterally. Source PDF gives tariff codes/structure but not $ rates -- those live in a separate 'Tariff Summary' attachment CitiPower doesn't co-publish; rates instead sourced from AER's regulator-hosted TSS.01 indicative-prices spreadsheet (2026-31 Tariff Structure Statement, Jan2025 proposal), cross-checked against the structural PDF's tariff codes (exact match: C1R, CDS, CRSTOU, C1G, CGTOU). 'Indicative' prices, not a final DNSP-published price list -- flagged as a slightly different provenance tier than other seeded DNSPs.",
+    "last_verified": "2026-08-03"
+  },
+  "dnsps": [
+    {
+      "code": "citipower",
+      "name": "CitiPower",
+      "state": "VIC",
+      "timezone": "Australia/Melbourne"
+    }
+  ],
+  "tariffs": [
+    {
+      "dnsp": "citipower",
+      "code": "C1R",
+      "name": "Residential Single Rate",
+      "tariff_class": "residential",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.30137,
+      "source_url": "https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx",
+      "last_verified": "2026-08-03T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.087583,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "citipower",
+      "code": "CRSTOU",
+      "name": "Residential ToU",
+      "tariff_class": "residential",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.30137,
+      "source_url": "https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx",
+      "last_verified": "2026-08-03T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.189871,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.047468,
+          "start_time": "21:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "citipower",
+      "code": "CDS",
+      "name": "Dedicated Circuit",
+      "tariff_class": "residential",
+      "tariff_type": "controlled_load",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.0,
+      "source_url": "https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx",
+      "last_verified": "2026-08-03T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "controlled_load",
+          "rate": 0.01,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "citipower",
+      "code": "C1G",
+      "name": "Small Business Single Rate",
+      "tariff_class": "business",
+      "tariff_type": "flat",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.583261,
+      "source_url": "https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx",
+      "last_verified": "2026-08-03T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "anytime",
+          "rate": 0.092482,
+          "start_time": "00:00",
+          "end_time": "00:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    },
+    {
+      "dnsp": "citipower",
+      "code": "CGTOU",
+      "name": "Small Business ToU",
+      "tariff_class": "business",
+      "tariff_type": "tou",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "daily_supply_charge": 0.583261,
+      "source_url": "https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx",
+      "last_verified": "2026-08-03T00:00:00+10:00",
+      "verified_by": "official_price_list",
+      "demand": null,
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.142693,
+          "start_time": "09:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.035673,
+          "start_time": "21:00",
+          "end_time": "09:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": []
+    }
+  ]
+}

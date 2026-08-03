@@ -246,6 +246,87 @@ Business ToU (NAST12):
 
 ---
 
+## CitiPower (VIC)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates — the doc explicitly references a separate "CitiPower - 2026-27 Tariff Summary" attachment for those, which CitiPower does not co-publish alongside this PDF (confirmed absent from every public CitiPower/AER page checked). |
+| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes cross-checked against the structural PDF above — exact match. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final retail price list like the other DNSPs in this file — a revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
+
+### Tariff Codes (CitiPower) — seeded subset only
+
+Only tariffs with an unambiguous single rate/period mapping in the indicative-prices sheet were seeded. **Not seeded**: CRCER (two-way/CER export tariff — indicative sheet only populates its off-peak column, peak/export/seasonal components are blank/zero, not enough to model faithfully); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs (demand charge is split across two seasonal windows — summer Dec-Mar, non-summer Apr-Nov — but this schema's `TariffDemand` supports only one window, so seeding these would require an unmade modeling decision, not a data gap).
+
+| Code | Name | Type |
+|------|------|------|
+| C1R | Residential Single Rate | flat |
+| CRSTOU | Residential ToU | tou |
+| CDS | Dedicated Circuit | controlled_load |
+| C1G | Small Business Single Rate | flat |
+| CGTOU | Small Business ToU | tou |
+
+### Time Windows (CitiPower)
+
+Residential ToU (CRSTOU):
+- **Peak**: 4pm–9pm every day
+- **Off-peak**: all other times (structurally includes a "Saver" 11am–4pm window per the PDF's eligibility table, but the indicative-prices sheet has no separate Saver rate column for 2026-27 — priced as one off-peak rate rather than guessing a distinct Saver value)
+
+Business ToU (CGTOU):
+- **Peak**: 9am–9pm weekdays (confirmed directly against CitiPower's TSS compliance document text, not assumed)
+- **Off-peak**: all other times
+
+---
+
+## Powercor (VIC)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **Powercor 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/Powercor%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower's PDF (see above) — Powercor and CitiPower are commonly-owned/co-filed with near-identical document templates, confirmed by direct side-by-side comparison, not assumed. |
+| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes cross-checked against the structural PDF — exact match. |
+
+### Tariff Codes (Powercor) — seeded subset only
+
+Same exclusions as CitiPower (see above): PRCER, NDD/NDM/NDMO, and all large/HV/sub-transmission tariffs not seeded.
+
+| Code | Name | Type |
+|------|------|------|
+| D1 | Residential Single Rate | flat |
+| PRSTOU | Residential ToU | tou |
+| DD1 | Dedicated Circuit | controlled_load |
+| ND1 | Small Business Single Rate | flat |
+| NDTOU | Small Business ToU | tou |
+
+### Time Windows (Powercor)
+
+Same as CitiPower — Peak 4pm–9pm (residential) / 9am–9pm weekdays (business ToU, confirmed against Powercor's own TSS compliance document text), off-peak all other times.
+
+---
+
+## United Energy (VIC)
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| **United Energy 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower/Powercor's PDFs. |
+| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes cross-checked against the structural PDF — exact match. |
+
+### Tariff Codes (United Energy) — seeded subset only
+
+Same exclusions as CitiPower/Powercor: URCER, LVMKW1R/UMBD/UMBO, and all large/HV tariffs not seeded.
+
+| Code | Name | Type |
+|------|------|------|
+| LVS1R | Residential Single Rate | flat |
+| URSTOU | Residential ToU | tou |
+| LVDed | Dedicated Circuit | controlled_load |
+| LVM1R | Small Business Single Rate | flat |
+| LVTOU | Small Business ToU | tou |
+
+### Time Windows (United Energy)
+
+Same as CitiPower/Powercor — Peak 4pm–9pm (residential) / 9am–9pm weekdays (business ToU, confirmed against United Energy's own TSS compliance document text), off-peak all other times.
+
+---
+
 ## Evoenergy (ACT)
 
 | Source | URL | Notes |
