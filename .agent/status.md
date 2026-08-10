@@ -50,3 +50,15 @@ currently assume exactly one demand object and would need real logic for
 Worth a MAJOR version bump per `VERSIONING.md`'s own rule ("breaking API changes").
 Flagging for planning to decide whether/when this is worth doing versus leaving
 seasonal-demand tariffs permanently out of scope.
+
+## 2026-08-10 — Security/PII scan pass: `.gitignore` gap closed (no working-tree or history leak found)
+
+**Cross-repo security pass** (`repos/.agent/security-scan.md`, new repeatable
+process this session, precedent `ha-tariff-au` commit `b5d2119`). Working tree,
+tracked-files, and full git history all came back clean — the earlier `/home/our`
+pickaxe hit was a false positive (`energex.com.au/home/our-services/...`, a real
+public tariff-source URL, not a local path). One gap fixed: `.gitignore` was
+missing `secrets.yaml`/`.claude/`/`.idea/`/`.vscode/` exclusions (had `.env`
+already). This repo is real and public
+(`github.com/Open-Energy-Collective/tariff-service`) — added a pointer to the new
+scan process in `.agent/pre-commit-rules.md` so it's run before future releases.

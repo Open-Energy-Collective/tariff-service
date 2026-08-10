@@ -36,3 +36,8 @@ Before committing and pushing any feature branch, verify ALL of the following:
   unclear, or missing, STOP and ask before adding it
 - Before committing code copied from an external source (not a package dependency):
   add an attribution comment citing source + license at the point of use — no exceptions
+
+## Security / PII scan before any release
+This repo is real and public (`github.com/Open-Energy-Collective/tariff-service`) —
+run `../.agent/scripts/security-scan.sh tariff-service` before cutting a release.
+Process/checklist: `repos/.agent/security-scan.md`.

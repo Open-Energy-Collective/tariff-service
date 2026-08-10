@@ -14,3 +14,11 @@ venv/
 .pyright/
 *.postman_collection.json
 data/tariffs.db
+
+# Secrets / local credentials — never commit
+secrets.yaml
+
+# Editor / agent-tool local state — machine-specific, not project config
+.claude/
+.vscode/
+.idea/
