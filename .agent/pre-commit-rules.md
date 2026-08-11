@@ -5,7 +5,18 @@ Before committing and pushing any feature branch, verify ALL of the following:
 ## Documentation
 - [ ] `README.md` — update if new endpoints, DNSPs, or features added
 - [ ] `DATA_SOURCES.md` — update if new DNSP data added (include source URL, time windows, tariff codes)
-- [ ] `VERSIONING.md` — bump `VERSION` file if MINOR or MAJOR change
+- [ ] `VERSIONING.md` — bump `VERSION` file for any release-worthy change (MAJOR/MINOR/PATCH per its table)
+- [ ] `CHANGELOG.md` — add an entry for the new version
+
+## Release (whenever `VERSION` is bumped)
+Added 2026-08-11 after finding this step had never actually happened despite
+`VERSIONING.md` documenting it since `0.2.0` — zero tags existed until that day.
+The missing step, not the doc, was the gap.
+- [ ] `git tag X.Y.Z && git push --tags` after the bump lands on `main`
+- [ ] Confirm the tag is on GitHub (`gh api repos/Open-Energy-Collective/tariff-service/tags`)
+- Deploy is NOT tag-gated (`deploy.yml` deploys on every `main` push) — the tag is a
+  historical/rollback marker, not a release trigger. Don't skip it because "it
+  already deployed."
 
 ## Code Quality
 - [ ] `ruff check .` passes with no errors

@@ -31,12 +31,20 @@ def is_in_time_window(current: time, start: time, end: time) -> bool:
 
 
 def is_day_match(day_type: str, weekday: int) -> bool:
-    """Check if the day type matches. weekday: 0=Monday, 6=Sunday."""
+    """Check if the day type matches. weekday: 0=Monday, 6=Sunday.
+
+    Accepts both singular and plural forms -- real seed data uses the plural
+    "weekdays"/"weekends" (per TariffRateResponse's own documented values,
+    see seed/powercor.json, seed/ausnet.json), but this only special-cased
+    the singular until now, so any weekday-restricted rate on those tariffs
+    silently fell through to the "unrecognized -> always matches" default
+    below and matched every day, weekends included. Found live 2026-08-10.
+    """
     if day_type == "all":
         return True
-    if day_type == "weekday":
+    if day_type in ("weekday", "weekdays"):
         return weekday < 5
-    if day_type == "weekend":
+    if day_type in ("weekend", "weekends"):
         return weekday >= 5
     return True
 

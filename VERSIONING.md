@@ -29,10 +29,17 @@ All other references read from it:
 ## Release Process
 
 1. Update `VERSION` file with the new version number
-2. Commit: `release: vX.Y.Z`
+2. Commit: `release: X.Y.Z`
 3. Merge to `main`
-4. Tag: `git tag vX.Y.Z && git push --tags`
+4. Tag: `git tag X.Y.Z && git push --tags`
 5. Deploy happens automatically (or manually if CI is down)
+
+Tags are a historical/rollback marker, not a deploy gate — `deploy.yml` deploys
+on every push to `main` regardless of tags, deliberately kept simple rather than
+tag-gated. Every version bump should still get a tag (step 4): this was written
+from the start but not actually followed in practice until 2026-08-11 (`0.2.0`
+through `0.6.0` were tagged retroactively that day, reconstructed from
+`VERSION`-bump commits in git history — see `CHANGELOG.md`).
 
 ## Pre-1.0 Convention
 

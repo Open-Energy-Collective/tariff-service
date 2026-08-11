@@ -121,6 +121,20 @@ def build_database() -> None:
 
                 # Exports
                 for export_data in tariff_data.get("exports", []):
+                    # Guard against the 2026-08-10 bug class: seed data
+                    # authored in the same shape as "rates" (period_name/
+                    # rate/start_time/end_time) instead of this model's real
+                    # credit_rate/charge_rate columns silently produced an
+                    # all-null row -- every field access below is a .get()
+                    # with no required-key check, so a shape mismatch never
+                    # raised, it just lost the data. Fail loudly instead.
+                    if "credit_rate" not in export_data and "charge_rate" not in export_data:
+                        raise ValueError(
+                            f"Tariff {tariff_data['dnsp']}/{tariff_data['code']}: "
+                            f"exports entry has neither 'credit_rate' nor 'charge_rate' "
+                            f"({list(export_data.keys())}) -- wrong shape, see "
+                            f"TariffExportResponse for the expected fields."
+                        )
                     export = TariffExport(
                         tariff_id=tariff.id,
                         credit_rate=export_data.get("credit_rate"),

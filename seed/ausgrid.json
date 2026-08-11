@@ -223,22 +223,15 @@
       "rates": [],
       "exports": [
         {
-          "period_name": "export_charge",
-          "rate": 0.01232,
-          "start_time": "00:00",
-          "end_time": "00:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
-        },
-        {
-          "period_name": "export_reward",
-          "rate": -0.03855,
-          "start_time": "00:00",
-          "end_time": "00:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
+          "credit_rate": 0.03855,
+          "credit_window_start": null,
+          "credit_window_end": null,
+          "credit_season_months": null,
+          "charge_rate": 0.01232,
+          "charge_window_start": null,
+          "charge_window_end": null,
+          "free_threshold_kwh": null,
+          "days": "all"
         }
       ]
     },
