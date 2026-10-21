@@ -42,7 +42,9 @@ same name.
    git tag -a X.Y.Z <merge-commit> -m "feat/X.Y.Z: <capability>"
    git push origin X.Y.Z
    ```
-7. Cut the next release branch from `main` at that merge commit.
+7. Publish a GitHub Release on the tag, named for the tag, with the approved
+   `CHANGELOG.md` section as its body.
+8. Cut the next release branch from `main` at that merge commit.
 
 Tags have no `v` prefix (`0.6.1`, `0.7.0`). Tags mark releases for rollback; `deploy.yml`
 deploys on every push to `main` and is not tag-gated.
