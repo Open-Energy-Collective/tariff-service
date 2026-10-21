@@ -172,6 +172,15 @@ SAPN uses short codes (e.g., RSR, RTOU, RESELE).
 
 ### Time Windows (SA Power Networks)
 
+From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (Table 1):
+
+- **RTOU**: off-peak 12am–6am (00:00–06:00), solar sponge 10am–4pm (10:00–16:00), peak all other times; no shoulder
+- **SBTOU, MBTOUD**: peak 5pm–9pm all days November–March; shoulder 7am–5pm workdays November–March and 7am–9pm workdays April–October; off-peak all other times
+- **MBTOUD demand**: anytime, highest 30-min interval in the last 12 months (seeded as a monthly anytime maximum)
+- **LBAD**: energy peak 7am–9pm workdays, off-peak all other times; demand 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays)
+
+RESELE and SBELE as seeded (these differ from the 2026-27 overview and are open):
+
 - **Peak**: 5pm–9pm (17:00–21:00) all days
 - **Solar Sponge**: 10am–3pm (10:00–15:00) all days
 - **Shoulder**: 6am–10am (06:00–10:00), 3pm–5pm (15:00–17:00), 9pm–1am (21:00–01:00)
