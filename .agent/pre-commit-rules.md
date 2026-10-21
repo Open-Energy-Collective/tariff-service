@@ -11,7 +11,7 @@ Org rules that apply to this repo:
 |---|---|
 | Branching, release branches, milestone releases (tag format: Overrides) | `governance/branching-strategy.md` |
 | Release notes in `CHANGELOG.md` | `governance/branching-strategy.md#milestone-releases` |
-| Licences, dependencies, copied code attribution | `governance/licensing-standards.md` |
+| Licences | `governance/licensing-standards.md` |
 | Security and PII review before a public push or release | `governance/adr/cross-project.md#2026-10-21-manual-security-and-pii-review-before-a-public-push`, `governance/security-standards.md`, `governance/security-privacy-principles.md` |
 | Naming | `governance/naming-standards.md` |
 | Tracker calls, findings, write signature | `governance/agent-workflow.md` |
@@ -21,7 +21,7 @@ Org rules that apply to this repo:
 
 | Org rule | Replaced here by |
 |---|---|
-| `branching-strategy.md#milestone-releases`: tag the merge commit `vX.Y.Z` | Tag `X.Y.Z` without `v`, continuing tags `0.2.0` to `0.6.1`. Founder exception: `governance/adr/cross-project.md#2026-10-21-tariff-service-keeps-xyz-tags` |
+| `branching-strategy.md#milestone-releases`: tag the merge commit `vX.Y.Z` | Tag `X.Y.Z` without `v`, continuing tags `0.5.0` to `0.6.1`. Founder exception: `governance/adr/cross-project.md#2026-10-21-tariff-service-keeps-xyz-tags` |
 
 ## Before every commit
 
@@ -31,6 +31,10 @@ Org rules that apply to this repo:
 - `DATA_SOURCES.md` is updated when DNSP data changes: source, time windows, tariff codes.
 - Seed values cite the knowledge entry they were checked against
   (`knowledge/documents/<dnsp>/` in the OEC root).
+- A new dependency declares MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC or LGPL. Any
+  other licence, or none, stops the work until the founder decides.
+- Code copied from an external source carries a comment at the point of use citing the
+  source and its licence.
 
 ## Commit messages
 
