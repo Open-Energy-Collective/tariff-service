@@ -1,54 +1,45 @@
-# Pre-Commit Checklist
+# tariff-service Rules
 
-Before committing and pushing any feature branch, verify ALL of the following:
+Adds tariff-service rules to the org rules. The org rules are the root `CLAUDE.md` and
+`governance/`. This file overrides an org rule only as listed in Overrides below. Any other
+disagreement between this file and an org rule is a finding for Architecture, and the org
+rule governs until it is resolved. This file does not restate an org rule; it links it.
 
-## Documentation
-- [ ] `README.md` — update if new endpoints, DNSPs, or features added
-- [ ] `DATA_SOURCES.md` — update if new DNSP data added (include source URL, time windows, tariff codes)
-- [ ] `VERSIONING.md` — bump `VERSION` file for any release-worthy change (MAJOR/MINOR/PATCH per its table)
-- [ ] `CHANGELOG.md` — add an entry for the new version
+Org rules that apply to this repo:
 
-## Release (whenever `VERSION` is bumped)
-Added 2026-08-11 after finding this step had never actually happened despite
-`VERSIONING.md` documenting it since `0.2.0` — zero tags existed until that day.
-The missing step, not the doc, was the gap.
-- [ ] `git tag X.Y.Z && git push --tags` after the bump lands on `main`
-- [ ] Confirm the tag is on GitHub (`gh api repos/Open-Energy-Collective/tariff-service/tags`)
-- Deploy is NOT tag-gated (`deploy.yml` deploys on every `main` push) — the tag is a
-  historical/rollback marker, not a release trigger. Don't skip it because "it
-  already deployed."
+| Topic | Org rule |
+|---|---|
+| Branching, release branches, milestone releases (tag format: Overrides) | `governance/branching-strategy.md` |
+| Release notes in `CHANGELOG.md` | `governance/branching-strategy.md#milestone-releases` |
+| Licences, dependencies, copied code attribution | `governance/licensing-standards.md` |
+| Security and PII review before a public push or release | `governance/adr/cross-project.md#2026-10-21-manual-security-and-pii-review-before-a-public-push`, `governance/security-standards.md`, `governance/security-privacy-principles.md` |
+| Naming | `governance/naming-standards.md` |
+| Tracker calls, findings, write signature | `governance/agent-workflow.md` |
+| Writing: no em dashes, banned words, Mermaid for flows | root `CLAUDE.md`, Stream Rules |
 
-## Code Quality
-- [ ] `ruff check .` passes with no errors
-- [ ] `pytest` passes (all tests green)
-- [ ] New features have tests (or existing tests still cover the change)
+## Overrides
 
-## Commit Message
-- Follow conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `security:`, `release:`
-- Include DNSP name and tariff count in commit body when adding seed data
+| Org rule | Replaced here by |
+|---|---|
+| `branching-strategy.md#milestone-releases`: tag the merge commit `vX.Y.Z` | Tag `X.Y.Z` without `v`, continuing tags `0.2.0` to `0.6.1`. Founder exception: `governance/adr/cross-project.md#2026-10-21-tariff-service-keeps-xyz-tags` |
 
-## Branching Strategy
-- Use **long-lived feature branches** for related work, named `feat/{version}` (e.g., `feat/0.5.0`)
-- Multiple commits on the branch are fine — push as you go
-- Only create a **single PR when the work is complete and tested**
-- Do NOT rapid-fire multiple PRs in quick succession (triggers GitHub anti-abuse flags)
-- **Squash merge** to main (clean single-commit history per release)
-- Individual commit messages are preserved in the PR body on GitHub
-- No `--admin` bypass unless absolutely necessary
+## Before every commit
 
-## Deploy
-- Can deploy manually from feature branch for testing before merge
-- After merge to main, deploy (manually until GitHub Actions is restored)
-- Verify the live API returns expected data after deploy
+- `ruff check .` passes.
+- `pytest` passes, and new behaviour has a test.
+- `README.md` is updated when endpoints, DNSPs or features change.
+- `DATA_SOURCES.md` is updated when DNSP data changes: source, time windows, tariff codes.
+- Seed values cite the knowledge entry they were checked against
+  (`knowledge/documents/<dnsp>/` in the OEC root).
 
-## Third-Party IP & License Compliance
-- Before adding any new dependency: verify it declares one of the approved licenses
-  (MIT, Apache-2.0, BSD-2/3-Clause, ISC, LGPL) — if its license is anything else,
-  unclear, or missing, STOP and ask before adding it
-- Before committing code copied from an external source (not a package dependency):
-  add an attribution comment citing source + license at the point of use — no exceptions
+## Commit messages
 
-## Security / PII scan before any release
-This repo is real and public (`github.com/Open-Energy-Collective/tariff-service`) —
-run `../.agent/scripts/security-scan.sh tariff-service` before cutting a release.
-Process/checklist: `repos/.agent/security-scan.md`.
+- Conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `security:`, `release:`.
+- A seed data commit names the DNSP and the tariff count in its body.
+
+## Versioning and deploy
+
+- `VERSION` is the single source of the version; `VERSIONING.md` gives the bump rules.
+- `deploy.yml` deploys on every push to `main`. Tags mark releases for rollback; they do
+  not gate deploys.
+- After a deploy, check the live API returns the expected data.
