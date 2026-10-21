@@ -479,11 +479,13 @@ Some retailers (e.g., Amber Electric) append zone suffixes to NTC codes:
 
 ## Time Windows (Energex)
 
-All Energex tariffs use the same peak/shoulder/off-peak windows:
+Residential ToU and demand (6900, 3900), from the residential tariffs page (`knowledge/documents/energex/2026-10-21-residential-tariffs-page.md` in the OEC root):
 - **Peak**: 4pm–9pm (16:00–21:00) every day
-- **Shoulder**: 9pm–12am (21:00–00:00) every day
-- **Off-peak**: 12am–4pm (00:00–16:00) every day
+- **Off-peak**: 11am–4pm (11:00–16:00) every day
+- **Shoulder**: 9pm–11am (21:00–11:00) every day
 - **Demand window**: 4pm–9pm, measured as max 30-min average of the month
+
+Business tariffs (3800, 7200, 8300) keep the seeded windows (peak 16:00–21:00, shoulder 21:00–00:00, off-peak 00:00–16:00) until the Energex network pricing guide is captured.
 
 ## Notes
 - **Authoritative source**: Energex Network Price List spreadsheet (AER-approved)

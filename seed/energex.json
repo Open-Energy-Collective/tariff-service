@@ -25,7 +25,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.774,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -42,7 +42,7 @@
           "period_name": "shoulder",
           "rate": 0.06069,
           "start_time": "21:00",
-          "end_time": "00:00",
+          "end_time": "11:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -50,7 +50,7 @@
         {
           "period_name": "off_peak",
           "rate": 0.00434,
-          "start_time": "00:00",
+          "start_time": "11:00",
           "end_time": "16:00",
           "days": "all",
           "season": "all",
@@ -69,7 +69,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.574,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": {
         "rate": 7.0,
@@ -93,7 +93,7 @@
           "period_name": "shoulder",
           "rate": 0.06069,
           "start_time": "21:00",
-          "end_time": "00:00",
+          "end_time": "11:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -101,7 +101,7 @@
         {
           "period_name": "off_peak",
           "rate": 0.00434,
-          "start_time": "00:00",
+          "start_time": "11:00",
           "end_time": "16:00",
           "days": "all",
           "season": "all",
@@ -349,6 +349,7 @@
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): extra demand charge, shoulder demand 4.08 $/kW/month (or 3.672 $/kVA/month), window not stated in the 2026-27 price list; seeded as the peak demand charge only, 15.459 $/kW/month 16:00-21:00.",
       "demand": {
         "rate": 15.459,
         "window_start": "16:00",
