@@ -416,6 +416,7 @@ Smart meter tariffs (T3A/B/C):
 Demand tariffs (T5, T6):
 - **On Season demand**: 3pm–9pm weekdays, October–March
 - **Off Season demand**: 3pm–9pm weekdays, April–September
+- **Unit**: the price list gives $/kVA without a period; read as per month (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md`), seeded without conversion
 - **Note**: NT uses UTC+9:30, no daylight saving
 
 ---
