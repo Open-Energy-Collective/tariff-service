@@ -21,25 +21,31 @@ MAJOR.MINOR.PATCH
 The version lives in one place: the `VERSION` file at the repo root.
 
 All other references read from it:
-- `pyproject.toml` — uses hatchling's `version` directive
-- `app/main.py` — reads `VERSION` file at import time
-- `/api/v1/health` — returns the same version
-- OpenAPI spec — shows the same version
+- `pyproject.toml`. Uses hatchling's `version` directive.
+- `app/main.py`. Reads the `VERSION` file at import time.
+- `/api/v1/health`. Returns the same version.
+- OpenAPI spec. Shows the same version.
 
 ## Release Process
 
-1. Update `VERSION` file with the new version number
-2. Commit: `release: X.Y.Z`
-3. Merge to `main`
-4. Tag: `git tag X.Y.Z && git push --tags`
-5. Deploy happens automatically (or manually if CI is down)
+Each release is a GitHub milestone `feat/X.Y.Z` worked on its own release branch of the
+same name.
 
-Tags are a historical/rollback marker, not a deploy gate — `deploy.yml` deploys
-on every push to `main` regardless of tags, deliberately kept simple rather than
-tag-gated. Every version bump should still get a tag (step 4): this was written
-from the start but not actually followed in practice until 2026-08-11 (`0.2.0`
-through `0.6.0` were tagged retroactively that day, reconstructed from
-`VERSION`-bump commits in git history — see `CHANGELOG.md`).
+1. Cut `feat/X.Y.Z` from `main` at the previous release's merge commit.
+2. Commit work directly to `feat/X.Y.Z`. CI runs the tests on every push.
+3. On the release branch, set `VERSION` to `X.Y.Z` and add the `X.Y.Z` section to
+   `CHANGELOG.md`. The maintainer approves the release notes before they are pushed.
+4. Close the milestone's issues and the milestone.
+5. Merge `feat/X.Y.Z` into `main` with one pull request. The push to `main` deploys.
+6. Tag the merge commit and push the tag:
+   ```bash
+   git tag -a X.Y.Z <merge-commit> -m "feat/X.Y.Z: <capability>"
+   git push origin X.Y.Z
+   ```
+7. Cut the next release branch from `main` at that merge commit.
+
+Tags have no `v` prefix (`0.6.1`, `0.7.0`). Tags mark releases for rollback; `deploy.yml`
+deploys on every push to `main` and is not tag-gated.
 
 ## Pre-1.0 Convention
 
