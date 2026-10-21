@@ -132,8 +132,8 @@ Essential uses alphanumeric codes (e.g., BLNRSS2, BLND1AR).
 ### Time Windows (Essential Energy)
 
 PSO-Int (interval meter, default for new connections):
-- **Peak**: 3pm–5pm (15:00–17:00) weekdays
-- **Shoulder**: 7am–3pm (07:00–15:00) and 5pm–8pm (17:00–20:00) weekdays
+- **Peak**: 5pm–8pm (17:00–20:00) weekdays; also the demand window
+- **Shoulder**: 7am–5pm (07:00–17:00) and 8pm–10pm (20:00–22:00) weekdays
 - **Off-peak**: All other times (including all weekend)
 
 Sun Soaker (SS) tariffs:
