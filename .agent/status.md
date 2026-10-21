@@ -1,5 +1,34 @@
 # Build Session Status Log
 
+## 2026-10-21, 0.7.0 milestone: stop point
+
+`feat/0.7.0` is pushed to GitHub at `6f74e76`, and CI run 39592209381 passed.
+
+Done and marked `complete`, waiting for Architecture to close: #29 (Energex 3800/7200,
+Power and Water demand, Victorian `verified_by` relabel) and #33 (demand surcharge per kWh,
+`423e904` and `6f74e76`). Closed already: #25, #26, #27, #28, #30.
+
+Next, in order:
+
+1. Architecture closes #29 and #33 after founder confirmation. That unblocks #22.
+2. #32 (Build): SAPN RESELE/SBELE windows, Ausgrid capacity-charge season, Evoenergy 023
+   winter months.
+3. #24: Ergon and TasNetworks.
+4. #22: source-checked tests plus a property sweep. Surcharge acceptance is rate / window
+   hours per month (#33).
+5. Release: the 0.7.0 `CHANGELOG.md` section lists the surcharge change under Breaking.
+   The founder approves the notes before they are pushed. The founder also decides squash
+   vs merge commit for the release PR.
+
+Open founder decisions: a testing-standards override for this repo; the optional
+`.claude/settings.json` allow rule for `git push origin feat/*`. #31 (0.8.0) holds the
+schema-change items. The org-wide `in-progress` label is parked in `BACKLOG.md` for
+Architecture.
+
+Test venv (Python 3.12, host 3.14 cannot build pydantic-core): create with
+`<OEC>/.venv/bin/uv venv --python 3.12` and `uv pip install -e ".[dev]"`; the previous
+one was in session scratch and will not survive.
+
 ## 2026-08-11 — Release process gap closed: VERSIONING.md's tagging step had never actually run
 
 Founder asked directly why there was no release tag despite `VERSION` sitting at
