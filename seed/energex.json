@@ -243,22 +243,31 @@
       "effective_to": null,
       "daily_supply_charge": 0.986,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": {
         "rate": 7.0,
-        "window_start": "16:00",
-        "window_end": "21:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_avg",
-        "days": "all",
+        "days": "weekdays",
         "season_months": null
       },
       "rates": [
         {
           "period_name": "peak",
           "rate": 0.02318,
-          "start_time": "16:00",
-          "end_time": "21:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01627,
+          "start_time": "11:00",
+          "end_time": "13:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -266,17 +275,8 @@
         {
           "period_name": "shoulder",
           "rate": 0.0822,
-          "start_time": "21:00",
-          "end_time": "00:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
-        },
-        {
-          "period_name": "off_peak",
-          "rate": 0.01627,
           "start_time": "00:00",
-          "end_time": "16:00",
+          "end_time": "00:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -347,23 +347,32 @@
       "effective_to": null,
       "daily_supply_charge": 9.257,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): extra demand charge, shoulder demand 4.08 $/kW/month (or 3.672 $/kVA/month), window not stated in the 2026-27 price list; seeded as the peak demand charge only, 15.459 $/kW/month 16:00-21:00.",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA by default (peak 13.913 $/kVA/month; kW variant 15.459 $/kW/month when the meter cannot publish kVA); extra demand charges, shoulder demand 3.672 $/kVA/month (4.08 $/kW/month) in 13:00-17:00 and 20:00-11:00 weekdays and 13:00-11:00 weekends, off-peak demand 0; seeded as the kW peak demand charge only, 15.459 $/kW/month 17:00-20:00 weekdays.",
       "demand": {
         "rate": 15.459,
-        "window_start": "16:00",
-        "window_end": "21:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_avg",
-        "days": "all",
+        "days": "weekdays",
         "season_months": null
       },
       "rates": [
         {
           "period_name": "peak",
           "rate": 0.01876,
-          "start_time": "16:00",
-          "end_time": "21:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.01627,
+          "start_time": "11:00",
+          "end_time": "13:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -371,17 +380,8 @@
         {
           "period_name": "shoulder",
           "rate": 0.02947,
-          "start_time": "21:00",
-          "end_time": "00:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
-        },
-        {
-          "period_name": "off_peak",
-          "rate": 0.01627,
           "start_time": "00:00",
-          "end_time": "16:00",
+          "end_time": "00:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -399,8 +399,9 @@
       "effective_to": null,
       "daily_supply_charge": 10.44,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): anytime demand priced per kVA (13.913 $/kVA/month on the highest 30-minute kVA in the month; no kW version); seeded as 13.913 $/kW/month.",
       "demand": {
         "rate": 13.913,
         "window_start": "00:00",

@@ -485,7 +485,13 @@ Residential ToU and demand (6900, 3900), from the residential tariffs page (`kno
 - **Shoulder**: 9pm–11am (21:00–11:00) every day
 - **Demand window**: 4pm–9pm, measured as max 30-min average of the month
 
-Business tariffs (3800, 7200, 8300) keep the seeded windows (peak 16:00–21:00, shoulder 21:00–00:00, off-peak 00:00–16:00) until the Energex network pricing guide is captured.
+Business ToU demand (3800, 7200), from the Energex Network Tariff Guide 2026-27 (Table 6 and section 3.3; `knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27.md`):
+- **Peak**: 5pm–8pm (17:00–20:00) weekdays; no peak on weekends; also the peak demand window
+- **Shoulder**: 1pm–5pm and 8pm–11am weekdays, 1pm–11am weekends
+- **Off-peak**: 11am–1pm (11:00–13:00) every day
+- **7200 demand**: $/kVA/month by default (kW variant seeded), with shoulder and off-peak demand charges the schema cannot hold
+
+Small Demand (8300): anytime demand on the highest 30-minute kVA in the month.
 
 ## Notes
 - **Authoritative source**: Energex Network Price List spreadsheet (AER-approved)
