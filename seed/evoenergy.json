@@ -81,6 +81,7 @@
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): second seasonal demand rate Seasonal kW Demand (Low) 13.083 c/kW/day (3.9249 $/kW/month), 5pm-9pm every day in non-winter months (seed months 1-5 and 9-12); extra demand charge Off-peak kW Demand 2.076 c/kW/day (0.6228 $/kW/month), 9pm-9am every day; seeded as the winter Seasonal kW Demand (High) charge only, 6.5424 $/kW/month 17:00-21:00 in months 6-8, with no demand charge in other months or windows.",
       "demand": {
         "rate": 6.5424,
         "window_start": "17:00",
@@ -123,15 +124,15 @@
       "tariff_type": "controlled_load",
       "effective_from": "2026-07-01",
       "effective_to": null,
-      "daily_supply_charge": 0.05,
+      "daily_supply_charge": 0.0,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
         {
           "period_name": "anytime",
-          "rate": 0.08291,
+          "rate": 0.05413,
           "start_time": "00:00",
           "end_time": "00:00",
           "days": "all",
@@ -195,8 +196,9 @@
       "effective_to": null,
       "daily_supply_charge": 0.82761,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): peak demand is priced per kVA (44.217 c/kVA/day, 13.2651 $/kVA/month, 7am-5pm weekdays); seeded as a kW demand rate of 13.2651 $/kW/month.",
       "demand": {
         "rate": 13.2651,
         "window_start": "07:00",
@@ -226,7 +228,7 @@
         },
         {
           "period_name": "off_peak",
-          "rate": 0.04892,
+          "rate": 0.05495,
           "start_time": "00:00",
           "end_time": "00:00",
           "days": "all",

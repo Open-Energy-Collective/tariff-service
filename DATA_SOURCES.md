@@ -371,6 +371,9 @@ Tariff 023 (New Residential Demand):
 - **Solar Soak**: 11am–3pm every day
 - **Off-peak**: All other times
 
+Controlled load (060):
+- **Off-peak**: 6 to 8 hours between 10pm and 7am every day, 5.413 c/kWh, no fixed charge (seeded as anytime)
+
 Business (090, 101):
 - **Peak**: 7am–5pm weekdays
 - **Shoulder**: 5pm–10pm weekdays
