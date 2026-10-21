@@ -133,8 +133,18 @@ def calculate_demand_surcharge(
             end.hour + end.minute / 60
         )
 
-    window_hours_per_month = window_hours_per_day * days_in_month
+    # Days the window runs in the month: weekdays 5/7, weekends 2/7.
+    days = (demand.days or "all").lower()
+    if days == "weekdays":
+        window_days = days_in_month * 5 / 7
+    elif days == "weekends":
+        window_days = days_in_month * 2 / 7
+    else:
+        window_days = days_in_month
+
+    window_hours_per_month = window_hours_per_day * window_days
     monthly_demand_charge = peak_demand_kw * demand.rate
-    surcharge_per_kwh = monthly_demand_charge / window_hours_per_month
+    # monthly charge / (peak kW x window hours), which is rate / window hours.
+    surcharge_per_kwh = demand.rate / window_hours_per_month if peak_demand_kw else 0.0
 
     return surcharge_per_kwh, monthly_demand_charge, window_hours_per_month

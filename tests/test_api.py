@@ -279,12 +279,13 @@ def test_demand_surcharge(client):
     assert data["peak_demand_kw"] == 4.5
     assert data["monthly_demand_charge"] == 33.45
     assert data["demand_window_hours_per_month"] == 150.0
-    # 4.5 * 7.434 / 150 = 0.22302
-    assert abs(data["surcharge_per_kwh"] - 0.22302) < 0.001
+    # 33.45 / (4.5 * 150) = 7.434 / 150 = 0.04956 (#33)
+    assert abs(data["surcharge_per_kwh"] - 0.04956) < 0.00001
 
 
 def test_demand_surcharge_high_demand(client):
-    """Higher demand should produce proportionally higher surcharge."""
+    """Higher demand raises the monthly charge proportionally; the per-kWh
+    surcharge stays rate / window hours (#33)."""
     response = client.get(
         "/api/v1/calculate/demand-surcharge",
         params={"dnsp": "energex", "tariff": "T12A", "peak_demand_kw": 10.0},
@@ -293,8 +294,8 @@ def test_demand_surcharge_high_demand(client):
     data = response.json()
     assert data["peak_demand_kw"] == 10.0
     assert data["monthly_demand_charge"] == 74.34
-    # 10 * 7.434 / 150 = 0.4956
-    assert abs(data["surcharge_per_kwh"] - 0.4956) < 0.001
+    # 74.34 / (10 * 150) = 0.04956
+    assert abs(data["surcharge_per_kwh"] - 0.04956) < 0.00001
 
 
 def test_demand_surcharge_zero_demand(client):
@@ -549,8 +550,8 @@ def test_demand_surcharge_all_day_window(client):
     assert response.status_code == 200
     data = response.json()
     assert data["demand_window_hours_per_month"] == 24.0 * 30
-    # 5.0 * 11.473 / 720 = 0.07967...
-    assert abs(data["surcharge_per_kwh"] - 0.07967) < 0.001
+    # 11.473 / 720 = 0.01593...
+    assert abs(data["surcharge_per_kwh"] - 0.01593) < 0.00001
 
 
 def test_current_rate_resolution_is_order_independent():
