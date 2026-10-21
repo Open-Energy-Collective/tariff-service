@@ -135,9 +135,9 @@ def calculate_demand_surcharge(
 
     # Days the window runs in the month: weekdays 5/7, weekends 2/7.
     days = (demand.days or "all").lower()
-    if days == "weekdays":
+    if days in ("weekday", "weekdays"):
         window_days = days_in_month * 5 / 7
-    elif days == "weekends":
+    elif days in ("weekend", "weekends"):
         window_days = days_in_month * 2 / 7
     else:
         window_days = days_in_month

@@ -233,7 +233,8 @@ class DemandSurchargeResponse(BaseModel):
     demand_rate: float = Field(description="Demand charge rate in $/kW/month")
     demand_window_hours_per_month: float = Field(
         description=(
-            "Total hours per month the demand window is active. "
+            "Total hours per month the demand window is active, in a 30-day month: "
+            "a weekday window counts 5/7 of the days, a weekend window 2/7. "
             "Used to amortize the demand charge into a per-kWh surcharge."
         )
     )
