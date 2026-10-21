@@ -218,6 +218,13 @@ Business (A210):
 - **Peak**: 9am–9pm weekdays
 - **Off-peak**: All other times
 
+Dedicated circuit (A180):
+- **Off-peak**: 11pm–7am AEST all days (supply only in that window)
+
+Export (A10E):
+- **Export charge**: 3.000 c/kWh, solar soak 11am–4pm every day
+- **Export reward**: 15.000 c/kWh credit, peak 4pm–9pm every day
+
 Business Demand (A230):
 - **Peak**: 7am–11pm weekdays
 - **Off-peak**: All other times

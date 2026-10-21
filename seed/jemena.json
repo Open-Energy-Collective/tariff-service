@@ -96,7 +96,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.33155,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -128,7 +128,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": 0.15,
+          "credit_window_start": "16:00",
+          "credit_window_end": "21:00",
+          "credit_season_months": null,
+          "charge_rate": 0.03,
+          "charge_window_start": "11:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": null,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "jemena",
@@ -140,15 +153,15 @@
       "effective_to": null,
       "daily_supply_charge": 0.0,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
         {
-          "period_name": "anytime",
-          "rate": 0.02321,
-          "start_time": "00:00",
-          "end_time": "00:00",
+          "period_name": "off_peak",
+          "rate": 0.04252,
+          "start_time": "23:00",
+          "end_time": "07:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -203,6 +216,7 @@
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand is the rolling 12-month peak (maximum level of the last 12 months, any time, 77.889 $/kW p.a.); seeded as 6.49075 $/kW/month (77.889 / 12) at any time with measurement_method rolling_12month_max as a label only, which the rate calculator does not apply.",
       "demand": {
         "rate": 6.49075,
         "window_start": "00:00",
