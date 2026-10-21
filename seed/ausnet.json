@@ -201,15 +201,21 @@
       "effective_to": null,
       "daily_supply_charge": 0.40805,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): second seasonal demand rate of 2.862 $/kW/month for the off-peak season (April to November, 15:00-21:00 weekdays); seeded as the peak-season rate of 11.473 $/kW/month for December to March only, with no demand charge April to November.",
       "demand": {
         "rate": 11.473,
-        "window_start": "00:00",
-        "window_end": "00:00",
+        "window_start": "15:00",
+        "window_end": "21:00",
         "measurement_method": "monthly_peak",
-        "days": "all",
-        "season_months": null
+        "days": "weekdays",
+        "season_months": [
+          1,
+          2,
+          3,
+          12
+        ]
       },
       "rates": [
         {

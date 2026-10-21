@@ -244,6 +244,10 @@ Business ToU (NAST12):
 - **Peak**: 7am–11pm weekdays
 - **Off-peak**: All other times
 
+Demand (NASN12):
+- **Demand window**: 3pm–9pm (15:00–21:00) weekdays, December to March (sheet "Tariff structures", structure 15)
+- **Off-peak season** (April to November): 2.862 $/kW/month, not seeded (one demand rate per tariff)
+
 ---
 
 ## CitiPower (VIC)
