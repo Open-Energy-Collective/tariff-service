@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from app.models.tariff import Tariff, TariffDemand, TariffRate
-from app.services.rate_calculator import get_current_rate
+from app.services.rate_calculator import get_current_rate, is_in_demand_window
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
 
@@ -101,3 +101,30 @@ def test_sapn_sbele_every_half_hour(day):
     tariff = load_tariff("sapn", "SBELE")
     for t in half_hours(day):
         assert get_current_rate(tariff, t) == sbele_expected(t), t
+
+
+# ── Ausgrid ──
+# knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.md,
+# Table 11 note (p. 40): large business capacity charges apply on working
+# weekdays (all year); peak energy charges apply in high-season months only.
+
+AUSGRID_CAPACITY = ["EA302", "EA305", "EA310", "EA370", "EA390"]
+
+
+@pytest.mark.parametrize("code", AUSGRID_CAPACITY)
+@pytest.mark.parametrize("month", range(1, 13))
+def test_ausgrid_capacity_window_every_month(code, month):
+    tariff = load_tariff("ausgrid", code)
+    first = datetime(2026, month, 1)
+    weekday = first + timedelta(days=(2 - first.weekday()) % 7)  # first Wednesday
+    assert is_in_demand_window(tariff.demand, weekday.replace(hour=16))
+    assert not is_in_demand_window(tariff.demand, weekday.replace(hour=14))
+    saturday = weekday + timedelta(days=3)
+    assert not is_in_demand_window(tariff.demand, saturday.replace(hour=16))
+
+
+@pytest.mark.parametrize("code", AUSGRID_CAPACITY)
+def test_ausgrid_capacity_peak_energy_stays_high_season(code):
+    tariff = load_tariff("ausgrid", code)
+    assert get_current_rate(tariff, datetime(2026, 7, 15, 16))[0] == "peak"
+    assert get_current_rate(tariff, datetime(2026, 4, 15, 16))[0] == "off_peak"

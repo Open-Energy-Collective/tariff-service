@@ -488,7 +488,7 @@
       "effective_to": null,
       "daily_supply_charge": 6.5337,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-10-23T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): capacity charge billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as the monthly 30-min maximum in that window.",
       "demand": {
@@ -497,16 +497,7 @@
         "window_end": "21:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          6,
-          7,
-          8,
-          11,
-          12
-        ]
+        "season_months": null
       },
       "rates": [
         {
@@ -549,7 +540,7 @@
       "effective_to": null,
       "daily_supply_charge": 25.46537,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-10-23T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA (57.7962 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 17.33886 per month applied to the monthly 30-min maximum kW in that window.",
       "demand": {
@@ -558,16 +549,7 @@
         "window_end": "21:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          6,
-          7,
-          8,
-          11,
-          12
-        ]
+        "season_months": null
       },
       "rates": [
         {
@@ -610,7 +592,7 @@
       "effective_to": null,
       "daily_supply_charge": 51.18167,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-10-23T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA (59.5298 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 17.85894 per month applied to the monthly 30-min maximum kW in that window.",
       "demand": {
@@ -619,16 +601,7 @@
         "window_end": "21:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          6,
-          7,
-          8,
-          11,
-          12
-        ]
+        "season_months": null
       },
       "rates": [
         {
@@ -671,7 +644,7 @@
       "effective_to": null,
       "daily_supply_charge": 79.79265,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-10-23T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA (34.6232 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 10.38696 per month applied to the monthly 30-min maximum kW in that window.",
       "demand": {
@@ -680,16 +653,7 @@
         "window_end": "21:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          6,
-          7,
-          8,
-          11,
-          12
-        ]
+        "season_months": null
       },
       "rates": [
         {
@@ -732,7 +696,7 @@
       "effective_to": null,
       "daily_supply_charge": 71.89654,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-10-23T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA (9.7115 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 2.91345 per month applied to the monthly 30-min maximum kW in that window.",
       "demand": {
@@ -741,16 +705,7 @@
         "window_end": "21:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          6,
-          7,
-          8,
-          11,
-          12
-        ]
+        "season_months": null
       },
       "rates": [
         {

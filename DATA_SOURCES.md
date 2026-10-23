@@ -50,7 +50,8 @@ Ausgrid uses **seasonal** peak pricing (no shoulder period):
 - **Off-peak**: All other times
 - **High season**: June–August (winter) and November–March (summer)
 - **No peak**: April, May, September, October (all off-peak)
-- **Demand window**: Same as peak (15:00–21:00, high season only)
+- **Demand window**: Same as peak (15:00–21:00, high season only) for EA111, EA116, EA251, EA256
+- **Capacity window (EA302, EA305, EA310, EA370, EA390)**: 15:00–21:00 working weekdays, all year; their peak energy rate stays high season only. Source: the revised TSS explanatory statement 2024-29, Table 11 note, p. 40 (`knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.md` in the OEC root)
 - **Demand measurement**: Maximum 30-minute interval in the peak window per month
 
 ---
