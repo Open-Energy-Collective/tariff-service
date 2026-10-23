@@ -5,7 +5,7 @@
     "effective_from": "2026-07-01",
     "effective_to": "2027-06-30",
     "extracted_date": "2026-07-20",
-    "notes": "Prices exclude GST. Rates already in $/kWh and $/day. Peak: 17:00-21:00 all days. Solar Sponge: 10:00-15:00 all days. Shoulder: 06:00-10:00, 15:00-17:00, 21:00-01:00. Off-peak: 01:00-06:00. Demand: $/kVA/day."
+    "notes": "Prices exclude GST. Rates already in $/kWh and $/day. Windows per tariff: DATA_SOURCES.md. Demand: $/kVA/day."
   },
   "dnsps": [
     {
@@ -96,7 +96,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-23T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -110,28 +110,19 @@
           "season_months": null
         },
         {
-          "period_name": "shoulder",
-          "rate": 0.1068,
-          "start_time": "06:00",
-          "end_time": "10:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
-        },
-        {
           "period_name": "solar_sponge",
           "rate": 0.0321,
           "start_time": "10:00",
-          "end_time": "15:00",
+          "end_time": "16:00",
           "days": "all",
           "season": "all",
           "season_months": null
         },
         {
-          "period_name": "off_peak",
-          "rate": 0.0321,
-          "start_time": "01:00",
-          "end_time": "06:00",
+          "period_name": "shoulder",
+          "rate": 0.1068,
+          "start_time": "00:00",
+          "end_time": "00:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -248,7 +239,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-23T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -263,16 +254,25 @@
         },
         {
           "period_name": "shoulder",
-          "rate": 0.1072,
-          "start_time": "06:00",
+          "rate": 0.1875,
+          "start_time": "07:00",
           "end_time": "10:00",
-          "days": "all",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1875,
+          "start_time": "16:00",
+          "end_time": "17:00",
+          "days": "weekdays",
           "season": "all",
           "season_months": null
         },
         {
           "period_name": "off_peak",
-          "rate": 0.1875,
+          "rate": 0.1072,
           "start_time": "00:00",
           "end_time": "00:00",
           "days": "all",

@@ -179,14 +179,10 @@ From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (
 - **MBTOUD demand**: anytime, highest 30-min interval in the last 12 months (seeded as a monthly anytime maximum)
 - **LBAD**: energy peak 7am–9pm workdays, off-peak all other times; demand 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays)
 
-RESELE and SBELE as seeded (these differ from the 2026-27 overview and are open):
+- **RESELE**: peak 5pm–9pm (17:00–21:00) all days, solar sponge 10am–4pm (10:00–16:00) all days, shoulder all other times (the 14 hours outside peak and solar sponge); no off-peak (customer overview Table 2)
+- **SBELE**: peak 5pm–9pm all days, shoulder 7am–10am and 4pm–5pm workdays, off-peak all other times (customer overview Table 5). Off-peak $0.1072/kWh and shoulder $0.1875/kWh, from the Off-Peak and Shoulder columns of the NUoS schedule (Table 9)
 
-- **Peak**: 5pm–9pm (17:00–21:00) all days
-- **Solar Sponge**: 10am–3pm (10:00–15:00) all days
-- **Shoulder**: 6am–10am (06:00–10:00), 3pm–5pm (15:00–17:00), 9pm–1am (21:00–01:00)
-- **Off-peak**: 1am–6am (01:00–06:00) all days
-- **Demand window**: Peak period (17:00–21:00), highest 30-min interval
-- **Note**: SA is UTC+9:30 (no daylight saving)
+Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT).
 
 ---
 
