@@ -750,3 +750,23 @@ def test_openapi_documents_demand_windows(client):
     for name in ("DemandWindowsResponse", "DemandWindow"):
         props = spec["components"]["schemas"][name]["properties"]
         assert all(p.get("description") for p in props.values()), name
+
+
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [
+        ("9999-12-30T00:00:00+00:00", "9999-12-31T00:00:00+00:00"),
+        ("0001-01-01T00:00:00+10:00", "0001-01-02T00:00:00+10:00"),
+    ],
+)
+def test_demand_windows_out_of_range_year_400(client, start, end):
+    r = windows(client, dnsp="energex", tariff="T12A", start=start, end=end)
+    assert r.status_code == 400
+
+
+def test_current_rate_out_of_range_year_400(client):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "T12A", "datetime": "9999-12-31T23:00:00+00:00"},
+    )
+    assert response.status_code == 400

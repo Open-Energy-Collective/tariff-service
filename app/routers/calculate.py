@@ -23,6 +23,8 @@ from app.services.tariff_service import get_tariff_detail
 
 router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
 
+OUT_OF_RANGE = "Datetime is outside the supported date range"
+
 
 @router.get("/current-rate", response_model=CurrentRateResponse)
 def current_rate(
@@ -60,7 +62,10 @@ def current_rate(
         )
     if parsed_dt.tzinfo is not None:
         # Resolve in the DNSP's local time; a naive datetime already is (#39).
-        parsed_dt = parsed_dt.astimezone(ZoneInfo(tariff_obj.dnsp.timezone))
+        try:
+            parsed_dt = parsed_dt.astimezone(ZoneInfo(tariff_obj.dnsp.timezone))
+        except OverflowError:
+            raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
     in_window = is_in_demand_window(tariff_obj.demand, parsed_dt)
 
@@ -179,13 +184,14 @@ def demand_windows_in_range(
         )
 
     tz = ZoneInfo(tariff_obj.dnsp.timezone)
+    try:
+        spans = demand_windows(tariff_obj.demand, tz, range_start, range_end)
+    except OverflowError:
+        raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
     return DemandWindowsResponse(
         dnsp=dnsp,
         tariff=tariff,
         start=start,
         end=end,
-        windows=[
-            DemandWindow(start=s.isoformat(), end=e.isoformat())
-            for s, e in demand_windows(tariff_obj.demand, tz, range_start, range_end)
-        ],
+        windows=[DemandWindow(start=s.isoformat(), end=e.isoformat()) for s, e in spans],
     )
