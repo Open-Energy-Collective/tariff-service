@@ -57,7 +57,7 @@ def half_hours(day: datetime) -> list[datetime]:
 
 # ── SA Power Networks ──
 # knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md,
-# Table 2 (RESELE) and Table 5 (SBELE); rates from Table 9, columns Peak,
+# Table 2 (RESELE) and Table 4 (SBELE); rates from Table 9, columns Peak,
 # Off-Peak, Shoulder, Solar Sponge. Times are local (ACST/ACDT).
 
 WORKDAY = datetime(2026, 7, 20)  # Monday
