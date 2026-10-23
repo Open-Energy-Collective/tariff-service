@@ -24,14 +24,13 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
   lower, so a threshold set on the old figures needs resetting. `monthly_demand_charge` is unchanged.
 - `/api/v1/calculate/current-rate` gives the same answer for the same moment in any UTC offset. Times are
   matched in the distributor's local time.
-- A date outside the supported range returns an error instead of failing.
 - 2026-27 prices and time windows corrected against the distributors' published price lists:
   - Ausgrid: EA302, EA305, EA310, EA370 and EA390 capacity charges apply on working weekdays all year.
   - AusNet: NASN12 demand window is 3pm to 9pm on weekdays, December to March.
   - CitiPower, Powercor, United Energy: business time-of-use off-peak covers weekends.
   - Energex: 3800, 3900, 6900 and 7200 time windows.
   - Essential Energy: demand tariffs' peak and demand window is 5pm to 8pm on weekdays.
-  - Evoenergy: 101 off-peak and 060 controlled load rates; 023 winter is June to August.
+  - Evoenergy: 101 off-peak and 060 controlled load rates.
   - Jemena: A180 rate and window; A10E export charge and reward.
   - Power and Water: T5 and T6 demand rates per month.
   - SA Power Networks: RTOU, SBTOU, RESELE and SBELE time periods and rates; MBTOUD and LBAD demand
