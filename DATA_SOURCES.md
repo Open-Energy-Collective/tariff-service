@@ -380,6 +380,7 @@ Tariff 023 (New Residential Demand):
 - **Demand (Low)**: 5pm–9pm every day during non-winter
 - **Solar Soak**: 11am–3pm every day
 - **Off-peak**: All other times
+- **Winter months**: June to August. The schedule of charges does not define them; the revised TSS 2024-29 does (pp. 7, 15: `knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29.md` in the OEC root)
 
 Controlled load (060):
 - **Off-peak**: 6 to 8 hours between 10pm and 7am every day, 5.413 c/kWh, no fixed charge (seeded as anytime)

@@ -128,3 +128,16 @@ def test_ausgrid_capacity_peak_energy_stays_high_season(code):
     tariff = load_tariff("ausgrid", code)
     assert get_current_rate(tariff, datetime(2026, 7, 15, 16))[0] == "peak"
     assert get_current_rate(tariff, datetime(2026, 4, 15, 16))[0] == "off_peak"
+
+
+# ── Evoenergy ──
+# Tariff 023's winter months are not in the 2026-27 schedule of charges; the
+# revised TSS 2024-29 defines them as 1 June to 31 August (pp. 7, 15):
+# knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29.md.
+
+
+@pytest.mark.parametrize("month", range(1, 13))
+def test_evoenergy_023_demand_winter_months(month):
+    tariff = load_tariff("evoenergy", "023")
+    t = datetime(2026, month, 15, 18)
+    assert is_in_demand_window(tariff.demand, t) is (month in (6, 7, 8))
