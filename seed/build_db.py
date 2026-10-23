@@ -31,6 +31,117 @@ def load_seed_files() -> list[dict]:
     return data
 
 
+def populate(session: Session, seed_files: list[dict]) -> None:
+    """Add every DNSP, tariff, rate, demand and export in seed_files, then commit."""
+    dnsp_map: dict[str, Dnsp] = {}
+
+    for data in seed_files:
+        # Create DNSPs
+        for dnsp_data in data.get("dnsps", []):
+            if dnsp_data["code"] not in dnsp_map:
+                dnsp = Dnsp(
+                    code=dnsp_data["code"],
+                    name=dnsp_data["name"],
+                    state=dnsp_data["state"],
+                    timezone=dnsp_data["timezone"],
+                )
+                session.add(dnsp)
+                session.flush()
+                dnsp_map[dnsp_data["code"]] = dnsp
+                print(f"  + DNSP: {dnsp.name} ({dnsp.code})")
+
+        # Create Tariffs
+        for tariff_data in data.get("tariffs", []):
+            dnsp = dnsp_map[tariff_data["dnsp"]]
+            tariff = Tariff(
+                dnsp_id=dnsp.id,
+                code=tariff_data["code"],
+                name=tariff_data["name"],
+                tariff_type=tariff_data["tariff_type"],
+                effective_from=tariff_data["effective_from"],
+                effective_to=tariff_data.get("effective_to"),
+                daily_supply_charge=tariff_data.get("daily_supply_charge"),
+                source_url=tariff_data.get("source_url"),
+                last_verified=tariff_data.get("last_verified"),
+                verified_by=tariff_data.get("verified_by"),
+            )
+            session.add(tariff)
+            session.flush()
+
+            # Demand
+            if demand_data := tariff_data.get("demand"):
+                demand = TariffDemand(
+                    tariff_id=tariff.id,
+                    rate=demand_data["rate"],
+                    window_start=demand_data["window_start"],
+                    window_end=demand_data["window_end"],
+                    measurement_method=demand_data["measurement_method"],
+                    days=demand_data.get("days", "all"),
+                    season_months=(
+                        json.dumps(demand_data["season_months"])
+                        if demand_data.get("season_months")
+                        else None
+                    ),
+                )
+                session.add(demand)
+
+            # Rates
+            for rate_data in tariff_data.get("rates", []):
+                rate = TariffRate(
+                    tariff_id=tariff.id,
+                    period_name=rate_data["period_name"],
+                    rate=rate_data["rate"],
+                    start_time=rate_data["start_time"],
+                    end_time=rate_data["end_time"],
+                    days=rate_data.get("days", "all"),
+                    season=rate_data.get("season", "all"),
+                    season_months=(
+                        json.dumps(rate_data["season_months"])
+                        if rate_data.get("season_months")
+                        else None
+                    ),
+                )
+                session.add(rate)
+
+            # Exports
+            for export_data in tariff_data.get("exports", []):
+                # Guard against the 2026-08-10 bug class: seed data
+                # authored in the same shape as "rates" (period_name/
+                # rate/start_time/end_time) instead of this model's real
+                # credit_rate/charge_rate columns silently produced an
+                # all-null row -- every field access below is a .get()
+                # with no required-key check, so a shape mismatch never
+                # raised, it just lost the data. Fail loudly instead.
+                if "credit_rate" not in export_data and "charge_rate" not in export_data:
+                    raise ValueError(
+                        f"Tariff {tariff_data['dnsp']}/{tariff_data['code']}: "
+                        f"exports entry has neither 'credit_rate' nor 'charge_rate' "
+                        f"({list(export_data.keys())}) -- wrong shape, see "
+                        f"TariffExportResponse for the expected fields."
+                    )
+                export = TariffExport(
+                    tariff_id=tariff.id,
+                    credit_rate=export_data.get("credit_rate"),
+                    credit_window_start=export_data.get("credit_window_start"),
+                    credit_window_end=export_data.get("credit_window_end"),
+                    credit_season_months=(
+                        json.dumps(export_data["credit_season_months"])
+                        if export_data.get("credit_season_months")
+                        else None
+                    ),
+                    charge_rate=export_data.get("charge_rate"),
+                    charge_window_start=export_data.get("charge_window_start"),
+                    charge_window_end=export_data.get("charge_window_end"),
+                    free_threshold_kwh=export_data.get("free_threshold_kwh"),
+                    days=export_data.get("days", "all"),
+                )
+                session.add(export)
+
+            print(f"  + Tariff: {tariff.code} ({tariff.name})")
+
+    session.commit()
+
+
 def build_database() -> None:
     """Create SQLite database from seed data."""
     # Ensure data directory exists
@@ -49,113 +160,7 @@ def build_database() -> None:
     seed_files = load_seed_files()
 
     with Session(engine) as session:
-        dnsp_map: dict[str, Dnsp] = {}
-
-        for data in seed_files:
-            # Create DNSPs
-            for dnsp_data in data.get("dnsps", []):
-                if dnsp_data["code"] not in dnsp_map:
-                    dnsp = Dnsp(
-                        code=dnsp_data["code"],
-                        name=dnsp_data["name"],
-                        state=dnsp_data["state"],
-                        timezone=dnsp_data["timezone"],
-                    )
-                    session.add(dnsp)
-                    session.flush()
-                    dnsp_map[dnsp_data["code"]] = dnsp
-                    print(f"  + DNSP: {dnsp.name} ({dnsp.code})")
-
-            # Create Tariffs
-            for tariff_data in data.get("tariffs", []):
-                dnsp = dnsp_map[tariff_data["dnsp"]]
-                tariff = Tariff(
-                    dnsp_id=dnsp.id,
-                    code=tariff_data["code"],
-                    name=tariff_data["name"],
-                    tariff_type=tariff_data["tariff_type"],
-                    effective_from=tariff_data["effective_from"],
-                    effective_to=tariff_data.get("effective_to"),
-                    daily_supply_charge=tariff_data.get("daily_supply_charge"),
-                    source_url=tariff_data.get("source_url"),
-                    last_verified=tariff_data.get("last_verified"),
-                    verified_by=tariff_data.get("verified_by"),
-                )
-                session.add(tariff)
-                session.flush()
-
-                # Demand
-                if demand_data := tariff_data.get("demand"):
-                    demand = TariffDemand(
-                        tariff_id=tariff.id,
-                        rate=demand_data["rate"],
-                        window_start=demand_data["window_start"],
-                        window_end=demand_data["window_end"],
-                        measurement_method=demand_data["measurement_method"],
-                        days=demand_data.get("days", "all"),
-                        season_months=(
-                            json.dumps(demand_data["season_months"])
-                            if demand_data.get("season_months")
-                            else None
-                        ),
-                    )
-                    session.add(demand)
-
-                # Rates
-                for rate_data in tariff_data.get("rates", []):
-                    rate = TariffRate(
-                        tariff_id=tariff.id,
-                        period_name=rate_data["period_name"],
-                        rate=rate_data["rate"],
-                        start_time=rate_data["start_time"],
-                        end_time=rate_data["end_time"],
-                        days=rate_data.get("days", "all"),
-                        season=rate_data.get("season", "all"),
-                        season_months=(
-                            json.dumps(rate_data["season_months"])
-                            if rate_data.get("season_months")
-                            else None
-                        ),
-                    )
-                    session.add(rate)
-
-                # Exports
-                for export_data in tariff_data.get("exports", []):
-                    # Guard against the 2026-08-10 bug class: seed data
-                    # authored in the same shape as "rates" (period_name/
-                    # rate/start_time/end_time) instead of this model's real
-                    # credit_rate/charge_rate columns silently produced an
-                    # all-null row -- every field access below is a .get()
-                    # with no required-key check, so a shape mismatch never
-                    # raised, it just lost the data. Fail loudly instead.
-                    if "credit_rate" not in export_data and "charge_rate" not in export_data:
-                        raise ValueError(
-                            f"Tariff {tariff_data['dnsp']}/{tariff_data['code']}: "
-                            f"exports entry has neither 'credit_rate' nor 'charge_rate' "
-                            f"({list(export_data.keys())}) -- wrong shape, see "
-                            f"TariffExportResponse for the expected fields."
-                        )
-                    export = TariffExport(
-                        tariff_id=tariff.id,
-                        credit_rate=export_data.get("credit_rate"),
-                        credit_window_start=export_data.get("credit_window_start"),
-                        credit_window_end=export_data.get("credit_window_end"),
-                        credit_season_months=(
-                            json.dumps(export_data["credit_season_months"])
-                            if export_data.get("credit_season_months")
-                            else None
-                        ),
-                        charge_rate=export_data.get("charge_rate"),
-                        charge_window_start=export_data.get("charge_window_start"),
-                        charge_window_end=export_data.get("charge_window_end"),
-                        free_threshold_kwh=export_data.get("free_threshold_kwh"),
-                        days=export_data.get("days", "all"),
-                    )
-                    session.add(export)
-
-                print(f"  + Tariff: {tariff.code} ({tariff.name})")
-
-        session.commit()
+        populate(session, seed_files)
         print(f"\n✓ Database built: {DB_PATH} ({DB_PATH.stat().st_size} bytes)")
 
 

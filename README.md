@@ -40,6 +40,7 @@ Public REST API serving curated Australian DNSP network tariff data, including t
 | GET | `/api/v1/tariffs/{dnsp}/{tariff}/history` | Get tariff version history |
 | GET | `/api/v1/calculate/current-rate` | Calculate active rate for a datetime |
 | GET | `/api/v1/calculate/demand-surcharge` | Calculate demand surcharge for a peak kW |
+| GET | `/api/v1/calculate/demand-windows` | Demand windows of a tariff over a time range (at most 31 days) |
 | GET | `/api/v1/docs/demand-methodology` | Per-DNSP demand charge methodology |
 
 ## Data Sources

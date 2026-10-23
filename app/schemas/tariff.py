@@ -233,7 +233,8 @@ class DemandSurchargeResponse(BaseModel):
     demand_rate: float = Field(description="Demand charge rate in $/kW/month")
     demand_window_hours_per_month: float = Field(
         description=(
-            "Total hours per month the demand window is active. "
+            "Total hours per month the demand window is active, in a 30-day month: "
+            "a weekday window counts 5/7 of the days, a weekend window 2/7. "
             "Used to amortize the demand charge into a per-kWh surcharge."
         )
     )
@@ -251,3 +252,30 @@ class DemandSurchargeResponse(BaseModel):
         )
     )
     unit: str = Field(default="$/kWh", description="Unit for surcharge_per_kwh")
+
+
+class DemandWindow(BaseModel):
+    start: str = Field(
+        description="Window start, ISO 8601 in the DNSP's local offset; inclusive"
+    )
+    end: str = Field(
+        description="Window end, ISO 8601 in the DNSP's local offset; exclusive"
+    )
+
+
+class DemandWindowsResponse(BaseModel):
+    dnsp: str = Field(description="DNSP code")
+    tariff: str = Field(description="Tariff code")
+    start: str = Field(description="Range start, as requested")
+    end: str = Field(description="Range end, as requested")
+    windows: list[DemandWindow] = Field(
+        description=(
+            "Demand windows within [start, end): half-open, clipped to the range, "
+            "sorted, merged when adjacent or overlapping. Empty for a tariff with "
+            "no demand charge."
+        )
+    )
+
+
+class ErrorResponse(BaseModel):
+    detail: str = Field(description="What was wrong with the request")

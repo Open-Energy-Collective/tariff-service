@@ -4,7 +4,8 @@ Determines current tariff period and calculates demand surcharges.
 """
 
 import json
-from datetime import datetime, time
+from datetime import UTC, date, datetime, time, timedelta
+from zoneinfo import ZoneInfo
 
 from app.models.tariff import Tariff, TariffDemand
 
@@ -111,6 +112,55 @@ def is_in_demand_window(demand: TariffDemand | None, dt: datetime) -> bool:
     return is_in_time_window(current_time, start, end)
 
 
+def demand_windows(
+    demand: TariffDemand | None, tz: ZoneInfo, start: datetime, end: datetime
+) -> list[tuple[datetime, datetime]]:
+    """The demand windows within [start, end), resolved in the DNSP's time zone.
+
+    Membership equals is_in_demand_window at every instant: each local date is
+    kept by is_day_match and is_season_match, and its in-window times follow
+    is_in_time_window (start == end is the whole day, end < start spans
+    midnight). Windows are half-open, clipped to the range, sorted and merged,
+    as aware datetimes in tz.
+    """
+    if demand is None:
+        return []
+    ws = parse_time(demand.window_start)
+    we = parse_time(demand.window_end)
+    midnight = time(0, 0)
+
+    def at(day: date, t: time) -> datetime:
+        return datetime.combine(day, t, tzinfo=tz).astimezone(UTC)
+
+    lo, hi = start.astimezone(UTC), end.astimezone(UTC)
+    spans: list[tuple[datetime, datetime]] = []
+    day = start.astimezone(tz).date()
+    while day <= end.astimezone(tz).date():
+        next_day = day + timedelta(days=1)
+        if is_day_match(demand.days, day.weekday()) and is_season_match(
+            demand.season_months, day.month
+        ):
+            # The three cases of is_in_time_window, as intervals. A point
+            # predicate cannot yield intervals; test_matches_is_in_demand_window_every_minute
+            # guards against the two drifting apart.
+            if ws == we:
+                parts = [(at(day, midnight), at(next_day, midnight))]
+            elif ws < we:
+                parts = [(at(day, ws), at(day, we))]
+            else:
+                parts = [(at(day, midnight), at(day, we)), (at(day, ws), at(next_day, midnight))]
+            for s, e in parts:
+                s, e = max(s, lo), min(e, hi)
+                if s >= e:
+                    continue
+                if spans and s <= spans[-1][1]:
+                    spans[-1] = (spans[-1][0], max(spans[-1][1], e))
+                else:
+                    spans.append((s, e))
+        day = next_day
+    return [(s.astimezone(tz), e.astimezone(tz)) for s, e in spans]
+
+
 def calculate_demand_surcharge(
     demand: TariffDemand, peak_demand_kw: float, days_in_month: int = 30
 ) -> tuple[float, float, float]:
@@ -133,8 +183,18 @@ def calculate_demand_surcharge(
             end.hour + end.minute / 60
         )
 
-    window_hours_per_month = window_hours_per_day * days_in_month
+    # Days the window runs in the month: weekdays 5/7, weekends 2/7.
+    days = (demand.days or "all").lower()
+    if days in ("weekday", "weekdays"):
+        window_days = days_in_month * 5 / 7
+    elif days in ("weekend", "weekends"):
+        window_days = days_in_month * 2 / 7
+    else:
+        window_days = days_in_month
+
+    window_hours_per_month = window_hours_per_day * window_days
     monthly_demand_charge = peak_demand_kw * demand.rate
-    surcharge_per_kwh = monthly_demand_charge / window_hours_per_month
+    # monthly charge / (peak kW x window hours), which is rate / window hours.
+    surcharge_per_kwh = demand.rate / window_hours_per_month if peak_demand_kw else 0.0
 
     return surcharge_per_kwh, monthly_demand_charge, window_hours_per_month

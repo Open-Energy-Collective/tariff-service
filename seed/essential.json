@@ -5,7 +5,7 @@
     "effective_from": "2026-07-01",
     "effective_to": "2027-06-30",
     "extracted_date": "2026-07-20",
-    "notes": "Prices exclude GST. PSO-Int (interval meter): Peak 15:00-17:00 & 07:00-10:00 weekdays (but simplified as peak/shoulder/off-peak in rates). Demand: $/kVA/month. Sun Soaker tariffs have peak at 7am-10am & 3pm-10pm."
+    "notes": "Prices exclude GST. PSO-Int (interval meter): peak 17:00-20:00 weekdays, shoulder 07:00-17:00 and 20:00-22:00 weekdays, off-peak all other times (price list p6). Demand: $/kVA/month. Sun Soaker tariffs have peak at 7am-10am & 3pm-10pm."
   },
   "dnsps": [
     {
@@ -70,12 +70,13 @@
       "effective_to": null,
       "daily_supply_charge": 1.4704,
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (5.1925 $/kVA/month); seeded as 5.1925 $/kW/month.",
       "demand": {
         "rate": 5.1925,
-        "window_start": "15:00",
-        "window_end": "17:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
         "season_months": null
@@ -84,8 +85,8 @@
         {
           "period_name": "peak",
           "rate": 0.1084,
-          "start_time": "15:00",
-          "end_time": "17:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -94,7 +95,16 @@
           "period_name": "shoulder",
           "rate": 0.07371,
           "start_time": "07:00",
-          "end_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.07371,
+          "start_time": "20:00",
+          "end_time": "22:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -217,12 +227,13 @@
       "effective_to": null,
       "daily_supply_charge": 2.3784,
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (9.7035 $/kVA/month); seeded as 9.7035 $/kW/month.",
       "demand": {
         "rate": 9.7035,
-        "window_start": "15:00",
-        "window_end": "17:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
         "season_months": null
@@ -231,8 +242,8 @@
         {
           "period_name": "peak",
           "rate": 0.14632,
-          "start_time": "15:00",
-          "end_time": "17:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -241,7 +252,16 @@
           "period_name": "shoulder",
           "rate": 0.1035,
           "start_time": "07:00",
-          "end_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1035,
+          "start_time": "20:00",
+          "end_time": "22:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -268,12 +288,13 @@
       "effective_to": null,
       "daily_supply_charge": 22.3346,
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA ($/kVA/month); extra demand charges, shoulder demand 10.8924 $/kVA/month (weekdays 07:00-17:00 and 20:00-22:00) and off-peak demand 2.8541 $/kVA/month (weekdays 22:00-07:00 and all weekend); seeded as the peak demand charge only (weekdays 17:00-20:00), per kVA treated as per kW.",
       "demand": {
         "rate": 12.039,
-        "window_start": "15:00",
-        "window_end": "17:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
         "season_months": null
@@ -282,8 +303,8 @@
         {
           "period_name": "peak",
           "rate": 0.0702,
-          "start_time": "15:00",
-          "end_time": "17:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -292,7 +313,16 @@
           "period_name": "shoulder",
           "rate": 0.05614,
           "start_time": "07:00",
-          "end_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.05614,
+          "start_time": "20:00",
+          "end_time": "22:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -319,12 +349,13 @@
       "effective_to": null,
       "daily_supply_charge": 27.4319,
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA ($/kVA/month); extra demand charges, shoulder demand 10.4071 $/kVA/month (weekdays 07:00-17:00 and 20:00-22:00) and off-peak demand 3.1143 $/kVA/month (weekdays 22:00-07:00 and all weekend); seeded as the peak demand charge only (weekdays 17:00-20:00), per kVA treated as per kW.",
       "demand": {
         "rate": 11.5026,
-        "window_start": "15:00",
-        "window_end": "17:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
         "season_months": null
@@ -333,8 +364,8 @@
         {
           "period_name": "peak",
           "rate": 0.05228,
-          "start_time": "15:00",
-          "end_time": "17:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -343,7 +374,16 @@
           "period_name": "shoulder",
           "rate": 0.04224,
           "start_time": "07:00",
-          "end_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.04224,
+          "start_time": "20:00",
+          "end_time": "22:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -370,12 +410,13 @@
       "effective_to": null,
       "daily_supply_charge": 27.2302,
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA ($/kVA/month); extra demand charges, shoulder demand 3.1645 $/kVA/month (weekdays 07:00-17:00 and 20:00-22:00) and off-peak demand 1.2614 $/kVA/month (weekdays 22:00-07:00 and all weekend); seeded as the peak demand charge only (weekdays 17:00-20:00), per kVA treated as per kW.",
       "demand": {
         "rate": 4.4388,
-        "window_start": "15:00",
-        "window_end": "17:00",
+        "window_start": "17:00",
+        "window_end": "20:00",
         "measurement_method": "30min_max",
         "days": "weekdays",
         "season_months": null
@@ -384,8 +425,8 @@
         {
           "period_name": "peak",
           "rate": 0.06741,
-          "start_time": "15:00",
-          "end_time": "17:00",
+          "start_time": "17:00",
+          "end_time": "20:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null
@@ -394,7 +435,16 @@
           "period_name": "shoulder",
           "rate": 0.03979,
           "start_time": "07:00",
-          "end_time": "15:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.03979,
+          "start_time": "20:00",
+          "end_time": "22:00",
           "days": "weekdays",
           "season": "all",
           "season_months": null

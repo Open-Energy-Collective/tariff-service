@@ -1,8 +1,12 @@
 """API endpoint tests."""
 
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 
+from app.database import engine
 from app.main import app
+from app.models.tariff import Dnsp, Tariff, TariffDemand
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Health
@@ -218,6 +222,29 @@ def test_current_rate_negative_offset(client):
     assert response.status_code == 200
 
 
+@pytest.mark.parametrize(
+    "dt", ["2026-07-20T17:30:00+10:00", "2026-07-20T07:30:00+00:00", "2026-07-20T02:30:00-05:00"]
+)
+def test_current_rate_resolves_in_dnsp_time_zone(client, dt):
+    """One instant (17:30 Brisbane) gives one answer in any offset (#39)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "T12A", "datetime": dt},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert (data["period"], data["in_demand_window"]) == ("peak", True)
+
+
+def test_current_rate_naive_datetime_is_dnsp_local(client):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "T12A", "datetime": "2026-07-20T17:30:00"},
+    )
+    assert response.status_code == 200
+    assert response.json()["in_demand_window"] is True
+
+
 def test_current_rate_invalid_datetime(client):
     """Invalid datetime format should return 400."""
     response = client.get(
@@ -279,12 +306,13 @@ def test_demand_surcharge(client):
     assert data["peak_demand_kw"] == 4.5
     assert data["monthly_demand_charge"] == 33.45
     assert data["demand_window_hours_per_month"] == 150.0
-    # 4.5 * 7.434 / 150 = 0.22302
-    assert abs(data["surcharge_per_kwh"] - 0.22302) < 0.001
+    # 33.45 / (4.5 * 150) = 7.434 / 150 = 0.04956 (#33)
+    assert abs(data["surcharge_per_kwh"] - 0.04956) < 0.00001
 
 
 def test_demand_surcharge_high_demand(client):
-    """Higher demand should produce proportionally higher surcharge."""
+    """Higher demand raises the monthly charge proportionally; the per-kWh
+    surcharge stays rate / window hours (#33)."""
     response = client.get(
         "/api/v1/calculate/demand-surcharge",
         params={"dnsp": "energex", "tariff": "T12A", "peak_demand_kw": 10.0},
@@ -293,8 +321,8 @@ def test_demand_surcharge_high_demand(client):
     data = response.json()
     assert data["peak_demand_kw"] == 10.0
     assert data["monthly_demand_charge"] == 74.34
-    # 10 * 7.434 / 150 = 0.4956
-    assert abs(data["surcharge_per_kwh"] - 0.4956) < 0.001
+    # 74.34 / (10 * 150) = 0.04956
+    assert abs(data["surcharge_per_kwh"] - 0.04956) < 0.00001
 
 
 def test_demand_surcharge_zero_demand(client):
@@ -549,8 +577,8 @@ def test_demand_surcharge_all_day_window(client):
     assert response.status_code == 200
     data = response.json()
     assert data["demand_window_hours_per_month"] == 24.0 * 30
-    # 5.0 * 11.473 / 720 = 0.07967...
-    assert abs(data["surcharge_per_kwh"] - 0.07967) < 0.001
+    # 11.473 / 720 = 0.01593...
+    assert abs(data["surcharge_per_kwh"] - 0.01593) < 0.00001
 
 
 def test_current_rate_resolution_is_order_independent():
@@ -604,3 +632,155 @@ def test_rate_limit_enforced_per_ip():
         response = limited_client.get("/api/v1/health")
         assert response.status_code == 429
         assert "retry-after" in {k.lower() for k in response.headers}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Demand windows (#36)
+# ─────────────────────────────────────────────────────────────────────────────
+
+DEMAND_WINDOWS = "/api/v1/calculate/demand-windows"
+DAY_3800 = [{"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00"}]
+
+
+@pytest.fixture
+def energex_3800():
+    """Energex 3800 with the seed's demand object (seed/energex.json)."""
+    with Session(engine) as session:
+        energex = session.query(Dnsp).filter_by(code="energex").one()
+        tariff = Tariff(
+            dnsp_id=energex.id,
+            code="3800",
+            name="Small Business Demand",
+            tariff_type="tou_demand",
+            effective_from="2026-07-01",
+            effective_to=None,
+            daily_supply_charge=0.0,
+        )
+        session.add(tariff)
+        session.flush()
+        session.add(
+            TariffDemand(
+                tariff_id=tariff.id,
+                rate=7.0,
+                window_start="17:00",
+                window_end="20:00",
+                measurement_method="30min_avg",
+                days="weekdays",
+                season_months=None,
+            )
+        )
+        session.commit()
+
+
+def windows(client, dnsp="energex", tariff="3800", start="2026-10-23T00:00:00+10:00",
+            end="2026-10-24T00:00:00+10:00"):
+    return client.get(
+        DEMAND_WINDOWS, params={"dnsp": dnsp, "tariff": tariff, "start": start, "end": end}
+    )
+
+
+def test_demand_windows(client, energex_3800):
+    r = windows(client)
+    assert r.status_code == 200
+    assert r.json() == {
+        "dnsp": "energex",
+        "tariff": "3800",
+        "start": "2026-10-23T00:00:00+10:00",
+        "end": "2026-10-24T00:00:00+10:00",
+        "windows": DAY_3800,
+    }
+
+
+def test_demand_windows_unknown_tariff_404(client, energex_3800):
+    r = windows(client, tariff="nope")
+    assert r.status_code == 404
+    assert r.json()["detail"] == "Tariff 'nope' not found for DNSP 'energex'"
+
+
+def test_demand_windows_no_demand_is_empty(client):
+    r = windows(client, dnsp="ausgrid", tariff="EA025")
+    assert r.status_code == 200
+    assert r.json()["windows"] == []
+
+
+def test_demand_windows_end_not_after_start_400(client, energex_3800):
+    r = windows(client, end="2026-10-23T00:00:00+10:00")
+    assert r.status_code == 400
+    assert "after start" in r.json()["detail"]
+
+
+def test_demand_windows_range_over_31_days_400(client, energex_3800):
+    r = windows(client, end="2026-11-23T00:01:00+10:00")
+    assert r.status_code == 400
+    assert "31 days" in r.json()["detail"]
+    assert windows(client, end="2026-11-23T00:00:00+10:00").status_code == 200
+
+
+@pytest.mark.parametrize("field", ["start", "end"])
+def test_demand_windows_naive_datetime_400(client, energex_3800, field):
+    r = windows(client, **{field: "2026-10-23T12:00:00"})
+    assert r.status_code == 400
+    assert "offset" in r.json()["detail"]
+
+
+def test_demand_windows_invalid_datetime_400(client, energex_3800):
+    r = windows(client, start="not-a-date")
+    assert r.status_code == 400
+
+
+def test_demand_windows_unencoded_plus(client, energex_3800):
+    r = client.get(
+        f"{DEMAND_WINDOWS}?dnsp=energex&tariff=3800"
+        "&start=2026-10-23T00:00:00+10:00&end=2026-10-24T00:00:00+10:00"
+    )
+    assert r.status_code == 200
+    assert r.json()["windows"] == DAY_3800
+
+
+def test_demand_windows_mixed_offsets(client, energex_3800):
+    r = windows(client, end="2026-10-24T01:00:00+11:00")
+    assert r.status_code == 200
+    assert r.json()["windows"] == DAY_3800
+
+
+def test_openapi_documents_demand_windows(client):
+    spec = client.get("/openapi.json").json()
+    op = spec["paths"][DEMAND_WINDOWS]["get"]
+    assert "31 days" in op["description"]
+    for name in ("DemandWindowsResponse", "DemandWindow"):
+        props = spec["components"]["schemas"][name]["properties"]
+        assert all(p.get("description") for p in props.values()), name
+
+
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [
+        ("9999-12-30T00:00:00+00:00", "9999-12-31T00:00:00+00:00"),
+        ("0001-01-01T00:00:00+10:00", "0001-01-02T00:00:00+10:00"),
+    ],
+)
+def test_demand_windows_out_of_range_year_400(client, start, end):
+    r = windows(client, dnsp="energex", tariff="T12A", start=start, end=end)
+    assert r.status_code == 400
+
+
+def test_current_rate_out_of_range_year_400(client):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "T12A", "datetime": "9999-12-31T23:00:00+00:00"},
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.parametrize("path", ["current-rate", "demand-surcharge", "demand-windows"])
+def test_openapi_documents_calculate_errors(client, path):
+    """The 400 and 404 responses are in the schema consumers vendor (#40)."""
+    spec = client.get("/openapi.json").json()
+    responses = spec["paths"][f"/api/v1/calculate/{path}"]["get"]["responses"]
+    for code in ("400", "404"):
+        assert responses[code]["description"], code
+        assert responses[code]["content"]["application/json"]["schema"] == {
+            "$ref": "#/components/schemas/ErrorResponse"
+        }
+    detail = spec["components"]["schemas"]["ErrorResponse"]["properties"]["detail"]
+    assert detail["description"]

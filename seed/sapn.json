@@ -5,7 +5,7 @@
     "effective_from": "2026-07-01",
     "effective_to": "2027-06-30",
     "extracted_date": "2026-07-20",
-    "notes": "Prices exclude GST. Rates already in $/kWh and $/day. Peak: 17:00-21:00 all days. Solar Sponge: 10:00-15:00 all days. Shoulder: 06:00-10:00, 15:00-17:00, 21:00-01:00. Off-peak: 01:00-06:00. Demand: $/kVA/day."
+    "notes": "Prices exclude GST. Rates already in $/kWh and $/day. Windows per tariff: DATA_SOURCES.md. Demand: $/kVA/day."
   },
   "dnsps": [
     {
@@ -52,24 +52,15 @@
       "effective_to": null,
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
         {
-          "period_name": "peak",
-          "rate": 0.2133,
-          "start_time": "17:00",
-          "end_time": "21:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
-        },
-        {
-          "period_name": "shoulder",
+          "period_name": "off_peak",
           "rate": 0.1067,
-          "start_time": "06:00",
-          "end_time": "10:00",
+          "start_time": "00:00",
+          "end_time": "06:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -78,16 +69,16 @@
           "period_name": "solar_sponge",
           "rate": 0.0535,
           "start_time": "10:00",
-          "end_time": "15:00",
+          "end_time": "16:00",
           "days": "all",
           "season": "all",
           "season_months": null
         },
         {
-          "period_name": "off_peak",
-          "rate": 0.0535,
-          "start_time": "01:00",
-          "end_time": "06:00",
+          "period_name": "peak",
+          "rate": 0.2133,
+          "start_time": "00:00",
+          "end_time": "00:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -105,7 +96,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-23T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -119,28 +110,19 @@
           "season_months": null
         },
         {
-          "period_name": "shoulder",
-          "rate": 0.1068,
-          "start_time": "06:00",
-          "end_time": "10:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
-        },
-        {
           "period_name": "solar_sponge",
           "rate": 0.0321,
           "start_time": "10:00",
-          "end_time": "15:00",
+          "end_time": "16:00",
           "days": "all",
           "season": "all",
           "season_months": null
         },
         {
-          "period_name": "off_peak",
-          "rate": 0.0321,
-          "start_time": "01:00",
-          "end_time": "06:00",
+          "period_name": "shoulder",
+          "rate": 0.1068,
+          "start_time": "00:00",
+          "end_time": "00:00",
           "days": "all",
           "season": "all",
           "season_months": null
@@ -184,7 +166,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -194,21 +176,50 @@
           "start_time": "17:00",
           "end_time": "21:00",
           "days": "all",
-          "season": "all",
-          "season_months": null
+          "season": "high",
+          "season_months": [
+            11,
+            12,
+            1,
+            2,
+            3
+          ]
         },
         {
           "period_name": "shoulder",
-          "rate": 0.1079,
-          "start_time": "06:00",
-          "end_time": "10:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
+          "rate": 0.1998,
+          "start_time": "07:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            11,
+            12,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1998,
+          "start_time": "07:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
         },
         {
           "period_name": "off_peak",
-          "rate": 0.1998,
+          "rate": 0.1079,
           "start_time": "00:00",
           "end_time": "00:00",
           "days": "all",
@@ -228,7 +239,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-23T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -243,16 +254,25 @@
         },
         {
           "period_name": "shoulder",
-          "rate": 0.1072,
-          "start_time": "06:00",
+          "rate": 0.1875,
+          "start_time": "07:00",
           "end_time": "10:00",
-          "days": "all",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1875,
+          "start_time": "16:00",
+          "end_time": "17:00",
+          "days": "weekdays",
           "season": "all",
           "season_months": null
         },
         {
           "period_name": "off_peak",
-          "rate": 0.1875,
+          "rate": 0.1072,
           "start_time": "00:00",
           "end_time": "00:00",
           "days": "all",
@@ -272,12 +292,13 @@
       "effective_to": null,
       "daily_supply_charge": 1.5082,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (0.0861 $/kVA/day); rolling 12-month peak (annual charge on the highest 30-minute demand interval in the last 12 months); seeded as 2.583 $/kW/month (0.0861 x 30) on the billing month's highest 30-minute interval, any time, all year.",
       "demand": {
         "rate": 2.583,
-        "window_start": "17:00",
-        "window_end": "21:00",
+        "window_start": "00:00",
+        "window_end": "00:00",
         "measurement_method": "30min_max",
         "days": "all",
         "season_months": null
@@ -289,21 +310,50 @@
           "start_time": "17:00",
           "end_time": "21:00",
           "days": "all",
-          "season": "all",
-          "season_months": null
+          "season": "high",
+          "season_months": [
+            11,
+            12,
+            1,
+            2,
+            3
+          ]
         },
         {
           "period_name": "shoulder",
-          "rate": 0.078,
-          "start_time": "06:00",
-          "end_time": "10:00",
-          "days": "all",
-          "season": "all",
-          "season_months": null
+          "rate": 0.1442,
+          "start_time": "07:00",
+          "end_time": "17:00",
+          "days": "weekdays",
+          "season": "high",
+          "season_months": [
+            11,
+            12,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "period_name": "shoulder",
+          "rate": 0.1442,
+          "start_time": "07:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "low",
+          "season_months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
         },
         {
           "period_name": "off_peak",
-          "rate": 0.1442,
+          "rate": 0.078,
           "start_time": "00:00",
           "end_time": "00:00",
           "days": "all",
@@ -323,19 +373,35 @@
       "effective_to": null,
       "daily_supply_charge": 8.6002,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (peak 0.3408 $/kVA/day); rolling 12-month peak (highest daily average demand in the 17:00-21:00 window, November to March, over the last 12 months, billed all year round); extra demand charge (anytime 0.0630 $/kVA/day on the highest 30-minute interval in the last 12 months, any time, all year); seeded as 10.224 $/kW/month (0.3408 x 30) on the 30-minute maximum 17:00-21:00 all days, charged November to March only, with no anytime charge. CBD sites (LBADCBD) use an 11:00-17:00 workday peak demand window instead.",
       "demand": {
         "rate": 10.224,
         "window_start": "17:00",
         "window_end": "21:00",
         "measurement_method": "30min_max",
         "days": "all",
-        "season_months": null
+        "season_months": [
+          11,
+          12,
+          1,
+          2,
+          3
+        ]
       },
       "rates": [
         {
-          "period_name": "anytime",
+          "period_name": "peak",
+          "rate": 0.1019,
+          "start_time": "07:00",
+          "end_time": "21:00",
+          "days": "weekdays",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
           "rate": 0.0637,
           "start_time": "00:00",
           "end_time": "00:00",

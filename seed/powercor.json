@@ -26,7 +26,7 @@
       "daily_supply_charge": 0.424658,
       "source_url": "https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx",
       "last_verified": "2026-08-03T00:00:00+10:00",
-      "verified_by": "official_price_list",
+      "verified_by": "aer_tss01_indicative_jan2025",
       "demand": null,
       "rates": [
         {
@@ -52,7 +52,8 @@
       "daily_supply_charge": 0.424658,
       "source_url": "https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx",
       "last_verified": "2026-08-03T00:00:00+10:00",
-      "verified_by": "official_price_list",
+      "verified_by": "aer_tss01_indicative_jan2025",
+      "notes": "Saver period 11:00-16:00 every day has no published 2026-27 rate (the 2026-27 Tariff Summary is not published) and is not seeded; it prices as off-peak. knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md.",
       "demand": null,
       "rates": [
         {
@@ -87,7 +88,7 @@
       "daily_supply_charge": 0.0,
       "source_url": "https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx",
       "last_verified": "2026-08-03T00:00:00+10:00",
-      "verified_by": "official_price_list",
+      "verified_by": "aer_tss01_indicative_jan2025",
       "demand": null,
       "rates": [
         {
@@ -113,7 +114,7 @@
       "daily_supply_charge": 0.71434,
       "source_url": "https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx",
       "last_verified": "2026-08-03T00:00:00+10:00",
-      "verified_by": "official_price_list",
+      "verified_by": "aer_tss01_indicative_jan2025",
       "demand": null,
       "rates": [
         {
@@ -138,8 +139,8 @@
       "effective_to": null,
       "daily_supply_charge": 0.71434,
       "source_url": "https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx",
-      "last_verified": "2026-08-03T00:00:00+10:00",
-      "verified_by": "official_price_list",
+      "last_verified": "2026-10-21T00:00:00+11:00",
+      "verified_by": "aer_tss01_indicative_jan2025",
       "demand": null,
       "rates": [
         {
@@ -154,8 +155,8 @@
         {
           "period_name": "off_peak",
           "rate": 0.052797,
-          "start_time": "21:00",
-          "end_time": "09:00",
+          "start_time": "00:00",
+          "end_time": "00:00",
           "days": "all",
           "season": "all",
           "season_months": null

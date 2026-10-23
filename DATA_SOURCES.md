@@ -50,7 +50,8 @@ Ausgrid uses **seasonal** peak pricing (no shoulder period):
 - **Off-peak**: All other times
 - **High season**: June–August (winter) and November–March (summer)
 - **No peak**: April, May, September, October (all off-peak)
-- **Demand window**: Same as peak (15:00–21:00, high season only)
+- **Demand window**: Same as peak (15:00–21:00, high season only) for EA111, EA116, EA251, EA256
+- **Capacity window (EA302, EA305, EA310, EA370, EA390)**: 15:00–21:00 working weekdays, all year; their peak energy rate stays high season only. Source: the revised TSS explanatory statement 2024-29, Table 11 note, p. 40 (`knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.md` in the OEC root)
 - **Demand measurement**: Maximum 30-minute interval in the peak window per month
 
 ---
@@ -132,8 +133,8 @@ Essential uses alphanumeric codes (e.g., BLNRSS2, BLND1AR).
 ### Time Windows (Essential Energy)
 
 PSO-Int (interval meter, default for new connections):
-- **Peak**: 3pm–5pm (15:00–17:00) weekdays
-- **Shoulder**: 7am–3pm (07:00–15:00) and 5pm–8pm (17:00–20:00) weekdays
+- **Peak**: 5pm–8pm (17:00–20:00) weekdays; also the demand window
+- **Shoulder**: 7am–5pm (07:00–17:00) and 8pm–10pm (20:00–22:00) weekdays
 - **Off-peak**: All other times (including all weekend)
 
 Sun Soaker (SS) tariffs:
@@ -172,12 +173,17 @@ SAPN uses short codes (e.g., RSR, RTOU, RESELE).
 
 ### Time Windows (SA Power Networks)
 
-- **Peak**: 5pm–9pm (17:00–21:00) all days
-- **Solar Sponge**: 10am–3pm (10:00–15:00) all days
-- **Shoulder**: 6am–10am (06:00–10:00), 3pm–5pm (15:00–17:00), 9pm–1am (21:00–01:00)
-- **Off-peak**: 1am–6am (01:00–06:00) all days
-- **Demand window**: Peak period (17:00–21:00), highest 30-min interval
-- **Note**: SA is UTC+9:30 (no daylight saving)
+From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (Table 1):
+
+- **RTOU**: off-peak 12am–6am (00:00–06:00), solar sponge 10am–4pm (10:00–16:00), peak all other times; no shoulder
+- **SBTOU, MBTOUD**: peak 5pm–9pm all days November–March; shoulder 7am–5pm workdays November–March and 7am–9pm workdays April–October; off-peak all other times
+- **MBTOUD demand**: anytime, highest 30-min interval in the last 12 months (seeded as a monthly anytime maximum)
+- **LBAD**: energy peak 7am–9pm workdays, off-peak all other times; demand 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays)
+
+- **RESELE**: peak 5pm–9pm (17:00–21:00) all days, solar sponge 10am–4pm (10:00–16:00) all days, shoulder all other times (the 14 hours outside peak and solar sponge); no off-peak (customer overview Table 2)
+- **SBELE**: peak 5pm–9pm all days, shoulder 7am–10am and 4pm–5pm workdays, off-peak all other times (customer overview Table 4). Off-peak $0.1072/kWh and shoulder $0.1875/kWh, from the Off-Peak and Shoulder columns of the NUoS schedule (Table 9)
+
+Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT).
 
 ---
 
@@ -208,6 +214,13 @@ Residential (A130, A10E):
 Business (A210):
 - **Peak**: 9am–9pm weekdays
 - **Off-peak**: All other times
+
+Dedicated circuit (A180):
+- **Off-peak**: 11pm–7am AEST all days (supply only in that window)
+
+Export (A10E):
+- **Export charge**: 3.000 c/kWh, solar soak 11am–4pm every day
+- **Export reward**: 15.000 c/kWh credit, peak 4pm–9pm every day
 
 Business Demand (A230):
 - **Peak**: 7am–11pm weekdays
@@ -244,6 +257,10 @@ Business ToU (NAST12):
 - **Peak**: 7am–11pm weekdays
 - **Off-peak**: All other times
 
+Demand (NASN12):
+- **Demand window**: 3pm–9pm (15:00–21:00) weekdays, December to March (sheet "Tariff structures", structure 15)
+- **Off-peak season** (April to November): 2.862 $/kW/month, not seeded (one demand rate per tariff)
+
 ---
 
 ## CitiPower (VIC)
@@ -252,6 +269,8 @@ Business ToU (NAST12):
 |--------|-----|-------|
 | **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates — the doc explicitly references a separate "CitiPower - 2026-27 Tariff Summary" attachment for those, which CitiPower does not co-publish alongside this PDF (confirmed absent from every public CitiPower/AER page checked). |
 | **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes cross-checked against the structural PDF above — exact match. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final retail price list like the other DNSPs in this file — a revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
+
+Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
 
 ### Tariff Codes (CitiPower) — seeded subset only
 
@@ -284,6 +303,8 @@ Business ToU (CGTOU):
 | **Powercor 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/Powercor%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower's PDF (see above) — Powercor and CitiPower are commonly-owned/co-filed with near-identical document templates, confirmed by direct side-by-side comparison, not assumed. |
 | **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes cross-checked against the structural PDF — exact match. |
 
+Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+
 ### Tariff Codes (Powercor) — seeded subset only
 
 Same exclusions as CitiPower (see above): PRCER, NDD/NDM/NDMO, and all large/HV/sub-transmission tariffs not seeded.
@@ -308,6 +329,8 @@ Same as CitiPower — Peak 4pm–9pm (residential) / 9am–9pm weekdays (busines
 |--------|-----|-------|
 | **United Energy 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower/Powercor's PDFs. |
 | **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes cross-checked against the structural PDF — exact match. |
+
+Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
 
 ### Tariff Codes (United Energy) — seeded subset only
 
@@ -357,6 +380,10 @@ Tariff 023 (New Residential Demand):
 - **Demand (Low)**: 5pm–9pm every day during non-winter
 - **Solar Soak**: 11am–3pm every day
 - **Off-peak**: All other times
+- **Winter months**: June to August. The schedule of charges does not define them; the revised TSS 2024-29 does (pp. 7, 15: `knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29.md` in the OEC root)
+
+Controlled load (060):
+- **Off-peak**: 6 to 8 hours between 10pm and 7am every day, 5.413 c/kWh, no fixed charge (seeded as anytime)
 
 Business (090, 101):
 - **Peak**: 7am–5pm weekdays
@@ -393,6 +420,7 @@ Smart meter tariffs (T3A/B/C):
 Demand tariffs (T5, T6):
 - **On Season demand**: 3pm–9pm weekdays, October–March
 - **Off Season demand**: 3pm–9pm weekdays, April–September
+- **Unit**: the price list gives $/kVA without a period; read as per month (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md`), seeded without conversion
 - **Note**: NT uses UTC+9:30, no daylight saving
 
 ---
@@ -456,11 +484,19 @@ Some retailers (e.g., Amber Electric) append zone suffixes to NTC codes:
 
 ## Time Windows (Energex)
 
-All Energex tariffs use the same peak/shoulder/off-peak windows:
+Residential ToU and demand (6900, 3900), from the residential tariffs page (`knowledge/documents/energex/2026-10-21-residential-tariffs-page.md` in the OEC root):
 - **Peak**: 4pm–9pm (16:00–21:00) every day
-- **Shoulder**: 9pm–12am (21:00–00:00) every day
-- **Off-peak**: 12am–4pm (00:00–16:00) every day
+- **Off-peak**: 11am–4pm (11:00–16:00) every day
+- **Shoulder**: 9pm–11am (21:00–11:00) every day
 - **Demand window**: 4pm–9pm, measured as max 30-min average of the month
+
+Business ToU demand (3800, 7200), from the Energex Network Tariff Guide 2026-27 (Table 6 and section 3.3; `knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27.md`):
+- **Peak**: 5pm–8pm (17:00–20:00) weekdays; no peak on weekends; also the peak demand window
+- **Shoulder**: 1pm–5pm and 8pm–11am weekdays, 1pm–11am weekends
+- **Off-peak**: 11am–1pm (11:00–13:00) every day
+- **7200 demand**: $/kVA/month by default (kW variant seeded), with shoulder and off-peak demand charges the schema cannot hold
+
+Small Demand (8300): anytime demand on the highest 30-minute kVA in the month.
 
 ## Notes
 - **Authoritative source**: Energex Network Price List spreadsheet (AER-approved)
