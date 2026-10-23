@@ -12,11 +12,13 @@ _test_db.close()
 os.environ["DATABASE_URL"] = f"sqlite:///{_test_db.name}"
 
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy.orm import Session  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
 
-from app.database import Base, engine  # noqa: E402
+from app.database import Base, engine, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffRate  # noqa: E402
+from seed.build_db import load_seed_files, populate  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -294,3 +296,36 @@ def client():
     with TestClient(app) as c:
         yield c
     app.state.limiter.enabled = True
+
+
+@pytest.fixture(scope="session")
+def seed_engine(tmp_path_factory):
+    """The real seed data (seed/build_db.py), built once into its own SQLite file."""
+    seed_db = create_engine(
+        f"sqlite:///{tmp_path_factory.mktemp('seed') / 'tariffs.db'}",
+        connect_args={"check_same_thread": False},
+    )
+    Base.metadata.create_all(seed_db)
+    with Session(seed_db) as session:
+        populate(session, load_seed_files())
+    return seed_db
+
+
+@pytest.fixture
+def seed_client(seed_engine):
+    """A test client whose API reads the real seed data, not the fixtures above."""
+    seed_session = sessionmaker(bind=seed_engine)
+
+    def _seed_db():
+        db = seed_session()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = _seed_db
+    app.state.limiter.enabled = False
+    with TestClient(app) as c:
+        yield c
+    app.state.limiter.enabled = True
+    del app.dependency_overrides[get_db]
