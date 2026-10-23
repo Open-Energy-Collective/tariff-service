@@ -1,14 +1,21 @@
 """Calculation endpoints for rate lookup and demand surcharge."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.tariff import CurrentRateResponse, DemandSurchargeResponse
+from app.schemas.tariff import (
+    CurrentRateResponse,
+    DemandSurchargeResponse,
+    DemandWindow,
+    DemandWindowsResponse,
+)
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
+    demand_windows,
     get_current_rate,
     is_in_demand_window,
 )
@@ -102,4 +109,77 @@ def demand_surcharge(
         demand_window_hours_per_month=window_hours,
         surcharge_per_kwh=round(surcharge, 5),
         monthly_demand_charge=round(monthly_charge, 2),
+    )
+
+
+MAX_DEMAND_WINDOW_RANGE = timedelta(days=31)
+
+
+def _parse_aware(name: str, value: str) -> datetime:
+    """Parse an ISO 8601 query value that must carry a UTC offset; 400 otherwise."""
+    try:
+        parsed = datetime.fromisoformat(value.replace(" ", "+"))
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=400, detail=f"Invalid {name}: '{value}'. Use ISO 8601."
+        )
+    if parsed.tzinfo is None:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{name} '{value}' has no UTC offset. Use ISO 8601 with an offset.",
+        )
+    return parsed
+
+
+@router.get("/demand-windows", response_model=DemandWindowsResponse)
+def demand_windows_in_range(
+    dnsp: str = Query(
+        ..., description="DNSP code",
+        json_schema_extra={"example": "energex"},
+    ),
+    tariff: str = Query(
+        ..., description="Tariff code",
+        json_schema_extra={"example": "3800"},
+    ),
+    start: str = Query(
+        ..., description="Range start, ISO 8601 with an offset",
+        json_schema_extra={"example": "2026-10-23T00:00:00+10:00"},
+    ),
+    end: str = Query(
+        ..., description="Range end, ISO 8601 with an offset; after start, at most 31 days on",
+        json_schema_extra={"example": "2026-10-30T00:00:00+10:00"},
+    ),
+    db: Session = Depends(get_db),
+) -> DemandWindowsResponse:
+    """Demand windows of a tariff over [start, end), at most 31 days.
+
+    Windows are resolved in the DNSP's local time by the rules of
+    `/calculate/current-rate`'s `in_demand_window`: half-open, clipped to the
+    range, sorted and merged, each bound in the DNSP's local offset.
+    """
+    tariff_obj = get_tariff_detail(db, dnsp, tariff)
+    if not tariff_obj:
+        raise HTTPException(
+            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+        )
+
+    range_start = _parse_aware("start", start)
+    range_end = _parse_aware("end", end)
+    if range_end <= range_start:
+        raise HTTPException(status_code=400, detail="end must be after start")
+    if range_end - range_start > MAX_DEMAND_WINDOW_RANGE:
+        raise HTTPException(
+            status_code=400, detail="Range from start to end must be at most 31 days"
+        )
+
+    tz = ZoneInfo(tariff_obj.dnsp.timezone)
+    return DemandWindowsResponse(
+        dnsp=dnsp,
+        tariff=tariff,
+        start=start,
+        end=end,
+        windows=[
+            DemandWindow(start=s.isoformat(), end=e.isoformat())
+            for s, e in demand_windows(tariff_obj.demand, tz, range_start, range_end)
+        ],
     )

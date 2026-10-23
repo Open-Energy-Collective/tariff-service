@@ -1,8 +1,12 @@
 """API endpoint tests."""
 
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 
+from app.database import engine
 from app.main import app
+from app.models.tariff import Dnsp, Tariff, TariffDemand
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Health
@@ -605,3 +609,121 @@ def test_rate_limit_enforced_per_ip():
         response = limited_client.get("/api/v1/health")
         assert response.status_code == 429
         assert "retry-after" in {k.lower() for k in response.headers}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Demand windows (#36)
+# ─────────────────────────────────────────────────────────────────────────────
+
+DEMAND_WINDOWS = "/api/v1/calculate/demand-windows"
+DAY_3800 = [{"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00"}]
+
+
+@pytest.fixture
+def energex_3800():
+    """Energex 3800 with the seed's demand object (seed/energex.json)."""
+    with Session(engine) as session:
+        energex = session.query(Dnsp).filter_by(code="energex").one()
+        tariff = Tariff(
+            dnsp_id=energex.id,
+            code="3800",
+            name="Small Business Demand",
+            tariff_type="tou_demand",
+            effective_from="2026-07-01",
+            effective_to=None,
+            daily_supply_charge=0.0,
+        )
+        session.add(tariff)
+        session.flush()
+        session.add(
+            TariffDemand(
+                tariff_id=tariff.id,
+                rate=7.0,
+                window_start="17:00",
+                window_end="20:00",
+                measurement_method="30min_avg",
+                days="weekdays",
+                season_months=None,
+            )
+        )
+        session.commit()
+
+
+def windows(client, dnsp="energex", tariff="3800", start="2026-10-23T00:00:00+10:00",
+            end="2026-10-24T00:00:00+10:00"):
+    return client.get(
+        DEMAND_WINDOWS, params={"dnsp": dnsp, "tariff": tariff, "start": start, "end": end}
+    )
+
+
+def test_demand_windows(client, energex_3800):
+    r = windows(client)
+    assert r.status_code == 200
+    assert r.json() == {
+        "dnsp": "energex",
+        "tariff": "3800",
+        "start": "2026-10-23T00:00:00+10:00",
+        "end": "2026-10-24T00:00:00+10:00",
+        "windows": DAY_3800,
+    }
+
+
+def test_demand_windows_unknown_tariff_404(client, energex_3800):
+    r = windows(client, tariff="nope")
+    assert r.status_code == 404
+    assert r.json()["detail"] == "Tariff 'nope' not found for DNSP 'energex'"
+
+
+def test_demand_windows_no_demand_is_empty(client):
+    r = windows(client, dnsp="ausgrid", tariff="EA025")
+    assert r.status_code == 200
+    assert r.json()["windows"] == []
+
+
+def test_demand_windows_end_not_after_start_400(client, energex_3800):
+    r = windows(client, end="2026-10-23T00:00:00+10:00")
+    assert r.status_code == 400
+    assert "after start" in r.json()["detail"]
+
+
+def test_demand_windows_range_over_31_days_400(client, energex_3800):
+    r = windows(client, end="2026-11-23T00:01:00+10:00")
+    assert r.status_code == 400
+    assert "31 days" in r.json()["detail"]
+    assert windows(client, end="2026-11-23T00:00:00+10:00").status_code == 200
+
+
+@pytest.mark.parametrize("field", ["start", "end"])
+def test_demand_windows_naive_datetime_400(client, energex_3800, field):
+    r = windows(client, **{field: "2026-10-23T12:00:00"})
+    assert r.status_code == 400
+    assert "offset" in r.json()["detail"]
+
+
+def test_demand_windows_invalid_datetime_400(client, energex_3800):
+    r = windows(client, start="not-a-date")
+    assert r.status_code == 400
+
+
+def test_demand_windows_unencoded_plus(client, energex_3800):
+    r = client.get(
+        f"{DEMAND_WINDOWS}?dnsp=energex&tariff=3800"
+        "&start=2026-10-23T00:00:00+10:00&end=2026-10-24T00:00:00+10:00"
+    )
+    assert r.status_code == 200
+    assert r.json()["windows"] == DAY_3800
+
+
+def test_demand_windows_mixed_offsets(client, energex_3800):
+    r = windows(client, end="2026-10-24T01:00:00+11:00")
+    assert r.status_code == 200
+    assert r.json()["windows"] == DAY_3800
+
+
+def test_openapi_documents_demand_windows(client):
+    spec = client.get("/openapi.json").json()
+    op = spec["paths"][DEMAND_WINDOWS]["get"]
+    assert "31 days" in op["description"]
+    for name in ("DemandWindowsResponse", "DemandWindow"):
+        props = spec["components"]["schemas"][name]["properties"]
+        assert all(p.get("description") for p in props.values()), name

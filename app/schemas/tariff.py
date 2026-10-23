@@ -252,3 +252,26 @@ class DemandSurchargeResponse(BaseModel):
         )
     )
     unit: str = Field(default="$/kWh", description="Unit for surcharge_per_kwh")
+
+
+class DemandWindow(BaseModel):
+    start: str = Field(
+        description="Window start, ISO 8601 in the DNSP's local offset; inclusive"
+    )
+    end: str = Field(
+        description="Window end, ISO 8601 in the DNSP's local offset; exclusive"
+    )
+
+
+class DemandWindowsResponse(BaseModel):
+    dnsp: str = Field(description="DNSP code")
+    tariff: str = Field(description="Tariff code")
+    start: str = Field(description="Range start, as requested")
+    end: str = Field(description="Range end, as requested")
+    windows: list[DemandWindow] = Field(
+        description=(
+            "Demand windows within [start, end): half-open, clipped to the range, "
+            "sorted, merged when adjacent or overlapping. Empty for a tariff with "
+            "no demand charge."
+        )
+    )
