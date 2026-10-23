@@ -52,12 +52,15 @@ def surcharge(client, dnsp: str, code: str, peak_kw: float = PEAK_KW) -> dict:
 
 @dataclass(frozen=True)
 class SourceCase:
-    """One demand tariff as its 2026-27 source states it.
+    """One demand tariff as its 2026-27 source states it. Where the source is
+    silent (a measurement interval), the case holds the seed's value and says so.
 
     seed_rate is the source rate converted to the seed's $/kW/month (stated in
     conversion). window_hours_per_month counts a weekday window as 5/7 of a
     30-day month. inside and outside are local times for /current-rate; an
-    anytime window has no outside, so both are inside.
+    anytime window has no outside, so both are inside. schema_gap names what the
+    seed cannot hold (feat/0.8.0, #31); off_season_charged is a local time when
+    the source charges demand and the seed does not.
     """
 
     dnsp: str
@@ -77,6 +80,7 @@ class SourceCase:
     surcharge_per_kwh: float
     monthly_charge: float
     schema_gap: str | None = None
+    off_season_charged: str | None = None
 
 
 SOURCE_CASES = [
@@ -91,7 +95,7 @@ SOURCE_CASES = [
         window=("15:00", "21:00"),
         days="all",
         season_months=[1, 2, 3, 6, 7, 8, 11, 12],
-        method="30min_max",
+        method="30min_max",  # as seeded: the source states no measurement interval
         inside="2027-01-13T16:00:00+11:00",
         outside="2027-01-13T21:00:00+11:00",
         outside_expected=False,
@@ -117,6 +121,7 @@ SOURCE_CASES = [
         surcharge_per_kwh=0.08923,
         monthly_charge=57.37,
         schema_gap="off-peak season rate 2.8622 $/kW/mth (April to November) not held",
+        off_season_charged="2026-07-15T15:00:00+10:00",
     ),
     SourceCase(
         dnsp="endeavour",
@@ -136,6 +141,7 @@ SOURCE_CASES = [
         surcharge_per_kwh=0.06363,
         monthly_charge=27.27,
         schema_gap="low season rate 9.27 c/kW/day (April to October) not held",
+        off_season_charged="2026-07-15T16:00:00+10:00",
     ),
     SourceCase(
         dnsp="energex",
@@ -194,6 +200,7 @@ SOURCE_CASES = [
         surcharge_per_kwh=0.05452,
         monthly_charge=32.71,
         schema_gap="low season 13.083 c/kW/day and off-peak demand 2.076 c/kW/day not held",
+        off_season_charged="2026-10-14T18:00:00+11:00",
     ),
     SourceCase(
         dnsp="jemena",
@@ -225,7 +232,7 @@ SOURCE_CASES = [
         window=("15:00", "21:00"),
         days="weekdays",
         season_months=[1, 2, 3, 10, 11, 12],
-        method="30min_max",
+        method="30min_max",  # as seeded: the source states no measurement interval
         inside="2026-10-14T15:00:00+09:30",
         outside="2026-10-14T21:00:00+09:30",
         outside_expected=False,
@@ -233,6 +240,7 @@ SOURCE_CASES = [
         surcharge_per_kwh=0.1299,
         monthly_charge=83.51,
         schema_gap="kVA; Off Season 3.9297 $/kVA (April to September) not held",
+        off_season_charged="2026-07-15T15:00:00+09:30",
     ),
     SourceCase(
         dnsp="sapn",
@@ -410,3 +418,23 @@ def test_sweep_surcharge_is_rate_over_window_hours(seed_client, dnsp, code, tz, 
         PEAK_KW * demand["rate"], abs=5e-3 + 1e-12
     )
     assert surcharge(seed_client, dnsp, code, peak_kw=0)["surcharge_per_kwh"] == 0
+
+
+GAP_CASES = [
+    pytest.param(
+        case,
+        id=f"{case.dnsp}-{case.code}",
+        marks=pytest.mark.xfail(reason=f"feat/0.8.0 (#31): {case.schema_gap}", strict=True),
+    )
+    for case in SOURCE_CASES
+    if case.schema_gap
+]
+
+
+@pytest.mark.parametrize("case", GAP_CASES)
+def test_demand_tariff_schema_gap(seed_client, case):
+    """Each known schema gap reports as xfail. Where the API can show the source's
+    off-season demand charge, the test asserts it; strict, so a fix shows as XPASS."""
+    if case.off_season_charged is None:
+        pytest.xfail(f"feat/0.8.0 (#31): {case.schema_gap}")
+    assert in_window(seed_client, case.dnsp, case.code, case.off_season_charged) is True
