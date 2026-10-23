@@ -140,6 +140,9 @@ def demand_windows(
         if is_day_match(demand.days, day.weekday()) and is_season_match(
             demand.season_months, day.month
         ):
+            # The three cases of is_in_time_window, as intervals. A point
+            # predicate cannot yield intervals; test_matches_is_in_demand_window_every_minute
+            # guards against the two drifting apart.
             if ws == we:
                 parts = [(at(day, midnight), at(next_day, midnight))]
             elif ws < we:
