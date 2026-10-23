@@ -275,3 +275,7 @@ class DemandWindowsResponse(BaseModel):
             "no demand charge."
         )
     )
+
+
+class ErrorResponse(BaseModel):
+    detail: str = Field(description="What was wrong with the request")

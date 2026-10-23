@@ -770,3 +770,17 @@ def test_current_rate_out_of_range_year_400(client):
         params={"dnsp": "energex", "tariff": "T12A", "datetime": "9999-12-31T23:00:00+00:00"},
     )
     assert response.status_code == 400
+
+
+@pytest.mark.parametrize("path", ["current-rate", "demand-surcharge", "demand-windows"])
+def test_openapi_documents_calculate_errors(client, path):
+    """The 400 and 404 responses are in the schema consumers vendor (#40)."""
+    spec = client.get("/openapi.json").json()
+    responses = spec["paths"][f"/api/v1/calculate/{path}"]["get"]["responses"]
+    for code in ("400", "404"):
+        assert responses[code]["description"], code
+        assert responses[code]["content"]["application/json"]["schema"] == {
+            "$ref": "#/components/schemas/ErrorResponse"
+        }
+    detail = spec["components"]["schemas"]["ErrorResponse"]["properties"]["detail"]
+    assert detail["description"]

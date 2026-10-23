@@ -12,6 +12,7 @@ from app.schemas.tariff import (
     DemandSurchargeResponse,
     DemandWindow,
     DemandWindowsResponse,
+    ErrorResponse,
 )
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
@@ -26,7 +27,19 @@ router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
 OUT_OF_RANGE = "Datetime is outside the supported date range"
 
 
-@router.get("/current-rate", response_model=CurrentRateResponse)
+def _errors(bad_request: str) -> dict:
+    """OpenAPI entries for a calculate route's 400 and 404 responses."""
+    return {
+        400: {"model": ErrorResponse, "description": bad_request},
+        404: {"model": ErrorResponse, "description": "Tariff not found for the DNSP"},
+    }
+
+
+@router.get(
+    "/current-rate",
+    response_model=CurrentRateResponse,
+    responses=_errors("Invalid datetime, or outside the supported date range"),
+)
 def current_rate(
     dnsp: str = Query(
         ..., description="DNSP code, e.g. 'energex'",
@@ -79,7 +92,11 @@ def current_rate(
     )
 
 
-@router.get("/demand-surcharge", response_model=DemandSurchargeResponse)
+@router.get(
+    "/demand-surcharge",
+    response_model=DemandSurchargeResponse,
+    responses=_errors("The tariff has no demand charge"),
+)
 def demand_surcharge(
     dnsp: str = Query(
         ..., description="DNSP code",
@@ -142,7 +159,14 @@ def _parse_aware(name: str, value: str) -> datetime:
     return parsed
 
 
-@router.get("/demand-windows", response_model=DemandWindowsResponse)
+@router.get(
+    "/demand-windows",
+    response_model=DemandWindowsResponse,
+    responses=_errors(
+        "Invalid or naive datetime, end not after start, range over 31 days, "
+        "or outside the supported date range"
+    ),
+)
 def demand_windows_in_range(
     dnsp: str = Query(
         ..., description="DNSP code",
