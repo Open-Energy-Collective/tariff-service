@@ -222,6 +222,29 @@ def test_current_rate_negative_offset(client):
     assert response.status_code == 200
 
 
+@pytest.mark.parametrize(
+    "dt", ["2026-07-20T17:30:00+10:00", "2026-07-20T07:30:00+00:00", "2026-07-20T02:30:00-05:00"]
+)
+def test_current_rate_resolves_in_dnsp_time_zone(client, dt):
+    """One instant (17:30 Brisbane) gives one answer in any offset (#39)."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "T12A", "datetime": dt},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert (data["period"], data["in_demand_window"]) == ("peak", True)
+
+
+def test_current_rate_naive_datetime_is_dnsp_local(client):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "T12A", "datetime": "2026-07-20T17:30:00"},
+    )
+    assert response.status_code == 200
+    assert response.json()["in_demand_window"] is True
+
+
 def test_current_rate_invalid_datetime(client):
     """Invalid datetime format should return 400."""
     response = client.get(

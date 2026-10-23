@@ -37,7 +37,10 @@ def current_rate(
     dt: str = Query(
         ...,
         alias="datetime",
-        description="ISO 8601 datetime, e.g. '2026-07-20T17:30:00+10:00'",
+        description=(
+            "ISO 8601 datetime, e.g. '2026-07-20T17:30:00+10:00'. Resolved in the "
+            "DNSP's local time; a value without an offset is taken as that local time."
+        ),
         json_schema_extra={"example": "2026-07-20T17:30:00+10:00"},
     ),
     db: Session = Depends(get_db),
@@ -55,6 +58,9 @@ def current_rate(
         raise HTTPException(
             status_code=400, detail=f"Invalid datetime format: '{dt}'. Use ISO 8601."
         )
+    if parsed_dt.tzinfo is not None:
+        # Resolve in the DNSP's local time; a naive datetime already is (#39).
+        parsed_dt = parsed_dt.astimezone(ZoneInfo(tariff_obj.dnsp.timezone))
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
     in_window = is_in_demand_window(tariff_obj.demand, parsed_dt)
 
