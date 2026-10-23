@@ -5,7 +5,7 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
-## [0.7.0] - Unreleased
+## [0.7.0] - 2026-10-24
 
 ### Added
 - `GET /api/v1/calculate/demand-windows`: the times a tariff's demand charge applies over a range of up
