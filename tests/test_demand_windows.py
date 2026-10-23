@@ -1,7 +1,7 @@
 """demand_windows against the seed demand objects (#36)."""
 
 import json
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -71,6 +71,61 @@ def test_dst_start_all_day_span_changes_offset():
     assert we.isoformat() == "2026-10-08T00:00:00+11:00"
 
 
+# One case per distinct seed demand shape not covered above: (dnsp file, code,
+# time zone, first local date, days, expected (date, start hour, end hour)).
+# Each range crosses the shape's season edge or a weekend.
+SHAPES = [
+    (
+        "ausgrid", "EA116", "Australia/Sydney", date(2026, 3, 30), 3,
+        [(date(2026, 3, 30), 15, 21), (date(2026, 3, 31), 15, 21)],
+    ),
+    (
+        "ausgrid", "EA251", "Australia/Sydney", date(2026, 11, 27), 4,
+        [(date(2026, 11, 27), 15, 21), (date(2026, 11, 30), 15, 21)],
+    ),
+    (
+        "ausgrid", "EA302", "Australia/Sydney", date(2026, 5, 1), 4,
+        [(date(2026, 5, 1), 15, 21), (date(2026, 5, 4), 15, 21)],
+    ),
+    (
+        "ausnet", "NASN12", "Australia/Melbourne", date(2026, 11, 30), 2,
+        [(date(2026, 12, 1), 15, 21)],
+    ),
+    (
+        "endeavour", "N72", "Australia/Sydney", date(2026, 10, 30), 4,
+        [(date(2026, 11, 2), 16, 20)],
+    ),
+    (
+        "energex", "3900", "Australia/Brisbane", date(2026, 10, 24), 1,
+        [(date(2026, 10, 24), 16, 21)],
+    ),
+    (
+        "evoenergy", "101", "Australia/Sydney", date(2026, 10, 23), 3,
+        [(date(2026, 10, 23), 7, 17)],
+    ),
+    (
+        "powerwater", "T5", "Australia/Darwin", date(2026, 9, 30), 2,
+        [(date(2026, 10, 1), 15, 21)],
+    ),
+    (
+        "sapn", "LBAD", "Australia/Adelaide", date(2026, 10, 31), 2,
+        [(date(2026, 11, 1), 17, 21)],
+    ),
+]
+
+
+@pytest.mark.parametrize(("dnsp_file", "code", "tz_name", "first", "days", "expected"), SHAPES)
+def test_seed_demand_shape(dnsp_file, code, tz_name, first, days, expected):
+    tz = ZoneInfo(tz_name)
+    d = load_tariff(dnsp_file, code).demand
+    start = datetime.combine(first, time(0), tzinfo=tz)
+    end = datetime.combine(first + timedelta(days=days), time(0), tzinfo=tz)
+    assert demand_windows(d, tz, start, end) == [
+        (datetime.combine(day, time(h0), tzinfo=tz), datetime.combine(day, time(h1), tzinfo=tz))
+        for day, h0, h1 in expected
+    ]
+
+
 def seed_demand_tariffs() -> list[tuple[str, str, str]]:
     """(dnsp file, tariff code, DNSP time zone) for every seed tariff with demand."""
     cases = []
@@ -81,13 +136,32 @@ def seed_demand_tariffs() -> list[tuple[str, str, str]]:
     return cases
 
 
-@pytest.mark.parametrize("month_start", [datetime(2026, 12, 1), datetime(2026, 6, 1)])
+def local_month(year: int, month: int):
+    """[1st of the month, 1st of the next) in the DNSP's local time."""
+    return lambda tz: (
+        datetime(year, month, 1, tzinfo=tz),
+        datetime(year + month // 12, month % 12 + 1, 1, tzinfo=tz),
+    )
+
+
+RANGES = {
+    "december": local_month(2026, 12),
+    "june": local_month(2026, 6),
+    # A UTC start off the local hour (23:07 on 31 March in Brisbane, 00:07 on
+    # 1 April in Sydney), across the 5 April DST end.
+    "april-utc": lambda tz: (
+        datetime(2026, 3, 31, 13, 7, tzinfo=UTC),
+        datetime(2026, 5, 1, tzinfo=UTC),
+    ),
+}
+
+
+@pytest.mark.parametrize("range_name", RANGES)
 @pytest.mark.parametrize(("dnsp_file", "code", "tz_name"), seed_demand_tariffs())
-def test_matches_is_in_demand_window_every_minute(dnsp_file, code, tz_name, month_start):
+def test_matches_is_in_demand_window_every_minute(dnsp_file, code, tz_name, range_name):
     tz = ZoneInfo(tz_name)
     d = load_tariff(dnsp_file, code).demand
-    start = month_start.replace(tzinfo=tz)
-    end = (month_start + timedelta(days=31)).replace(day=1).replace(tzinfo=tz)
+    start, end = RANGES[range_name](tz)
     windows = demand_windows(d, tz, start, end)
     t_utc, end_utc, i = start.astimezone(UTC), end.astimezone(UTC), 0
     while t_utc < end_utc:
