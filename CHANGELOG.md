@@ -3,7 +3,7 @@
 All notable changes to this project are documented here. Versioning follows
 [VERSIONING.md](VERSIONING.md) (SemVer, pre-1.0). Retroactively reconstructed
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
-that date (see `.agent/status.md`'s 2026-08-11 entry).
+that date (see `tariff-service@b74e8d9:.agent/status.md`'s 2026-08-11 entry).
 
 ## [0.6.1] — 2026-08-11
 
