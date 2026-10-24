@@ -8,6 +8,14 @@ Parameters:
     Default: /oec/tariff-service/jwt-secret
     Description: SSM parameter name containing the JWT secret
     NoEcho: true
+  Environment:
+    Type: String
+    Default: live
+    AllowedValues: [live, trial]
+    Description: live claims api.openenergy.org.au; trial is a non-live stack with no custom domain
+
+Conditions:
+  IsLive: !Equals [!Ref Environment, live]
 
 Globals:
   Function:
@@ -52,6 +60,7 @@ Resources:
         ThrottlingBurstLimit: 100
 
   ApiDomainName:
+    Condition: IsLive
     Type: AWS::ApiGatewayV2::DomainName
     Properties:
       DomainName: api.openenergy.org.au
@@ -60,6 +69,7 @@ Resources:
           CertificateArn: !Ref ApiCertificate
 
   ApiMapping:
+    Condition: IsLive
     Type: AWS::ApiGatewayV2::ApiMapping
     Properties:
       ApiId: !Ref TariffApi
@@ -67,6 +77,7 @@ Resources:
       Stage: prod
 
   ApiCertificate:
+    Condition: IsLive
     Type: AWS::CertificateManager::Certificate
     Properties:
       DomainName: api.openenergy.org.au
@@ -82,7 +93,7 @@ Resources:
   ErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: TariffService-5xx-Errors
+      AlarmName: !If [IsLive, TariffService-5xx-Errors, !Sub "${AWS::StackName}-5xx-Errors"]
       MetricName: 5XXError
       Namespace: AWS/ApiGateway
       Statistic: Sum
@@ -99,5 +110,6 @@ Outputs:
     Description: API endpoint URL
     Value: !Sub "https://${TariffApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
   CustomDomainUrl:
+    Condition: IsLive
     Description: Custom domain URL
     Value: "https://api.openenergy.org.au"

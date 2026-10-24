@@ -86,6 +86,19 @@ sam deploy --template-file .aws-sam/build/template.yaml \
   --no-fail-on-empty-changeset
 ```
 
+A non-live stack for testing deploy changes takes `Environment=trial`: no custom domain,
+certificate or DNS records, and an alarm named after the stack. Remove it when done.
+
+```bash
+sam deploy --template-file .aws-sam/build/template.yaml \
+  --stack-name oec-tariff-service-trial \
+  --parameter-overrides Environment=trial \
+  --region ap-southeast-2 \
+  --capabilities CAPABILITY_IAM \
+  --resolve-s3
+sam delete --stack-name oec-tariff-service-trial --region ap-southeast-2
+```
+
 ## License
 
 MIT
