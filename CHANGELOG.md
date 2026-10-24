@@ -5,6 +5,11 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
+## [0.7.1] - 2026-10-24
+
+### Changed
+- Deployment pipeline updated; the API is unchanged.
+
 ## [0.7.0] - 2026-10-24
 
 ### Added
