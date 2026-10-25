@@ -21,7 +21,7 @@ Org rules that apply to this repo:
 
 | Org rule | Replaced here by |
 |---|---|
-| `branching-strategy.md#milestone-releases`: tag the merge commit `vX.Y.Z` | Tag `X.Y.Z` without `v`, continuing tags `0.5.0` to `0.6.1`. Founder exception: `governance/adr/cross-project.md#2026-10-21-tariff-service-keeps-xyz-tags` |
+| `branching-strategy.md#milestone-releases`: tag the merge commit `vX.Y.Z` | Tag `X.Y.Z` without `v`, continuing tags `0.5.0` to `0.6.1`. Maintainer exception: `governance/adr/cross-project.md#2026-10-21-tariff-service-keeps-xyz-tags` |
 
 ## Before every commit
 
@@ -32,7 +32,7 @@ Org rules that apply to this repo:
 - Seed values cite the knowledge entry they were checked against
   (`knowledge/documents/<dnsp>/` in the OEC root).
 - A new dependency declares MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC or LGPL. Any
-  other licence, or none, stops the work until the founder decides.
+  other licence, or none, stops the work until the maintainer decides.
 - Code copied from an external source carries a comment at the point of use citing the
   source and its licence.
 
