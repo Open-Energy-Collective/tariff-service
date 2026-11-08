@@ -1,12 +1,14 @@
 """API endpoint tests."""
 
+from datetime import date
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.database import engine
 from app.main import app
-from app.models.tariff import Dnsp, Tariff, TariffDemand
+from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffRate
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Health
@@ -220,6 +222,8 @@ def test_current_rate_negative_offset(client):
         params={"dnsp": "energex", "tariff": "T12A", "datetime": "2026-07-19T21:30:00-06:00"},
     )
     assert response.status_code == 200
+    # 03:30 UTC on 20 July is 13:30 in Brisbane.
+    assert response.json()["period"] == "off_peak"
 
 
 @pytest.mark.parametrize(
@@ -503,12 +507,12 @@ def test_ausgrid_demand_window_outside_hours(client):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SA Power Networks — Solar Sponge + Peak 17:00-21:00
+# SA Power Networks: solar sponge, off-peak, peak all other times
 # ─────────────────────────────────────────────────────────────────────────────
 
 
 def test_sapn_peak(client):
-    """19:00 should be peak (17:00-21:00)."""
+    """19:00 is peak, the catch-all."""
     response = client.get(
         "/api/v1/calculate/current-rate",
         params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T19:00:00+09:30"},
@@ -520,7 +524,7 @@ def test_sapn_peak(client):
 
 
 def test_sapn_solar_sponge(client):
-    """12:00 should be solar_sponge (10:00-15:00)."""
+    """12:00 is solar_sponge (10:00-16:00)."""
     response = client.get(
         "/api/v1/calculate/current-rate",
         params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T12:00:00+09:30"},
@@ -531,20 +535,20 @@ def test_sapn_solar_sponge(client):
     assert data["rate"] == 0.0535
 
 
-def test_sapn_shoulder(client):
-    """08:00 should be shoulder (06:00-10:00)."""
+def test_sapn_morning_is_peak(client):
+    """08:00 falls in no listed window, so the peak catch-all applies. RTOU has no shoulder."""
     response = client.get(
         "/api/v1/calculate/current-rate",
         params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T08:00:00+09:30"},
     )
     assert response.status_code == 200
     data = response.json()
-    assert data["period"] == "shoulder"
-    assert data["rate"] == 0.1067
+    assert data["period"] == "peak"
+    assert data["rate"] == 0.2133
 
 
 def test_sapn_off_peak(client):
-    """03:00 should be off-peak (01:00-06:00)."""
+    """03:00 is off-peak (00:00-06:00)."""
     response = client.get(
         "/api/v1/calculate/current-rate",
         params={"dnsp": "sapn", "tariff": "RTOU", "datetime": "2026-07-20T03:00:00+09:30"},
@@ -552,7 +556,7 @@ def test_sapn_off_peak(client):
     assert response.status_code == 200
     data = response.json()
     assert data["period"] == "off_peak"
-    assert data["rate"] == 0.0535
+    assert data["rate"] == 0.1067
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -784,3 +788,98 @@ def test_openapi_documents_calculate_errors(client, path):
         }
     detail = spec["components"]["schemas"]["ErrorResponse"]["properties"]["detail"]
     assert detail["description"]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Tariff version selection (#51)
+# ─────────────────────────────────────────────────────────────────────────────
+
+OLD, CURRENT, FUTURE = 1.0, 2.0, 3.0
+
+
+@pytest.fixture
+def versioned_tariff():
+    """Energex V1: three versions told apart by their supply charge and energy rate."""
+    with Session(engine) as session:
+        energex = session.query(Dnsp).filter_by(code="energex").one()
+        for supply, start, end in [
+            (OLD, "2025-07-01", "2026-07-01"),
+            (CURRENT, "2026-07-01", None),
+            (FUTURE, "2027-07-01", None),
+        ]:
+            tariff = Tariff(
+                dnsp_id=energex.id,
+                code="V1",
+                name="Versioned",
+                tariff_type="flat",
+                effective_from=start,
+                effective_to=end,
+                daily_supply_charge=supply,
+            )
+            session.add(tariff)
+            session.flush()
+            session.add(
+                TariffRate(
+                    tariff_id=tariff.id,
+                    period_name="anytime",
+                    rate=supply,
+                    start_time="00:00",
+                    end_time="00:00",
+                    days="all",
+                    season="all",
+                )
+            )
+        session.commit()
+
+
+def set_today(monkeypatch, today: date) -> None:
+    class FixedDate(date):
+        @classmethod
+        def today(cls):
+            return today
+
+    monkeypatch.setattr("app.services.tariff_service.date", FixedDate)
+
+
+@pytest.mark.parametrize(
+    ("today", "supply"),
+    [
+        (date(2026, 6, 30), OLD),  # last day of the old version
+        (date(2026, 7, 1), CURRENT),  # effective_to is exclusive, effective_from inclusive
+        (date(2027, 6, 30), CURRENT),
+        (date(2027, 7, 1), FUTURE),  # two versions in force: the newest wins
+    ],
+)
+def test_detail_selects_the_version_in_force(client, versioned_tariff, monkeypatch, today, supply):
+    set_today(monkeypatch, today)
+    response = client.get("/api/v1/tariffs/energex/V1")
+    assert response.status_code == 200
+    assert response.json()["daily_supply_charge"] == supply
+
+
+def test_detail_404_before_the_first_version(client, versioned_tariff, monkeypatch):
+    set_today(monkeypatch, date(2025, 6, 30))
+    assert client.get("/api/v1/tariffs/energex/V1").status_code == 404
+
+
+def test_list_shows_only_the_version_in_force(client, versioned_tariff, monkeypatch):
+    set_today(monkeypatch, date(2026, 8, 1))
+    listed = [t for t in client.get("/api/v1/tariffs/energex").json() if t["code"] == "V1"]
+    assert [t["effective_from"] for t in listed] == ["2026-07-01"]
+
+
+def test_history_returns_every_version_newest_first(client, versioned_tariff):
+    history = client.get("/api/v1/tariffs/energex/V1/history").json()
+    assert [t["effective_from"] for t in history] == ["2027-07-01", "2026-07-01", "2025-07-01"]
+
+
+@pytest.mark.xfail(reason="#50: version selection uses today, not the requested date", strict=True)
+def test_current_rate_uses_the_version_in_force_at_the_requested_time(
+    client, versioned_tariff, monkeypatch
+):
+    set_today(monkeypatch, date(2026, 8, 1))
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "V1", "datetime": "2026-01-15T12:00:00+10:00"},
+    )
+    assert response.json()["rate"] == OLD
