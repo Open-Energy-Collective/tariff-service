@@ -332,9 +332,10 @@ def season_runs(months: list[int] | None) -> list[tuple[int, int]]:
     return runs
 
 
-def local(tz: str, year: int, month: int, weekday: int, hhmm: str) -> str:
+def local(tz: str, month: int, weekday: int, hhmm: str) -> str:
     """ISO datetime with the zone's offset: the first given weekday of a month at hh:mm."""
-    first = datetime(year, month, 1)
+    # A month of the 2026-27 tariff year, which the seed versions are in force for.
+    first = datetime(2027 if month < 7 else 2026, month, 1)
     day = first + timedelta(days=(weekday - first.weekday()) % 7)
     hour, minute = map(int, hhmm.split(":"))
     return day.replace(hour=hour, minute=minute, tzinfo=ZoneInfo(tz)).isoformat()
@@ -369,12 +370,12 @@ def test_sweep_window_edges(seed_client, dnsp, code, tz, demand):
     start, end = demand["window_start"], demand["window_end"]
     if start == end:  # anytime window
         for hhmm in ("00:00", "12:00", "23:59"):
-            assert in_window(seed_client, dnsp, code, local(tz, 2026, month, wd, hhmm))
+            assert in_window(seed_client, dnsp, code, local(tz, month, wd, hhmm))
         return
-    assert in_window(seed_client, dnsp, code, local(tz, 2026, month, wd, start))
-    assert not in_window(seed_client, dnsp, code, local(tz, 2026, month, wd, end))
+    assert in_window(seed_client, dnsp, code, local(tz, month, wd, start))
+    assert not in_window(seed_client, dnsp, code, local(tz, month, wd, end))
     before = minus_one_minute(start)
-    assert not in_window(seed_client, dnsp, code, local(tz, 2026, month, wd, before))
+    assert not in_window(seed_client, dnsp, code, local(tz, month, wd, before))
 
 
 @pytest.mark.parametrize(("dnsp", "code", "tz", "demand"), DEMAND_TARIFFS, ids=SWEEP_IDS)
@@ -383,12 +384,12 @@ def test_sweep_season_edges(seed_client, dnsp, code, tz, demand):
     wd = in_season_weekday(demand)
     start = demand["window_start"]
     for first, last in season_runs(demand["season_months"]):
-        assert in_window(seed_client, dnsp, code, local(tz, 2026, first, wd, start))
-        assert in_window(seed_client, dnsp, code, local(tz, 2026, last, wd, start))
+        assert in_window(seed_client, dnsp, code, local(tz, first, wd, start))
+        assert in_window(seed_client, dnsp, code, local(tz, last, wd, start))
         if demand["season_months"]:
             before, after = (first - 2) % 12 + 1, last % 12 + 1
-            assert not in_window(seed_client, dnsp, code, local(tz, 2026, before, wd, start))
-            assert not in_window(seed_client, dnsp, code, local(tz, 2026, after, wd, start))
+            assert not in_window(seed_client, dnsp, code, local(tz, before, wd, start))
+            assert not in_window(seed_client, dnsp, code, local(tz, after, wd, start))
 
 
 @pytest.mark.parametrize(("dnsp", "code", "tz", "demand"), DEMAND_TARIFFS, ids=SWEEP_IDS)
@@ -397,8 +398,8 @@ def test_sweep_day_type(seed_client, dnsp, code, tz, demand):
     month = season_runs(demand["season_months"])[0][0]
     start = demand["window_start"]
     days = demand["days"]
-    wednesday = local(tz, 2026, month, 2, start)
-    saturday = local(tz, 2026, month, 5, start)
+    wednesday = local(tz, month, 2, start)
+    saturday = local(tz, month, 5, start)
     assert in_window(seed_client, dnsp, code, wednesday) is (days not in ("weekend", "weekends"))
     assert in_window(seed_client, dnsp, code, saturday) is (days not in ("weekday", "weekdays"))
 

@@ -442,7 +442,7 @@ def test_ausgrid_off_peak_in_shoulder_month(client):
     """April 18:00 is off-peak (shoulder month, no peak applies)."""
     response = client.get(
         "/api/v1/calculate/current-rate",
-        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-04-20T18:00:00+10:00"},
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2027-04-19T18:00:00+10:00"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -454,7 +454,7 @@ def test_ausgrid_off_peak_in_may(client):
     """May 17:00 is off-peak (May is shoulder month, no peak)."""
     response = client.get(
         "/api/v1/calculate/current-rate",
-        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2026-05-15T17:00:00+10:00"},
+        params={"dnsp": "ausgrid", "tariff": "EA025", "datetime": "2027-05-14T17:00:00+10:00"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -488,7 +488,7 @@ def test_ausgrid_demand_window_shoulder_month(client):
     """April 18:00 — demand window NOT active (shoulder month)."""
     response = client.get(
         "/api/v1/calculate/current-rate",
-        params={"dnsp": "ausgrid", "tariff": "EA116", "datetime": "2026-04-20T18:00:00+10:00"},
+        params={"dnsp": "ausgrid", "tariff": "EA116", "datetime": "2027-04-19T18:00:00+10:00"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -873,7 +873,6 @@ def test_history_returns_every_version_newest_first(client, versioned_tariff):
     assert [t["effective_from"] for t in history] == ["2027-07-01", "2026-07-01", "2025-07-01"]
 
 
-@pytest.mark.xfail(reason="#50: version selection uses today, not the requested date", strict=True)
 def test_current_rate_uses_the_version_in_force_at_the_requested_time(
     client, versioned_tariff, monkeypatch
 ):
@@ -883,3 +882,38 @@ def test_current_rate_uses_the_version_in_force_at_the_requested_time(
         params={"dnsp": "energex", "tariff": "V1", "datetime": "2026-01-15T12:00:00+10:00"},
     )
     assert response.json()["rate"] == OLD
+
+
+@pytest.mark.parametrize(
+    ("at", "rate"),
+    [
+        # 23:59 on 30 June and 00:30 on 1 July in Brisbane, each given in another offset.
+        ("2026-06-30T13:59:00+00:00", OLD),
+        ("2026-06-30T14:30:00+00:00", CURRENT),
+        ("2026-07-01T00:30:00", CURRENT),  # no offset: DNSP local time
+        ("2027-07-15T12:00:00+10:00", FUTURE),
+    ],
+)
+def test_current_rate_selects_version_on_the_dnsp_local_date(client, versioned_tariff, at, rate):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "V1", "datetime": at},
+    )
+    assert response.status_code == 200
+    assert response.json()["rate"] == rate
+
+
+def test_current_rate_404_before_the_first_version(client, versioned_tariff):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "energex", "tariff": "V1", "datetime": "2025-06-30T12:00:00+10:00"},
+    )
+    assert response.status_code == 404
+
+
+def test_current_rate_unknown_dnsp_is_404(client):
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "nope", "tariff": "T12A", "datetime": "2026-07-20T12:00:00+10:00"},
+    )
+    assert response.status_code == 404

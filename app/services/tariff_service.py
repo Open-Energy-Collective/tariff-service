@@ -30,9 +30,16 @@ def get_tariffs_for_dnsp(db: Session, dnsp_code: str) -> list[Tariff]:
     )
 
 
-def get_tariff_detail(db: Session, dnsp_code: str, tariff_code: str) -> Tariff | None:
-    """Return full tariff detail (current active version) with all relationships loaded."""
-    today = date.today().isoformat()
+def get_dnsp(db: Session, dnsp_code: str) -> Dnsp | None:
+    """Return one DNSP by code."""
+    return db.execute(select(Dnsp).where(Dnsp.code == dnsp_code)).scalars().first()
+
+
+def get_tariff_detail(
+    db: Session, dnsp_code: str, tariff_code: str, on: date | None = None
+) -> Tariff | None:
+    """Return the tariff version in force on a date (default today), relationships loaded."""
+    day = (on or date.today()).isoformat()
     result = db.execute(
         select(Tariff)
         .join(Dnsp)
@@ -44,8 +51,8 @@ def get_tariff_detail(db: Session, dnsp_code: str, tariff_code: str) -> Tariff |
         )
         .where(Dnsp.code == dnsp_code)
         .where(Tariff.code == tariff_code)
-        .where(Tariff.effective_from <= today)
-        .where((Tariff.effective_to.is_(None)) | (Tariff.effective_to > today))
+        .where(Tariff.effective_from <= day)
+        .where((Tariff.effective_to.is_(None)) | (Tariff.effective_to > day))
         .order_by(Tariff.effective_from.desc())
     )
     return result.scalars().first()

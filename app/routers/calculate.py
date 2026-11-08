@@ -20,7 +20,7 @@ from app.services.rate_calculator import (
     get_current_rate,
     is_in_demand_window,
 )
-from app.services.tariff_service import get_tariff_detail
+from app.services.tariff_service import get_dnsp, get_tariff_detail
 
 router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
 
@@ -54,18 +54,20 @@ def current_rate(
         alias="datetime",
         description=(
             "ISO 8601 datetime, e.g. '2026-07-20T17:30:00+10:00'. Resolved in the "
-            "DNSP's local time; a value without an offset is taken as that local time."
+            "DNSP's local time; a value without an offset is taken as that local time. "
+            "The tariff version in force on that local date is used."
         ),
         json_schema_extra={"example": "2026-07-20T17:30:00+10:00"},
     ),
     db: Session = Depends(get_db),
 ) -> CurrentRateResponse:
     """Get the active rate for a given DNSP, tariff, and datetime."""
-    tariff_obj = get_tariff_detail(db, dnsp, tariff)
-    if not tariff_obj:
-        raise HTTPException(
-            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
-        )
+    not_found = HTTPException(
+        status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+    )
+    dnsp_obj = get_dnsp(db, dnsp)
+    if not dnsp_obj:
+        raise not_found
 
     try:
         parsed_dt = datetime.fromisoformat(dt.replace(" ", "+"))
@@ -76,9 +78,12 @@ def current_rate(
     if parsed_dt.tzinfo is not None:
         # Resolve in the DNSP's local time; a naive datetime already is (#39).
         try:
-            parsed_dt = parsed_dt.astimezone(ZoneInfo(tariff_obj.dnsp.timezone))
+            parsed_dt = parsed_dt.astimezone(ZoneInfo(dnsp_obj.timezone))
         except OverflowError:
             raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
+    tariff_obj = get_tariff_detail(db, dnsp, tariff, on=parsed_dt.date())
+    if not tariff_obj:
+        raise not_found
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
     in_window = is_in_demand_window(tariff_obj.demand, parsed_dt)
 
