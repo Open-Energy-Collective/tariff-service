@@ -4,9 +4,11 @@
 2. The API returns what seed/*.json holds, field for field.
 3. Each DNSP's time zone is stated here, independently of the seed.
 4. Known defects are strict xfails linked to their issue, so a fix reports as XPASS.
+5. Energy rates and supply charges match the 2026-27 sources, one tariff per DNSP and type.
 """
 
 import json
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -264,3 +266,272 @@ def test_a180_does_not_report_off_peak_outside_its_window(seed_client):
 def test_ea029_does_not_report_a_zero_rate_as_success(seed_client):
     response = current_rate(seed_client, "ausgrid", "EA029")
     assert (response.status_code, response.json().get("period")) != (200, "unknown")
+
+
+# ── 5. Source-checked energy rates and supply charges ──
+
+# Sources are knowledge/documents/<entry> in the OEC root, ex GST. Expected values are
+# written in the source's own units and were read from the source, not from the seed.
+# CitiPower, Powercor and United Energy have no captured 2026-27 rates (#46).
+AUSGRID = "ausgrid/2026-10-21-network-price-list-2026-27.pdf"
+AUSNET = "ausnet/2026-10-21-network-tariff-schedule-2026-27.xlsx, sheet Network 2026-27"
+ENDEAVOUR = "endeavour-energy/2026-10-21-network-price-list-2026-27.pdf"
+ENERGEX = "energex/2026-10-21-network-price-list-2026-27.xlsx"
+ESSENTIAL = "essential-energy/2026-10-21-price-list-explanatory-notes-2026-27.pdf"
+EVOENERGY = "evoenergy/2026-10-21-schedule-of-charges-2026-27.pdf, excluding metering"
+JEMENA = "jemena/2026-10-21-network-tariff-schedule-2026-27.pdf"
+POWERWATER = "power-and-water/2026-10-21-network-tariffs-2026-27.pdf"
+SAPN = "sa-power-networks/2026-10-21-tariff-price-list-2026-27.pdf, Table 1"
+
+
+def cents(value: float) -> float:
+    return value / 100
+
+
+def per_year(value: float) -> float:
+    return value / 365
+
+
+@dataclass(frozen=True)
+class SourcePrices:
+    dnsp: str
+    code: str
+    entry: str
+    supply: float  # $/day
+    rates: tuple[tuple[str, float], ...]  # (period, $/kWh)
+    export: tuple[float, float] | None = None  # (credit, charge) in $/kWh
+    defect: str | None = None
+
+
+def flat(dnsp, code, entry, supply, rate, period="anytime"):
+    return SourcePrices(dnsp, code, entry, supply, ((period, rate),))
+
+
+SOURCE_PRICES = [
+    flat("ausgrid", "EA010", AUSGRID, cents(50.8550), cents(12.7029)),
+    SourcePrices(
+        "ausgrid",
+        "EA025",
+        AUSGRID,
+        cents(63.2330),
+        (("peak", cents(32.5164)), ("off_peak", cents(5.3570))),
+    ),
+    SourcePrices(
+        "ausgrid",
+        "EA116",
+        AUSGRID,
+        cents(67.0054),
+        (("peak", cents(2.8061)), ("off_peak", cents(2.8061))),
+    ),
+    SourcePrices("ausgrid", "EA029", AUSGRID, 0.0, (), export=(cents(3.8551), cents(1.2320))),
+    flat("ausgrid", "EA030", AUSGRID, cents(1.4842), cents(2.9657)),
+    flat("ausnet", "NEE11", AUSNET, per_year(145.30522), cents(13.42965)),
+    SourcePrices(
+        "ausnet",
+        "NASS11",
+        AUSNET,
+        per_year(145.30522),
+        (("peak", cents(26.95562)), ("solar_soak", cents(1)), ("off_peak", cents(5.32994))),
+    ),
+    SourcePrices(
+        "ausnet",
+        "RCER11",
+        AUSNET,
+        per_year(145.30522),
+        (("peak", cents(26.95562)), ("solar_soak", cents(1)), ("off_peak", cents(5.32994))),
+        export=(cents(10), cents(1)),
+        defect="#53: export terms not seeded",
+    ),
+    flat("ausnet", "NEE33", AUSNET, 0.0, cents(4.90046)),
+    SourcePrices(
+        "ausnet",
+        "NASN12",
+        AUSNET,
+        per_year(148.93785),
+        (("anytime", cents(16.79589)),),
+        defect="#52: seeded with the NEE11 rate",
+    ),
+    flat("endeavour", "N70", ENDEAVOUR, cents(70.1921), cents(12.0348)),
+    SourcePrices(
+        "endeavour",
+        "N71",
+        ENDEAVOUR,
+        cents(70.1921),
+        (
+            ("peak", cents(23.4471)),
+            ("peak", cents(15.2042)),
+            ("solar_soak", cents(4.5355)),
+            ("off_peak", cents(11.7340)),
+        ),
+    ),
+    SourcePrices(
+        "endeavour",
+        "N72",
+        ENDEAVOUR,
+        cents(70.1921),
+        (("solar_soak", cents(4.5355)), ("anytime", cents(10.1466))),
+    ),
+    flat("endeavour", "N50", ENDEAVOUR, cents(11.8721), cents(4.8190)),
+    flat("energex", "8400", ENERGEX, 0.994, 0.09391),
+    SourcePrices(
+        "energex",
+        "6900",
+        ENERGEX,
+        0.774,
+        (("peak", 0.19533), ("shoulder", 0.06069), ("off_peak", 0.00434)),
+    ),
+    SourcePrices(
+        "energex",
+        "3900",
+        ENERGEX,
+        0.574,
+        (("peak", 0.02533), ("shoulder", 0.06069), ("off_peak", 0.00434)),
+    ),
+    flat("energex", "9100", ENERGEX, 0.0, 0.02675, period="controlled_load"),
+    flat("energex", "8300", ENERGEX, 10.44, 0.03365),
+    SourcePrices(
+        "energex",
+        "96200",
+        ENERGEX,
+        0.651,
+        (("peak", 0.19533), ("shoulder", 0.06069), ("off_peak", 0.00434)),
+        export=(0.12195, 0.0221),
+    ),
+    SourcePrices(
+        "essential",
+        "BLNRSS2",
+        ESSENTIAL,
+        1.4704,
+        (("peak", cents(17.9566)), ("off_peak", cents(6.3275))),
+    ),
+    SourcePrices(
+        "essential",
+        "BLND1AR",
+        ESSENTIAL,
+        1.4704,
+        (("peak", cents(10.8399)), ("shoulder", cents(7.3713)), ("off_peak", cents(4.3811))),
+    ),
+    flat("essential", "BLNC1AU", ESSENTIAL, 0.1338, cents(3.5046)),
+    SourcePrices(
+        "evoenergy",
+        "017",
+        EVOENERGY,
+        cents(39.331),
+        (("peak", cents(19.084)), ("solar_soak", cents(4.814)), ("off_peak", cents(7.386))),
+    ),
+    SourcePrices(
+        "evoenergy",
+        "023",
+        EVOENERGY,
+        cents(39.391),
+        (("solar_soak", cents(4.665)), ("off_peak", cents(6.569))),
+    ),
+    flat("evoenergy", "060", EVOENERGY, 0.0, cents(5.413)),
+    flat("jemena", "A100", JEMENA, per_year(120.774), cents(9.486)),
+    SourcePrices(
+        "jemena",
+        "A130",
+        JEMENA,
+        per_year(120.754),
+        (("peak", cents(18.208)), ("solar_soak", cents(1)), ("off_peak", cents(4.551))),
+    ),
+    SourcePrices(
+        "jemena",
+        "A10E",
+        JEMENA,
+        per_year(121.014),
+        (("peak", cents(18.208)), ("solar_soak", cents(1)), ("off_peak", cents(4.551))),
+        export=(cents(15), cents(3)),
+    ),
+    flat("jemena", "A180", JEMENA, 0.0, cents(4.252), period="off_peak"),
+    SourcePrices(
+        "jemena",
+        "A230",
+        JEMENA,
+        per_year(494.463),
+        (("peak", cents(9.809)), ("off_peak", cents(3.442))),
+    ),
+    flat("powerwater", "T1", POWERWATER, 2.4599, 0.0659),
+    SourcePrices(
+        "powerwater",
+        "T3A",
+        POWERWATER,
+        2.4596,
+        (("peak", 0.1968), ("solar_soak", 0.0592), ("off_peak", 0.0592)),
+    ),
+    flat("powerwater", "T5", POWERWATER, 108.0677, 0.0295),
+    flat("sapn", "RSR", SAPN, 0.6553, 0.1634),
+    SourcePrices(
+        "sapn",
+        "RTOU",
+        SAPN,
+        0.6553,
+        (("peak", 0.2133), ("off_peak", 0.1067), ("solar_sponge", 0.0535)),
+    ),
+    SourcePrices(
+        "sapn",
+        "MBTOUD",
+        SAPN,
+        1.5082,
+        (("peak", 0.2073), ("off_peak", 0.0780), ("shoulder", 0.1442)),
+    ),
+]
+
+SEED_ROUNDING = 6e-6  # the seed holds 5 decimal places
+
+
+def source_params():
+    for case in SOURCE_PRICES:
+        marks = [pytest.mark.xfail(reason=case.defect, strict=True)] if case.defect else []
+        yield pytest.param(case, id=f"{case.dnsp}-{case.code}", marks=marks)
+
+
+@pytest.mark.parametrize("case", source_params())
+def test_prices_match_the_source(seed_client, case):
+    body = seed_client.get(f"/api/v1/tariffs/{case.dnsp}/{case.code}").json()
+
+    assert body["daily_supply_charge"] == pytest.approx(case.supply, abs=SEED_ROUNDING)
+    seeded = sorted({(r["period"], r["rate"]) for r in body["rates"]})
+    expected = sorted(case.rates)
+    assert [period for period, _ in seeded] == [period for period, _ in expected]
+    assert [rate for _, rate in seeded] == pytest.approx(
+        [rate for _, rate in expected], abs=SEED_ROUNDING
+    )
+    if case.export:
+        assert [(e["credit_rate"], e["charge_rate"]) for e in body["export"]] == [
+            pytest.approx(case.export, abs=SEED_ROUNDING)
+        ]
+
+
+def test_each_dnsp_and_type_with_captured_rates_has_a_source_check():
+    covered = {
+        (c.dnsp, t["tariff_type"])
+        for c in SOURCE_PRICES
+        for t in SEED_TARIFFS
+        if (t["dnsp"], t["code"]) == (c.dnsp, c.code)
+    }
+    unpriced = {"citipower", "powercor", "united_energy"}
+    assert {
+        (t["dnsp"], t["tariff_type"]) for t in SEED_TARIFFS if t["dnsp"] not in unpriced
+    } == covered
+
+
+# ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.pdf, time of use tariff:
+# from 1 July 2024 peak 3pm-9pm all days, November to March and June to August.
+AUSGRID_HIGH_SEASON = {1, 2, 3, 6, 7, 8, 11, 12}
+
+
+@pytest.mark.parametrize("month", range(1, 13))
+def test_ea025_peak_only_in_the_source_high_season(seed_client, month):
+    year = 2027 if month < 7 else 2026
+    period = current_rate(seed_client, "ausgrid", "EA025", f"{year}-{month:02d}-15T18:00:00")
+    assert period.json()["period"] == ("peak" if month in AUSGRID_HIGH_SEASON else "off_peak")
+
+
+@pytest.mark.parametrize(
+    ("hhmm", "period"),
+    [("14:59", "off_peak"), ("15:00", "peak"), ("20:59", "peak"), ("21:00", "off_peak")],
+)
+def test_ea025_peak_window_matches_the_source(seed_client, hhmm, period):
+    response = current_rate(seed_client, "ausgrid", "EA025", f"2026-07-18T{hhmm}:00")
+    assert response.json()["period"] == period
