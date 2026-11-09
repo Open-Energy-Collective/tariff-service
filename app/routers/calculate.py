@@ -38,7 +38,13 @@ def _errors(bad_request: str) -> dict:
 @router.get(
     "/current-rate",
     response_model=CurrentRateResponse,
-    responses=_errors("Invalid datetime, or outside the supported date range"),
+    responses={
+        **_errors("Invalid datetime, or outside the supported date range"),
+        404: {
+            "model": ErrorResponse,
+            "description": "Tariff not found for the DNSP, or no version in force on that date",
+        },
+    },
 )
 def current_rate(
     dnsp: str = Query(

@@ -204,9 +204,18 @@ class CurrentRateResponse(BaseModel):
     tariff: str = Field(description="Tariff code")
     datetime: str = Field(description="The datetime used for calculation")
     period: str = Field(
-        description="Active rate period at this time: 'peak', 'off_peak', 'shoulder', 'anytime'"
+        description=(
+            "Active rate period at this time: 'peak', 'off_peak', 'shoulder', 'anytime', "
+            "or 'none' when no single rate is in force"
+        )
     )
-    rate: float = Field(description="Energy rate in $/kWh for this period")
+    rate: float | None = Field(
+        description=(
+            "Energy rate in $/kWh for this period. Null when period is 'none': the time is "
+            "outside the tariff's rate windows, the tariff has no energy rates, or the rate "
+            "depends on consumption"
+        )
+    )
     in_demand_window: bool = Field(
         description=(
             "Whether the given datetime falls within the demand measurement window. "

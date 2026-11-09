@@ -1,6 +1,6 @@
 """The real seed through seed/build_db.py and the API (#51).
 
-1. Every tariff resolves to exactly one rate at every half hour.
+1. Every tariff resolves to exactly one rate at every half hour, or to a defined gap.
 2. The API returns what seed/*.json holds, field for field.
 3. Each DNSP's time zone is stated here, independently of the seed.
 4. Known defects are strict xfails linked to their issue, so a fix reports as XPASS.
@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from app.database import Base
 from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffExport, TariffRate
 from app.services.rate_calculator import (
+    get_current_rate,
     is_day_match,
     is_in_time_window,
     is_season_match,
@@ -41,19 +42,18 @@ def tariff_id(tariff: dict) -> str:
 
 # ── 1. Every half hour resolves to one rate ──
 
-# No rate matches, or the rate depends on row order. Each is a defect with an issue.
-UNRESOLVED = {
-    ("ausgrid", "EA029"): "#49: no energy rates seeded",
-    ("endeavour", "N90"): "#47: two all-day block rates, the block depends on consumption",
-    ("jemena", "A180"): "#48: no rate outside 23:00-07:00",
+# Times with no rate in force: current-rate reports period "none" and a null rate
+# (governance/adr/cross-project.md, 2026-11-09). Any other tariff has one rate at all times.
+NO_RATE_AT = {
+    ("ausgrid", "EA029"): lambda at: True,  # #49: export terms only, no energy rates
+    ("endeavour", "N90"): lambda at: True,  # #47: the block depends on consumption
+    ("jemena", "A180"): lambda at: 7 <= at.hour < 23,  # #48: one rate, 23:00-07:00
 }
 
 
 def sweep_params():
     for tariff in SEED_TARIFFS:
-        reason = UNRESOLVED.get((tariff["dnsp"], tariff["code"]))
-        marks = [pytest.mark.xfail(reason=reason, strict=True)] if reason else []
-        yield pytest.param(tariff["dnsp"], tariff["code"], id=tariff_id(tariff), marks=marks)
+        yield pytest.param(tariff["dnsp"], tariff["code"], id=tariff_id(tariff))
 
 
 def sample_days() -> list[datetime]:
@@ -83,7 +83,8 @@ def matching_rates(tariff: Tariff, at: datetime) -> list[TariffRate]:
 
 
 @pytest.mark.parametrize(("dnsp", "code"), sweep_params())
-def test_every_half_hour_has_exactly_one_rate(seed_engine, dnsp, code):
+def test_every_half_hour_has_exactly_one_rate_or_a_defined_gap(seed_engine, dnsp, code):
+    no_rate_at = NO_RATE_AT.get((dnsp, code))
     with Session(seed_engine) as session:
         tariff = session.execute(
             select(Tariff).join(Dnsp).where(Dnsp.code == dnsp, Tariff.code == code)
@@ -91,8 +92,13 @@ def test_every_half_hour_has_exactly_one_rate(seed_engine, dnsp, code):
         for day in sample_days():
             for i in range(48):
                 at = day + timedelta(minutes=30 * i)
+                resolved = get_current_rate(tariff, at)
+                if no_rate_at is not None and no_rate_at(at):
+                    assert resolved == ("none", None), f"{at:%a %m-%d %H:%M}: {resolved}"
+                    continue
                 found = [(r.period_name, r.rate) for r in matching_rates(tariff, at)]
                 assert len(found) == 1, f"{at:%a %m-%d %H:%M}: {found}"
+                assert resolved == found[0], f"{at:%a %m-%d %H:%M}: {resolved}"
 
 
 # ── 2. The API returns what the seed holds ──
@@ -257,15 +263,33 @@ def test_victorian_residential_tou_has_a_saver_period(seed_client, dnsp, tariff)
     assert current_rate(seed_client, dnsp, tariff).json()["period"] == "saver"
 
 
-@pytest.mark.xfail(reason="#48: the no-match fallback reports the first rate", strict=True)
-def test_a180_does_not_report_off_peak_outside_its_window(seed_client):
-    assert current_rate(seed_client, "jemena", "A180").json().get("period") != "off_peak"
+def assert_no_rate_in_force(response) -> None:
+    assert response.status_code == 200
+    body = response.json()
+    assert (body["period"], body["rate"]) == ("none", None)
 
 
-@pytest.mark.xfail(reason="#49: a tariff with no energy rates returns 200 and zero", strict=True)
-def test_ea029_does_not_report_a_zero_rate_as_success(seed_client):
-    response = current_rate(seed_client, "ausgrid", "EA029")
-    assert (response.status_code, response.json().get("period")) != (200, "unknown")
+def test_a180_reports_no_rate_outside_its_window(seed_client):
+    assert_no_rate_in_force(current_rate(seed_client, "jemena", "A180"))
+
+
+def test_a180_reports_its_rate_inside_its_window(seed_client):
+    body = current_rate(seed_client, "jemena", "A180", "2026-11-11T23:30:00+11:00").json()
+    assert (body["period"], body["rate"]) == ("off_peak", 0.04252)
+
+
+def test_ea029_reports_no_rate_in_force(seed_client):
+    assert_no_rate_in_force(current_rate(seed_client, "ausgrid", "EA029"))
+
+
+@pytest.mark.parametrize("at", [NOON, "2026-07-15T02:00:00+10:00"])
+def test_n90_reports_no_single_rate_because_the_block_depends_on_consumption(seed_client, at):
+    assert_no_rate_in_force(current_rate(seed_client, "endeavour", "N90", at))
+
+
+def test_n90_still_lists_both_blocks(seed_client):
+    rates = seed_client.get("/api/v1/tariffs/endeavour/N90").json()["rates"]
+    assert {r["period"] for r in rates} == {"block_1", "block_2"}
 
 
 # ── 5. Source-checked energy rates and supply charges ──
