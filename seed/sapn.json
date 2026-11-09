@@ -26,7 +26,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -40,7 +40,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": null,
+          "credit_window_start": null,
+          "credit_window_end": null,
+          "credit_season_months": null,
+          "charge_rate": 0.0075,
+          "charge_window_start": null,
+          "charge_window_end": null,
+          "charge_season_months": null,
+          "free_threshold_kwh": 11.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",
@@ -52,7 +65,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -84,7 +97,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": null,
+          "credit_window_start": null,
+          "credit_window_end": null,
+          "credit_season_months": null,
+          "charge_rate": 0.01,
+          "charge_window_start": "10:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": 9.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",
@@ -96,7 +122,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-23T00:00:00+10:30",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -128,7 +154,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": 0.1322,
+          "credit_window_start": "17:00",
+          "credit_window_end": "21:00",
+          "credit_season_months": [1, 2, 3, 11, 12],
+          "charge_rate": 0.01,
+          "charge_window_start": "10:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": 9.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",
@@ -140,7 +179,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-07-20T00:00:00+09:30",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -154,7 +193,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": null,
+          "credit_window_start": null,
+          "credit_window_end": null,
+          "credit_season_months": null,
+          "charge_rate": 0.0075,
+          "charge_window_start": null,
+          "charge_window_end": null,
+          "charge_season_months": null,
+          "free_threshold_kwh": 11.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",
@@ -166,7 +218,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -227,7 +279,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": null,
+          "credit_window_start": null,
+          "credit_window_end": null,
+          "credit_season_months": null,
+          "charge_rate": 0.01,
+          "charge_window_start": "10:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": 9.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",
@@ -239,7 +304,7 @@
       "effective_to": null,
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-23T00:00:00+10:30",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "demand": null,
       "rates": [
@@ -280,7 +345,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": 0.1322,
+          "credit_window_start": "17:00",
+          "credit_window_end": "21:00",
+          "credit_season_months": [1, 2, 3, 11, 12],
+          "charge_rate": 0.01,
+          "charge_window_start": "10:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": 9.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",
@@ -292,7 +370,7 @@
       "effective_to": null,
       "daily_supply_charge": 1.5082,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA (0.0861 $/kVA/day); rolling 12-month peak (annual charge on the highest 30-minute demand interval in the last 12 months); seeded as 2.583 $/kW/month (0.0861 x 30) on the billing month's highest 30-minute interval, any time, all year.",
       "demand": {
@@ -361,7 +439,20 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [
+        {
+          "credit_rate": null,
+          "credit_window_start": null,
+          "credit_window_end": null,
+          "credit_season_months": null,
+          "charge_rate": 0.01,
+          "charge_window_start": "10:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": null,
+          "free_threshold_kwh": 9.0,
+          "days": "all"
+        }
+      ]
     },
     {
       "dnsp": "sapn",

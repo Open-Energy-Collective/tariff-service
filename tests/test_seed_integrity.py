@@ -523,6 +523,37 @@ def test_rcer11_export_windows_match_the_source(seed_client):
     assert export["days"] == "all"
 
 
+# sa-power-networks/2026-10-21-tariff-price-list-2026-27.pdf Table 1 (rates) and
+# 2026-10-21-customer-overview-2026-27.pdf Tables 2 and 4 (windows, allowances), 0-30 kW export.
+SAPN_SOLAR_SPONGE = ("10:00", "16:00")
+SAPN_NOV_MAR = [1, 2, 3, 11, 12]
+SAPN_EXPORTS = [
+    ("RSR", 0.0075, (None, None), 11.0, None),
+    ("BSR", 0.0075, (None, None), 11.0, None),
+    ("RTOU", 0.0100, SAPN_SOLAR_SPONGE, 9.0, None),
+    ("SBTOU", 0.0100, SAPN_SOLAR_SPONGE, 9.0, None),
+    ("MBTOUD", 0.0100, SAPN_SOLAR_SPONGE, 9.0, None),
+    ("RESELE", 0.0100, SAPN_SOLAR_SPONGE, 9.0, 0.1322),
+    ("SBELE", 0.0100, SAPN_SOLAR_SPONGE, 9.0, 0.1322),
+]
+
+
+@pytest.mark.parametrize(("code", "charge", "window", "free", "credit"), SAPN_EXPORTS)
+def test_sapn_exports_match_the_source(seed_client, code, charge, window, free, credit):
+    exports = seed_client.get(f"/api/v1/tariffs/sapn/{code}").json()["export"]
+    assert len(exports) == 1
+    export = exports[0]
+    assert export["charge_rate"] == charge
+    assert (export["charge_window_start"], export["charge_window_end"]) == window
+    assert export["free_threshold_kwh"] == free
+    assert export["credit_rate"] == credit
+    assert (export["credit_window_start"], export["credit_window_end"]) == (
+        ("17:00", "21:00") if credit else (None, None)
+    )
+    assert export["credit_season_months"] == (SAPN_NOV_MAR if credit else None)
+    assert export["days"] == "all"
+
+
 # ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.pdf, time of use tariff:
 # from 1 July 2024 peak 3pm-9pm all days, November to March and June to August.
 AUSGRID_HIGH_SEASON = {1, 2, 3, 6, 7, 8, 11, 12}

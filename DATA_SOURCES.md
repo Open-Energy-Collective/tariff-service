@@ -183,6 +183,12 @@ From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (
 - **RESELE**: peak 5pm–9pm (17:00–21:00) all days, solar sponge 10am–4pm (10:00–16:00) all days, shoulder all other times (the 14 hours outside peak and solar sponge); no off-peak (customer overview Table 2)
 - **SBELE**: peak 5pm–9pm all days, shoulder 7am–10am and 4pm–5pm workdays, off-peak all other times (customer overview Table 4). Off-peak $0.1072/kWh and shoulder $0.1875/kWh, from the Off-Peak and Shoulder columns of the NUoS schedule (Table 9)
 
+Exports, 0-30 kW export capacity (price list Table 1; overview Tables 2 and 4):
+- **RSR, BSR**: charge 0.75 c/kWh above 11 kWh per day
+- **RTOU, SBTOU, MBTOUD**: charge 1 c/kWh 10am–4pm above 9 kWh per day
+- **RESELE, SBELE**: as RTOU, plus credit 13.22 c/kWh 5pm–9pm November–March
+- Rollover of unused allowance within a billing period is not seeded (#31)
+
 Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT).
 
 ---
