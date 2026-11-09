@@ -253,6 +253,10 @@ Residential ToU (NASS11, RCER11):
 - **Solar Soak**: 11am–4pm every day (1 c/kWh)
 - **Off-peak**: All other times
 
+Export (RCER11, sheet "Tariff structures", structure 20):
+- **Export charge**: 11am–4pm every day, 1 c/kWh above a basic export level of 1 kWh per day
+- **Export reward**: 4pm–9pm every day, 10 c/kWh
+
 Business ToU (NAST12):
 - **Peak**: 7am–11pm weekdays
 - **Off-peak**: All other times
@@ -260,6 +264,7 @@ Business ToU (NAST12):
 Demand (NASN12):
 - **Demand window**: 3pm–9pm (15:00–21:00) weekdays, December to March (sheet "Tariff structures", structure 15)
 - **Off-peak season** (April to November): 2.862 $/kW/month, not seeded (one demand rate per tariff)
+- **Energy**: anytime 16.796 c/kWh (sheet "Network 2026-27")
 
 ---
 

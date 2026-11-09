@@ -340,7 +340,6 @@ SOURCE_PRICES = [
         per_year(145.30522),
         (("peak", cents(26.95562)), ("solar_soak", cents(1)), ("off_peak", cents(5.32994))),
         export=(cents(10), cents(1)),
-        defect="#53: export terms not seeded",
     ),
     flat("ausnet", "NEE33", AUSNET, 0.0, cents(4.90046)),
     SourcePrices(
@@ -349,7 +348,6 @@ SOURCE_PRICES = [
         AUSNET,
         per_year(148.93785),
         (("anytime", cents(16.79589)),),
-        defect="#52: seeded with the NEE11 rate",
     ),
     flat("endeavour", "N70", ENDEAVOUR, cents(70.1921), cents(12.0348)),
     SourcePrices(
@@ -514,6 +512,15 @@ def test_each_dnsp_and_type_with_captured_rates_has_a_source_check():
     assert {
         (t["dnsp"], t["tariff_type"]) for t in SEED_TARIFFS if t["dnsp"] not in unpriced
     } == covered
+
+
+def test_rcer11_export_windows_match_the_source(seed_client):
+    """AusNet workbook, sheet Tariff structures, structure 20, local time, every day."""
+    export = seed_client.get("/api/v1/tariffs/ausnet/RCER11").json()["export"][0]
+    assert (export["charge_window_start"], export["charge_window_end"]) == ("11:00", "16:00")
+    assert (export["credit_window_start"], export["credit_window_end"]) == ("16:00", "21:00")
+    assert export["free_threshold_kwh"] == 1  # the basic export level, kWh per day
+    assert export["days"] == "all"
 
 
 # ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.pdf, time of use tariff:
