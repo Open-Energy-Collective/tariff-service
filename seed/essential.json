@@ -321,7 +321,7 @@
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
       "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Demand checked 2026-11-10 against knowledge/documents/essential-energy/2026-10-21-price-list-explanatory-notes-2026-27 (p 1: peak 12.0390 $/kVA/month; s 4: peak 17:00-20:00 weekdays, times unchanged on a weekday public holiday; s 6: monthly maximum 30-minute clocked kVA). Shoulder 10.8924 $/kVA/month (07:00-17:00 and 20:00-22:00 weekdays) and off-peak 2.8541 $/kVA/month (22:00-07:00 weekdays and all weekend) are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#62).",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/essential-energy/2026-10-21-price-list-explanatory-notes-2026-27 (p 1: peak 12.0390 $/kVA/month; s 4: peak 17:00-20:00 weekdays, times unchanged on a weekday public holiday; s 6: monthly maximum 30-minute clocked kVA). Shoulder 10.8924 $/kVA/month (07:00-17:00 and 20:00-22:00 weekdays) and off-peak 2.8541 $/kVA/month (22:00-07:00 weekdays and all weekend) are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70).",
       "demand_charges": [
         {
           "period": "peak",
@@ -393,7 +393,7 @@
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
       "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Demand checked 2026-11-10 against knowledge/documents/essential-energy/2026-10-21-price-list-explanatory-notes-2026-27 (p 1: peak 11.5026 $/kVA/month; s 4: peak 17:00-20:00 weekdays, times unchanged on a weekday public holiday; s 6: monthly maximum 30-minute clocked kVA). Shoulder 10.4071 $/kVA/month (07:00-17:00 and 20:00-22:00 weekdays) and off-peak 3.1143 $/kVA/month (22:00-07:00 weekdays and all weekend) are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#62).",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/essential-energy/2026-10-21-price-list-explanatory-notes-2026-27 (p 1: peak 11.5026 $/kVA/month; s 4: peak 17:00-20:00 weekdays, times unchanged on a weekday public holiday; s 6: monthly maximum 30-minute clocked kVA). Shoulder 10.4071 $/kVA/month (07:00-17:00 and 20:00-22:00 weekdays) and off-peak 3.1143 $/kVA/month (22:00-07:00 weekdays and all weekend) are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70).",
       "demand_charges": [
         {
           "period": "peak",
@@ -465,7 +465,7 @@
       "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
       "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Demand checked 2026-11-10 against knowledge/documents/essential-energy/2026-10-21-price-list-explanatory-notes-2026-27 (p 1: peak 4.4388 $/kVA/month; s 4: peak 17:00-20:00 weekdays, times unchanged on a weekday public holiday; s 6: monthly maximum 30-minute clocked kVA). Shoulder 3.1645 $/kVA/month (07:00-17:00 and 20:00-22:00 weekdays) and off-peak 1.2614 $/kVA/month (22:00-07:00 weekdays and all weekend) are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#62).",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/essential-energy/2026-10-21-price-list-explanatory-notes-2026-27 (p 1: peak 4.4388 $/kVA/month; s 4: peak 17:00-20:00 weekdays, times unchanged on a weekday public holiday; s 6: monthly maximum 30-minute clocked kVA). Shoulder 3.1645 $/kVA/month (07:00-17:00 and 20:00-22:00 weekdays) and off-peak 1.2614 $/kVA/month (22:00-07:00 weekdays and all weekend) are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70).",
       "demand_charges": [
         {
           "period": "peak",

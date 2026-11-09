@@ -616,7 +616,7 @@ def test_demand_charges_match_source(seed_client, dnsp, code):
     assert sorted(map(as_charge, charges)) == sorted(expected)
 
 
-# Source charges the model cannot hold yet, so the seed leaves them out (#62).
+# Source charges the model cannot hold yet, so the seed leaves them out (#70).
 WEEKEND_HOLIDAY_GAP = (
     "a weekends window that runs on weekend public holidays and not on weekday ones "
     "has no public_holidays value"
@@ -625,7 +625,7 @@ TWO_WINDOW_GAP = "one charge measured over two windows has no single row"
 UNHELD_CHARGES = [
     pytest.param(
         "essential", code, period, rate,
-        marks=pytest.mark.xfail(reason=f"#62: {why}", strict=True),
+        marks=pytest.mark.xfail(reason=f"#70: {why}", strict=True),
         id=f"essential-{code}-{period}",
     )
     for code, shoulder, off_peak in (
@@ -642,7 +642,7 @@ UNHELD_CHARGES = [
     pytest.param(
         "energex", "7200", "shoulder", 4.08,
         marks=pytest.mark.xfail(
-            reason=f"#62: shoulder 13:00-17:00 and 20:00-11:00 weekdays, 13:00-11:00 weekends: "
+            reason=f"#70: shoulder 13:00-17:00 and 20:00-11:00 weekdays, 13:00-11:00 weekends: "
             f"{TWO_WINDOW_GAP}; {WEEKEND_HOLIDAY_GAP}",
             strict=True,
         ),
@@ -658,7 +658,7 @@ def test_source_charge_the_model_cannot_hold(seed_client, dnsp, code, period, ra
 
 
 @pytest.mark.xfail(
-    reason="#62: LBAD peak demand is the highest daily average in the window, "
+    reason="#70: LBAD peak demand is the highest daily average in the window, "
     "which no measurement_method value names",
     strict=True,
 )

@@ -139,7 +139,7 @@ PSO-Int (interval meter, default for new connections):
 - **Shoulder**: 7am–5pm (07:00–17:00) and 8pm–10pm (20:00–22:00) weekdays
 - **Off-peak**: All other times (including all weekend)
 - **Public holidays**: times are unchanged when a public holiday falls on a weekday (`public_holidays` `included`)
-- **Demand**: priced per kVA per month (`unit` `kVA`), on the maximum 30-minute clocked kVA in the month. BLND3AO, BHND3AO and BSSD3AO also have shoulder and off-peak demand charges. They are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#62)
+- **Demand**: priced per kVA per month (`unit` `kVA`), on the maximum 30-minute clocked kVA in the month. BLND3AO, BHND3AO and BSSD3AO also have shoulder and off-peak demand charges. They are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70)
 
 Sun Soaker (SS) tariffs:
 - **Peak**: 7am–10am and 3pm–10pm all days
@@ -182,7 +182,7 @@ From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (
 - **RTOU**: off-peak 12am–6am (00:00–06:00), solar sponge 10am–4pm (10:00–16:00), peak all other times; no shoulder
 - **SBTOU, MBTOUD**: peak 5pm–9pm all days November–March; shoulder 7am–5pm workdays November–March and 7am–9pm workdays April–October; off-peak all other times
 - **MBTOUD demand**: anytime, per kVA, highest 30-min interval in the last 12 months (`peak_period` `rolling_12_months`)
-- **LBAD**: energy peak 7am–9pm workdays, off-peak all other times. Peak demand per kVA, 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays), on the highest daily average demand of the last 12 months and billed all year. No `measurement_method` value names a daily average, so the seeded `30min_max` stands (#62). Anytime demand 0.0630 $/kVA/day (1.89 $/kVA/month) on the highest 30-min interval of the last 12 months
+- **LBAD**: energy peak 7am–9pm workdays, off-peak all other times. Peak demand per kVA, 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays), on the highest daily average demand of the last 12 months and billed all year. No `measurement_method` value names a daily average, so the seeded `30min_max` stands (#70). Anytime demand 0.0630 $/kVA/day (1.89 $/kVA/month) on the highest 30-min interval of the last 12 months
 
 - **RESELE**: peak 5pm–9pm (17:00–21:00) all days, solar sponge 10am–4pm (10:00–16:00) all days, shoulder all other times (the 14 hours outside peak and solar sponge); no off-peak (customer overview Table 2)
 - **SBELE**: peak 5pm–9pm all days, shoulder 7am–10am and 4pm–5pm workdays, off-peak all other times (customer overview Table 4). Off-peak $0.1072/kWh and shoulder $0.1875/kWh, from the Off-Peak and Shoulder columns of the NUoS schedule (Table 9)
@@ -515,13 +515,13 @@ Business ToU demand (3800, 7200), from the Energex Network Tariff Guide 2026-27 
 - **Shoulder**: 1pm–5pm and 8pm–11am weekdays, 1pm–11am weekends
 - **Off-peak**: 11am–1pm (11:00–13:00) every day
 - **Public holidays**: weekdays and weekends each include the public holidays that fall on them
-- **7200 demand**: $/kVA/month by default; the kW variant (15.459 $/kW/month peak) is seeded. The shoulder demand charge is not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#62). Off-peak demand is 0
+- **7200 demand**: $/kVA/month by default; the kW variant (15.459 $/kW/month peak) is seeded on purpose, because OEC measures and plans in kW (decided 2026-11-10). The shoulder demand charge is not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70). Off-peak demand is 0
 
 Small Demand (8300): anytime demand on the highest 30-minute kVA in the month, priced per kVA (`unit` `kVA`).
 
 ## Time Basis and Public Holidays
 
-- **Time basis**: every tariff version carries `time_basis`. `local` windows follow the distributor's clock with daylight saving. `standard` windows follow standard time all year. Jemena A180 is the only `standard` tariff, from its AEST window. Every other tariff is `local`, and the audit of each DNSP is tracked in issue #56.
+- **Time basis**: every tariff version carries `time_basis`. `local` windows follow the distributor's clock with daylight saving. `standard` windows follow standard time all year. Jemena A180 is the only `standard` tariff, from its AEST window. Every other tariff is `local`, and the check of each DNSP against its source is tracked in issue #68.
 - **Public holidays**: looked up by the DNSP's state with the `holidays` Python package (MIT, pinned in `pyproject.toml`), state-wide only. The captured price lists do not name a holiday list, so regional holidays are not modelled.
 - **Treatment**: `public_holidays` on a weekday or weekend window is `excluded` (the window does not apply on a holiday) or `included` (a weekday window applies on a weekday holiday only, a weekend window applies on any holiday). Ausgrid, Endeavour, CitiPower, Powercor and United Energy weekdays are `excluded`, Power and Water weekdays are `included`. Essential and Energex sources keep weekday times on a weekday holiday, so their weekdays are `included`. The AusNet and Evoenergy sources state no treatment for their weekday demand windows, which keep the seeded `included`. Other weekday windows are not checked against their sources here.
 - **Prices expected until**: `prices_expected_until` is 2027-07-01 on every seeded tariff, the day after the 2026-27 price lists end and the next annual price change.

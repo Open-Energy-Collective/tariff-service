@@ -506,7 +506,7 @@
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
       "last_verified": "2026-11-10T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "notes": "Demand checked 2026-11-10 against knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27 (Table 5 and Table 9): peak annual demand 0.3408 $/kVA/day (x 30) on the highest daily average demand of the last 12 months in 17:00-21:00 all days, November to March (non-CBD), billed all year; anytime annual demand 0.0630 $/kVA/day (x 30) on the highest 30-minute demand interval of the last 12 months. The peak charge keeps measurement_method 30min_max: no value names a daily average (#62). CBD sites (LBADCBD) use an 11:00-17:00 workday peak window instead.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27 (Table 5 and Table 9): peak annual demand 0.3408 $/kVA/day (x 30) on the highest daily average demand of the last 12 months in 17:00-21:00 all days, November to March (non-CBD), billed all year; anytime annual demand 0.0630 $/kVA/day (x 30) on the highest 30-minute demand interval of the last 12 months. The peak charge keeps measurement_method 30min_max: no value names a daily average (#70). CBD sites (LBADCBD) use an 11:00-17:00 workday peak window instead.",
       "demand_charges": [
         {
           "period": "peak",
