@@ -917,3 +917,98 @@ def test_current_rate_unknown_dnsp_is_404(client):
         params={"dnsp": "nope", "tariff": "T12A", "datetime": "2026-07-20T12:00:00+10:00"},
     )
     assert response.status_code == 404
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Demand windows use the version in force on each local date (#55)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.fixture
+def demand_versions():
+    """Energex DW has 17:00-20:00 to 30 June 2026, then 18:00-21:00. DA is all day in both."""
+    with Session(engine) as session:
+        energex = session.query(Dnsp).filter_by(code="energex").one()
+        for code, start, end, window_start, window_end in [
+            ("DW", "2025-07-01", "2026-07-01", "17:00", "20:00"),
+            ("DW", "2026-07-01", None, "18:00", "21:00"),
+            ("DA", "2025-07-01", "2026-07-01", "00:00", "00:00"),
+            ("DA", "2026-07-01", None, "00:00", "00:00"),
+        ]:
+            tariff = Tariff(
+                dnsp_id=energex.id,
+                code=code,
+                name="Versioned demand",
+                tariff_type="demand",
+                effective_from=start,
+                effective_to=end,
+                daily_supply_charge=1.0,
+            )
+            session.add(tariff)
+            session.flush()
+            session.add(
+                TariffDemand(
+                    tariff_id=tariff.id,
+                    rate=10.0,
+                    window_start=window_start,
+                    window_end=window_end,
+                    measurement_method="peak_kw",
+                )
+            )
+        session.commit()
+
+
+def demand_windows_for(client, tariff: str, start: str, end: str):
+    return client.get(
+        "/api/v1/calculate/demand-windows",
+        params={
+            "dnsp": "energex",
+            "tariff": tariff,
+            "start": f"{start}T00:00:00+10:00",
+            "end": f"{end}T00:00:00+10:00",
+        },
+    )
+
+
+def window(day: str, start: str, end: str) -> dict:
+    return {"start": f"{day}T{start}:00+10:00", "end": f"{day}T{end}:00+10:00"}
+
+
+def test_demand_windows_use_the_version_of_the_requested_range(
+    client, demand_versions, monkeypatch
+):
+    set_today(monkeypatch, date(2026, 8, 1))
+    response = demand_windows_for(client, "DW", "2026-06-15", "2026-06-16")
+    assert response.status_code == 200
+    assert response.json()["windows"] == [window("2026-06-15", "17:00", "20:00")]
+
+
+def test_demand_windows_use_a_version_not_yet_in_force_today(client, demand_versions, monkeypatch):
+    set_today(monkeypatch, date(2026, 6, 1))
+    response = demand_windows_for(client, "DW", "2026-08-03", "2026-08-04")
+    assert response.json()["windows"] == [window("2026-08-03", "18:00", "21:00")]
+
+
+def test_demand_windows_range_across_two_versions_uses_each_days_version(client, demand_versions):
+    response = demand_windows_for(client, "DW", "2026-06-30", "2026-07-02")
+    assert response.json()["windows"] == [
+        window("2026-06-30", "17:00", "20:00"),
+        window("2026-07-01", "18:00", "21:00"),
+    ]
+
+
+def test_demand_windows_merge_across_a_version_boundary(client, demand_versions):
+    response = demand_windows_for(client, "DA", "2026-06-30", "2026-07-02")
+    assert response.json()["windows"] == [
+        {"start": "2026-06-30T00:00:00+10:00", "end": "2026-07-02T00:00:00+10:00"}
+    ]
+
+
+def test_demand_windows_404_when_no_version_covers_the_range(client, demand_versions):
+    response = demand_windows_for(client, "DW", "2025-06-01", "2025-06-02")
+    assert response.status_code == 404
+
+
+def test_demand_windows_skip_days_before_the_first_version(client, demand_versions):
+    response = demand_windows_for(client, "DW", "2025-06-30", "2025-07-02")
+    assert response.json()["windows"] == [window("2025-07-01", "17:00", "20:00")]

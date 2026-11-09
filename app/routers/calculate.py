@@ -16,11 +16,15 @@ from app.schemas.tariff import (
 )
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
-    demand_windows,
     get_current_rate,
     is_in_demand_window,
 )
-from app.services.tariff_service import get_dnsp, get_tariff_detail
+from app.services.tariff_service import (
+    demand_windows_in_force,
+    get_dnsp,
+    get_tariff_detail,
+    get_tariff_history,
+)
 
 router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
 
@@ -173,10 +177,16 @@ def _parse_aware(name: str, value: str) -> datetime:
 @router.get(
     "/demand-windows",
     response_model=DemandWindowsResponse,
-    responses=_errors(
-        "Invalid or naive datetime, end not after start, range over 31 days, "
-        "or outside the supported date range"
-    ),
+    responses={
+        **_errors(
+            "Invalid or naive datetime, end not after start, range over 31 days, "
+            "or outside the supported date range"
+        ),
+        404: {
+            "model": ErrorResponse,
+            "description": "Tariff not found for the DNSP, or no version in force in the range",
+        },
+    },
 )
 def demand_windows_in_range(
     dnsp: str = Query(
@@ -201,13 +211,14 @@ def demand_windows_in_range(
 
     Windows are resolved in the DNSP's local time by the rules of
     `/calculate/current-rate`'s `in_demand_window`: half-open, clipped to the
-    range, sorted and merged, each bound in the DNSP's local offset.
+    range, sorted and merged, each bound in the DNSP's local offset. Each local
+    date uses the tariff version in force on that date.
     """
-    tariff_obj = get_tariff_detail(db, dnsp, tariff)
-    if not tariff_obj:
-        raise HTTPException(
-            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
-        )
+    not_found = HTTPException(
+        status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+    )
+    if not get_tariff_history(db, dnsp, tariff):
+        raise not_found
 
     range_start = _parse_aware("start", start)
     range_end = _parse_aware("end", end)
@@ -218,11 +229,13 @@ def demand_windows_in_range(
             status_code=400, detail="Range from start to end must be at most 31 days"
         )
 
-    tz = ZoneInfo(tariff_obj.dnsp.timezone)
+    tz = ZoneInfo(get_dnsp(db, dnsp).timezone)
     try:
-        spans = demand_windows(tariff_obj.demand, tz, range_start, range_end)
+        spans = demand_windows_in_force(db, dnsp, tariff, tz, range_start, range_end)
     except OverflowError:
         raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
+    if spans is None:
+        raise not_found
     return DemandWindowsResponse(
         dnsp=dnsp,
         tariff=tariff,
