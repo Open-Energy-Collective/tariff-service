@@ -23,6 +23,16 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 - No field is removed. `demand` is unchanged and is due for removal in a later release. Read
   `demand_charges` instead.
 
+### Fixed
+- Every seeded demand charge is checked against its 2026-27 source. Endeavour's seven demand tariffs,
+  Evoenergy 023 and Power and Water T5 and T6 gain their low-season or off-season charge, Evoenergy 023
+  its 21:00-09:00 off-peak charge and SA Power Networks LBAD its anytime charge, so `in_demand_window`
+  is true in those windows.
+- Ausgrid EA305, EA310, EA370 and EA390, Endeavour N19, N29 and N39, Energex 8300, Essential's five
+  demand tariffs, Evoenergy 101, Power and Water T5 and T6 and SA Power Networks MBTOUD and LBAD are
+  priced per kVA. Ausgrid EA302 to EA390, Jemena A230 and SA Power Networks MBTOUD and LBAD charge on
+  the peak of the last 12 months. `demand` is unchanged for every tariff.
+
 ## [0.8.0] - 2026-11-09
 
 ### Breaking

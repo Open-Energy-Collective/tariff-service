@@ -73,8 +73,9 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.574,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (peak demand 7 $/kW/month) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3: the single highest 30-minute average kW in 16:00-21:00, weekdays and weekends).",
       "demand_charges": [
         {
           "period": "peak",
@@ -262,8 +263,9 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.986,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (peak demand 7 $/kW/month) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3 and Table 6: the single highest 30-minute average kW in 17:00-20:00 weekdays; weekdays include public holidays).",
       "demand_charges": [
         {
           "period": "peak",
@@ -379,9 +381,9 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 9.257,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA by default (peak 13.913 $/kVA/month; kW variant 15.459 $/kW/month when the meter cannot publish kVA); extra demand charges, shoulder demand 3.672 $/kVA/month (4.08 $/kW/month) in 13:00-17:00 and 20:00-11:00 weekdays and 13:00-11:00 weekends, off-peak demand 0; seeded as the kW peak demand charge only, 15.459 $/kW/month 17:00-20:00 weekdays.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (peak demand 13.913 $/kVA/month or 15.459 $/kW/month, shoulder demand 3.672 $/kVA/month or 4.08 $/kW/month, off-peak demand 0) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3 and Table 6: kVA by default, the kW variant when the meter cannot publish kVA; single highest 30-minute average; peak 17:00-20:00 weekdays, weekdays include public holidays; shoulder 13:00-17:00 and 20:00-11:00 weekdays and 13:00-11:00 weekends; off-peak 11:00-13:00 every day). Seeded as the kW variant's peak charge. The shoulder charge is not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#62). The off-peak demand charge is 0.",
       "demand_charges": [
         {
           "period": "peak",
@@ -440,14 +442,14 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 10.44,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): anytime demand priced per kVA (13.913 $/kVA/month on the highest 30-minute kVA in the month; no kW version); seeded as 13.913 $/kW/month.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (anytime demand 13.913 $/kVA/month) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3: the single highest 30-minute kVA in the month; no kW version).",
       "demand_charges": [
         {
           "period": "anytime",
           "rate": 13.913,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "00:00",
           "end": "00:00",
           "days": "all",

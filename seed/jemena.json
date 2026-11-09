@@ -229,9 +229,9 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 1.35469,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand is the rolling 12-month peak (maximum level of the last 12 months, any time, 77.889 $/kW p.a.); seeded as 6.49075 $/kW/month (77.889 / 12) at any time with measurement_method rolling_12month_max as a label only, which the rate calculator does not apply.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/jemena/2026-10-21-network-tariff-schedule-2026-27: 77.889 $/kW p.a. (/ 12), charging window any time (local time), on the maximum level of the last 12 months. The schedule states no measurement interval; measurement_method rolling_12month_max is kept as seeded.",
       "demand_charges": [
         {
           "period": "anytime",
@@ -242,7 +242,7 @@
           "days": "all",
           "months": null,
           "measurement_method": "rolling_12month_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [

@@ -399,20 +399,20 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 1.5082,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-11-09T00:00:00+10:30",
+      "last_verified": "2026-11-10T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (0.0861 $/kVA/day); rolling 12-month peak (annual charge on the highest 30-minute demand interval in the last 12 months); seeded as 2.583 $/kW/month (0.0861 x 30) on the billing month's highest 30-minute interval, any time, all year.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27 (Table 4 and Table 9): annual demand 0.0861 $/kVA/day (x 30) on the highest 30-minute demand interval of the last 12 months, with no time window or season.",
       "demand_charges": [
         {
           "period": "anytime",
           "rate": 2.583,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "00:00",
           "end": "00:00",
           "days": "all",
           "months": null,
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [
@@ -504,14 +504,14 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 8.6002,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (peak 0.3408 $/kVA/day); rolling 12-month peak (highest daily average demand in the 17:00-21:00 window, November to March, over the last 12 months, billed all year round); extra demand charge (anytime 0.0630 $/kVA/day on the highest 30-minute interval in the last 12 months, any time, all year); seeded as 10.224 $/kW/month (0.3408 x 30) on the 30-minute maximum 17:00-21:00 all days, charged November to March only, with no anytime charge. CBD sites (LBADCBD) use an 11:00-17:00 workday peak demand window instead.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27 (Table 5 and Table 9): peak annual demand 0.3408 $/kVA/day (x 30) on the highest daily average demand of the last 12 months in 17:00-21:00 all days, November to March (non-CBD), billed all year; anytime annual demand 0.0630 $/kVA/day (x 30) on the highest 30-minute demand interval of the last 12 months. The peak charge keeps measurement_method 30min_max: no value names a daily average (#62). CBD sites (LBADCBD) use an 11:00-17:00 workday peak window instead.",
       "demand_charges": [
         {
           "period": "peak",
           "rate": 10.224,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "17:00",
           "end": "21:00",
           "days": "all",
@@ -523,7 +523,18 @@
             3
           ],
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
+        },
+        {
+          "period": "anytime",
+          "rate": 1.89,
+          "unit": "kVA",
+          "start": "00:00",
+          "end": "00:00",
+          "days": "all",
+          "months": null,
+          "measurement_method": "30min_max",
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [

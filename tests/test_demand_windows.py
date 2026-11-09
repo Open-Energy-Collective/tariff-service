@@ -182,15 +182,34 @@ def test_all_day_window_merges_into_one_span():
     assert demand_windows(t, s, e) == [(s, e, 13.913)]
 
 
-def test_season_months_exclude_out_of_season_days():
-    # Evoenergy 023: 17:00-21:00 all, [6, 7, 8]. 31 Aug to 2 Sep.
+def test_season_months_change_the_rate_at_the_season_edge():
+    # Evoenergy 023: 17:00-21:00 all, 6.5424 in [6, 7, 8] and 3.9249 in the other
+    # months; off-peak 0.6228 21:00-09:00 all year. 31 Aug to 2 Sep.
     t = load_tariff("evoenergy", "023")
     syd = ZoneInfo("Australia/Sydney")
-    got = demand_windows(
-        t, datetime(2026, 8, 31, tzinfo=syd), datetime(2026, 9, 2, tzinfo=syd)
-    )
+
+    def at(day: int, hour: int) -> datetime:
+        return datetime(2026, 8 if day > 2 else 9, day, hour, tzinfo=syd)
+
+    got = demand_windows(t, at(31, 0), at(2, 0))
     assert got == [
-        (datetime(2026, 8, 31, 17, tzinfo=syd), datetime(2026, 8, 31, 21, tzinfo=syd), 6.5424)
+        (at(31, 0), at(31, 9), 0.6228),
+        (at(31, 17), at(31, 21), 6.5424),
+        (at(31, 21), at(1, 9), 0.6228),
+        (at(1, 17), at(1, 21), 3.9249),
+        (at(1, 21), at(2, 0), 0.6228),
+    ]
+
+
+def test_seed_peak_over_anytime_splits_the_day():
+    # SAPN LBAD: peak 10.224 17:00-21:00 all, November to March, over anytime 1.89.
+    t = load_tariff("sapn", "LBAD")
+    adl = ZoneInfo("Australia/Adelaide")
+    s, e = datetime(2026, 11, 1, tzinfo=adl), datetime(2026, 11, 2, tzinfo=adl)
+    assert demand_windows(t, s, e) == [
+        (s, datetime(2026, 11, 1, 17, tzinfo=adl), 1.89),
+        (datetime(2026, 11, 1, 17, tzinfo=adl), datetime(2026, 11, 1, 21, tzinfo=adl), 10.224),
+        (datetime(2026, 11, 1, 21, tzinfo=adl), e, 1.89),
     ]
 
 
@@ -223,7 +242,8 @@ def test_dst_start_all_day_span_changes_offset():
 
 # One case per distinct seed demand shape not covered above: (dnsp file, code,
 # time zone, first local date, days, expected (date, start hour, end hour)).
-# NASN12's 30 November is its off-season charge and 1 December its summer one.
+# NASN12's 30 November is its off-season charge and 1 December its summer one;
+# likewise N72 on 30 October and 2 November, and T5 on 30 September and 1 October.
 # Each range crosses the shape's season edge or a weekend.
 SHAPES = [
     (
@@ -244,7 +264,7 @@ SHAPES = [
     ),
     (
         "endeavour", "N72", "Australia/Sydney", date(2026, 10, 30), 4,
-        [(date(2026, 11, 2), 16, 20)],
+        [(date(2026, 10, 30), 16, 20), (date(2026, 11, 2), 16, 20)],
     ),
     (
         "energex", "3900", "Australia/Brisbane", date(2026, 10, 24), 1,
@@ -256,11 +276,7 @@ SHAPES = [
     ),
     (
         "powerwater", "T5", "Australia/Darwin", date(2026, 9, 30), 2,
-        [(date(2026, 10, 1), 15, 21)],
-    ),
-    (
-        "sapn", "LBAD", "Australia/Adelaide", date(2026, 10, 31), 2,
-        [(date(2026, 11, 1), 17, 21)],
+        [(date(2026, 9, 30), 15, 21), (date(2026, 10, 1), 15, 21)],
     ),
 ]
 

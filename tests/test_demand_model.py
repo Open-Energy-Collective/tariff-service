@@ -92,7 +92,10 @@ def test_demand_charge_period_follows_the_window(seed_session):
     charges = seed_session.execute(select(TariffDemandCharge)).scalars().all()
     assert charges
     for charge in charges:
-        assert charge.period == ("anytime" if charge.start == charge.end else "peak")
+        if charge.start == charge.end:
+            assert charge.period == "anytime"
+        else:
+            assert charge.period in ("peak", "shoulder", "off_peak")
 
 
 @pytest.mark.parametrize(

@@ -169,6 +169,8 @@ def test_ausgrid_capacity_peak_energy_stays_high_season(code):
 
 @pytest.mark.parametrize("month", range(1, 13))
 def test_evoenergy_023_demand_winter_months(month):
+    """17:00-21:00 charges Seasonal kW Demand (High) in winter and (Low) in the other months."""
     tariff = load_tariff("evoenergy", "023")
-    t = datetime(2026, month, 15, 18)
-    assert in_demand_window(tariff, t) is (month in (6, 7, 8))
+    t = on_clock(tariff, datetime(2026, month, 15, 18))
+    active = [charge.rate for charge, on in demand_charges_at(tariff, t) if on]
+    assert active == [6.5424 if month in (6, 7, 8) else 3.9249]

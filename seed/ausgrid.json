@@ -102,7 +102,7 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.57295,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand_charges": [
         {
@@ -155,7 +155,8 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [],
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (1.4584 c/kW/day high season, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11: 15:00-21:00 all days, November to March and June to August, no demand charge in April, May, September and October). The sources state no measurement interval; 30min_max is kept as seeded."
     },
     {
       "dnsp": "ausgrid",
@@ -169,7 +170,7 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.67005,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand_charges": [
         {
@@ -222,7 +223,8 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [],
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (39.4850 c/kW/day high season, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11: 15:00-21:00 all days, November to March and June to August, no demand charge in April, May, September and October). The sources state no measurement interval; 30min_max is kept as seeded."
     },
     {
       "dnsp": "ausgrid",
@@ -400,7 +402,7 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 2.02108,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand_charges": [
         {
@@ -455,7 +457,8 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [],
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (1.3817 c/kW/day high season, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11: 15:00-21:00 working weekdays, November to March and June to August, no demand charge in April, May, September and October). The sources state no measurement interval; 30min_max is kept as seeded."
     },
     {
       "dnsp": "ausgrid",
@@ -469,7 +472,7 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 2.42179,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-07-20T00:00:00+10:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
       "demand_charges": [
         {
@@ -524,7 +527,8 @@
           "season_months": null
         }
       ],
-      "exports": []
+      "exports": [],
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (44.5311 c/kW/day high season, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11: 15:00-21:00 working weekdays, November to March and June to August, no demand charge in April, May, September and October). The sources state no measurement interval; 30min_max is kept as seeded."
     },
     {
       "dnsp": "ausgrid",
@@ -538,9 +542,9 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 6.5337,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-23T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): capacity charge billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as the monthly 30-min maximum in that window.",
+      "notes": "Capacity checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (48.3397 c/kW/day, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11 note and the capacity charge section: 15:00-21:00 working weekdays all year, on the highest peak-window demand of the prior 12 months). The sources state no measurement interval; 30min_max is kept as seeded.",
       "demand_charges": [
         {
           "period": "peak",
@@ -552,7 +556,7 @@
           "public_holidays": "excluded",
           "months": null,
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [
@@ -599,21 +603,21 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 25.46537,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-23T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (57.7962 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 17.33886 per month applied to the monthly 30-min maximum kW in that window.",
+      "notes": "Capacity checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (57.7962 c/kVA/day, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11 note and the capacity charge section: 15:00-21:00 working weekdays all year, on the highest peak-window demand of the prior 12 months). The sources state no measurement interval; 30min_max is kept as seeded.",
       "demand_charges": [
         {
           "period": "peak",
           "rate": 17.33886,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "15:00",
           "end": "21:00",
           "days": "weekdays",
           "public_holidays": "excluded",
           "months": null,
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [
@@ -660,21 +664,21 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 51.18167,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-23T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (59.5298 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 17.85894 per month applied to the monthly 30-min maximum kW in that window.",
+      "notes": "Capacity checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (59.5298 c/kVA/day, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11 note and the capacity charge section: 15:00-21:00 working weekdays all year, on the highest peak-window demand of the prior 12 months). The sources state no measurement interval; 30min_max is kept as seeded.",
       "demand_charges": [
         {
           "period": "peak",
           "rate": 17.85894,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "15:00",
           "end": "21:00",
           "days": "weekdays",
           "public_holidays": "excluded",
           "months": null,
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [
@@ -721,21 +725,21 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 79.79265,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-23T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (34.6232 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 10.38696 per month applied to the monthly 30-min maximum kW in that window.",
+      "notes": "Capacity checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (34.6232 c/kVA/day, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11 note and the capacity charge section: 15:00-21:00 working weekdays all year, on the highest peak-window demand of the prior 12 months). The sources state no measurement interval; 30min_max is kept as seeded.",
       "demand_charges": [
         {
           "period": "peak",
           "rate": 10.38696,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "15:00",
           "end": "21:00",
           "days": "weekdays",
           "public_holidays": "excluded",
           "months": null,
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [
@@ -782,21 +786,21 @@
       "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 71.89654,
       "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
-      "last_verified": "2026-10-23T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (9.7115 c/kVA/day) and billed on the rolling 12-month peak (maximum demand in the 15:00-21:00 weekday window over the prior 12 months); seeded as 2.91345 per month applied to the monthly 30-min maximum kW in that window.",
+      "notes": "Capacity checked 2026-11-10 against knowledge/documents/ausgrid/2026-10-21-network-price-list-2026-27 (9.7115 c/kVA/day, x 30 / 100) and knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29 (Table 11 note and the capacity charge section: 15:00-21:00 working weekdays all year, on the highest peak-window demand of the prior 12 months). The sources state no measurement interval; 30min_max is kept as seeded.",
       "demand_charges": [
         {
           "period": "peak",
           "rate": 2.91345,
-          "unit": "kW",
+          "unit": "kVA",
           "start": "15:00",
           "end": "21:00",
           "days": "weekdays",
           "public_holidays": "excluded",
           "months": null,
           "measurement_method": "30min_max",
-          "peak_period": "month"
+          "peak_period": "rolling_12_months"
         }
       ],
       "rates": [
