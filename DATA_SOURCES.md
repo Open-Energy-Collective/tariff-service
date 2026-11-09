@@ -270,7 +270,7 @@ Business ToU (NAST12):
 
 Demand (NASN12):
 - **Demand window**: 3pm–9pm (15:00–21:00) weekdays, all year (sheet "Tariff structures", structure 15)
-- **Demand rates**: 11.473 $/kW/month December to March; 2.862 $/kW/month April to November (off-peak season), same window
+- **Demand rates**: two seasons on the same window. 11.473 $/kW/month December to March (`months` 12, 1, 2, 3) and 2.862 $/kW/month April to November (`months` 4 to 11)
 - **Energy**: anytime 16.796 c/kWh (sheet "Network 2026-27")
 
 ---
@@ -509,6 +509,13 @@ Business ToU demand (3800, 7200), from the Energex Network Tariff Guide 2026-27 
 - **7200 demand**: $/kVA/month by default (kW variant seeded), with shoulder and off-peak demand charges the schema cannot hold
 
 Small Demand (8300): anytime demand on the highest 30-minute kVA in the month.
+
+## Time Basis and Public Holidays
+
+- **Time basis**: every tariff version carries `time_basis`. `local` windows follow the distributor's clock with daylight saving. `standard` windows follow standard time all year. Jemena A180 is the only `standard` tariff, from its AEST window. Every other tariff is `local`, and the audit of each DNSP is tracked in issue #56.
+- **Public holidays**: looked up by the DNSP's state with the `holidays` Python package (MIT, pinned in `pyproject.toml`), state-wide only. The captured price lists do not name a holiday list, so regional holidays are not modelled.
+- **Treatment**: `public_holidays` on a weekday or weekend window is `excluded` (the window does not apply on a holiday) or `included`. Ausgrid, Endeavour, CitiPower, Powercor and United Energy weekdays are `excluded`, Power and Water weekdays are `included`, and every other DNSP is `included` pending the source check in issue #62.
+- **Prices expected until**: `prices_expected_until` is 2027-07-01 on every seeded tariff, the day after the 2026-27 price lists end and the next annual price change.
 
 ## Notes
 - **Authoritative source**: Energex Network Price List spreadsheet (AER-approved)

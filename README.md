@@ -47,6 +47,33 @@ Public REST API serving curated Australian DNSP network tariff data, including t
 in force: the time is outside the tariff's rate windows, the tariff has no energy rates, or the
 rate depends on consumption.
 
+### Tariff detail fields
+
+`GET /api/v1/tariffs/{dnsp}/{tariff}` returns these fields in addition to the rates and export terms:
+
+| Field | Meaning |
+|---|---|
+| `demand_charges` | Every demand charge of the tariff. Each has `period`, `rate` ($ per `unit` per month), `unit` (`kW` or `kVA`), `start`, `end`, `days`, `public_holidays`, `months` (null is all year), `measurement_method` and `peak_period` (`month` or `rolling_12_months`). Empty when the tariff has none |
+| `demand` | The highest-rate charge, a tie going to the earliest start. It is unchanged and a later release removes it. Read `demand_charges` instead |
+| `time_basis` | `local` (daylight saving applies) or `standard` (standard time all year). Applies to every energy, demand and export window of the tariff |
+| `prices_expected_until` | Date until which the prices are expected to hold, or null. Informational. It does not change which version is in force |
+| `rates[].public_holidays`, `export[].public_holidays` | `included` or `excluded`, or null for an all-days window. Whether a weekday or weekend window applies on a public holiday |
+| `export[].free_threshold_period`, `export[].free_threshold_rollover` | The period the free export allowance is counted over (`day` or `year`), and whether unused allowance carries over (`none`, `billing_period`, `billing_period_like_days`). Both are null when there is no allowance |
+
+`tariff_type` does not indicate exports. Read the `export` list. The service describes export
+allowances and does not calculate export charges in dollars.
+
+`/api/v1/calculate/current-rate` also returns `demand_charges`: every charge whose `months` cover the
+date, each with `period`, `rate`, `unit`, `peak_period` and `active`. `active` is true only inside the
+charge's window, and `in_demand_window` is true when any entry is active.
+
+`/api/v1/calculate/demand-windows` returns every demand charge in force, and each window has a `rate`.
+Where charges overlap, the higher rate takes the stretch. Adjacent stretches merge only at an equal rate.
+Each date uses the version in force that date.
+
+Windows, months and public holidays are judged on the tariff's `time_basis` clock. A request with no UTC
+offset is read on the distributor's local clock.
+
 ## Data Sources
 
 See `DATA_SOURCES.md` for authoritative tariff data sources and methodology notes.

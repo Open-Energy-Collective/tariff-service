@@ -5,6 +5,24 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
+## [0.9.0] - Unreleased
+
+### Added
+- Tariff detail: `demand_charges` (every demand charge, with seasons, `unit` kW or kVA and `peak_period`),
+  `time_basis`, `prices_expected_until`, `public_holidays` on `rates` and `export`, and
+  `free_threshold_period` and `free_threshold_rollover` on `export`.
+- `/api/v1/calculate/current-rate` returns `demand_charges`, each with `active`.
+- `/api/v1/calculate/demand-windows` returns a `rate` on each window.
+
+### Changed
+- `/api/v1/calculate/current-rate` and `/api/v1/calculate/demand-windows` follow public holidays by the
+  distributor's state where the tariff's windows exclude holidays.
+- Both endpoints judge windows on the tariff's `time_basis`. Jemena A180 is now correct during daylight saving.
+- `/api/v1/calculate/demand-windows` returns every demand charge in force, with higher rates taking overlaps.
+  AusNet NASN12 now has its April to November rate of 2.862 $/kW/month.
+- No field is removed. `demand` is unchanged and is due for removal in a later release. Read
+  `demand_charges` instead.
+
 ## [0.8.0] - 2026-11-09
 
 ### Breaking
