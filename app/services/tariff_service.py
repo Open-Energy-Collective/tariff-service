@@ -77,11 +77,11 @@ def demand_windows_in_force(
         next_day = day + timedelta(days=1)
         version = get_tariff_detail(db, dnsp_code, tariff_code, on=day)
         if version is not None:
-            any_version = True
             day_start = datetime.combine(day, time(0, 0), tzinfo=tz).astimezone(UTC)
             day_end = datetime.combine(next_day, time(0, 0), tzinfo=tz).astimezone(UTC)
             s, e = max(lo, day_start), min(hi, day_end)
             if s < e:
+                any_version = True
                 for window_start, window_end in demand_windows(version.demand, tz, s, e):
                     window_start = window_start.astimezone(UTC)
                     window_end = window_end.astimezone(UTC)

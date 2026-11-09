@@ -1012,3 +1012,17 @@ def test_demand_windows_404_when_no_version_covers_the_range(client, demand_vers
 def test_demand_windows_skip_days_before_the_first_version(client, demand_versions):
     response = demand_windows_for(client, "DW", "2025-06-30", "2025-07-02")
     assert response.json()["windows"] == [window("2025-07-01", "17:00", "20:00")]
+
+
+def test_demand_windows_404_when_the_range_ends_as_the_first_version_starts(
+    client, demand_versions
+):
+    assert demand_windows_for(client, "DW", "2025-06-20", "2025-07-01").status_code == 404
+
+
+def test_demand_windows_unknown_tariff_is_404_before_bad_dates_are_400(client, demand_versions):
+    response = client.get(
+        "/api/v1/calculate/demand-windows",
+        params={"dnsp": "energex", "tariff": "NOPE", "start": "bad", "end": "bad"},
+    )
+    assert response.status_code == 404

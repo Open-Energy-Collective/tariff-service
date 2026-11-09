@@ -274,7 +274,7 @@ def test_a180_reports_no_rate_outside_its_window(seed_client):
 
 
 def test_a180_reports_its_rate_inside_its_window(seed_client):
-    body = current_rate(seed_client, "jemena", "A180", "2026-11-11T23:30:00+11:00").json()
+    body = current_rate(seed_client, "jemena", "A180", "2026-07-15T23:30:00+10:00").json()
     assert (body["period"], body["rate"]) == ("off_peak", 0.04252)
 
 
