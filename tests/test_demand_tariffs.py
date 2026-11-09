@@ -425,7 +425,7 @@ GAP_CASES = [
     pytest.param(
         case,
         id=f"{case.dnsp}-{case.code}",
-        marks=pytest.mark.xfail(reason=f"feat/0.8.0 (#31): {case.schema_gap}", strict=True),
+        marks=pytest.mark.xfail(reason=f"#31: {case.schema_gap}", strict=True),
     )
     for case in SOURCE_CASES
     if case.schema_gap
@@ -437,5 +437,5 @@ def test_demand_tariff_schema_gap(seed_client, case):
     """Each known schema gap reports as xfail. Where the API can show the source's
     off-season demand charge, the test asserts it; strict, so a fix shows as XPASS."""
     if case.off_season_charged is None:
-        pytest.xfail(f"feat/0.8.0 (#31): {case.schema_gap}")
+        pytest.xfail(f"#31: {case.schema_gap}")
     assert in_window(seed_client, case.dnsp, case.code, case.off_season_charged) is True
