@@ -199,6 +199,14 @@ class CurrentRateRequest(BaseModel):
     datetime: str  # ISO 8601
 
 
+class DemandChargeInForce(BaseModel):
+    period: str = Field(description="Demand period, e.g. 'peak'")
+    rate: float = Field(description="Demand charge rate per unit per month")
+    unit: str = Field(description="Billing unit: 'kW' or 'kVA'")
+    peak_period: str = Field(description="Period over which the peak is measured")
+    active: bool = Field(description="Whether the datetime falls inside this charge's window")
+
+
 class CurrentRateResponse(BaseModel):
     dnsp: str = Field(description="DNSP code")
     tariff: str = Field(description="Tariff code")
@@ -221,8 +229,12 @@ class CurrentRateResponse(BaseModel):
             "Whether the given datetime falls within the demand measurement window. "
             "If true, consumption at this time contributes to the monthly peak demand "
             "calculation (which determines the demand charge). "
-            "Only relevant for 'tou_demand' and 'demand' tariff types."
+            "Only relevant for 'tou_demand' and 'demand' tariff types. "
+            "True when any entry of demand_charges is active."
         )
+    )
+    demand_charges: list[DemandChargeInForce] = Field(
+        description="Every demand charge whose months cover the date on the tariff's clock"
     )
     unit: str = Field(default="$/kWh", description="Unit for the rate field")
 

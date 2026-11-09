@@ -18,13 +18,8 @@ from sqlalchemy.orm import Session
 
 from app.database import Base
 from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffExport, TariffRate
-from app.services.rate_calculator import (
-    get_current_rate,
-    is_day_match,
-    is_in_time_window,
-    is_season_match,
-    parse_time,
-)
+from app.services.rate_calculator import get_current_rate
+from app.services.window_match import clock_for, window_applies
 from seed import build_db
 from seed.build_db import populate, validate_tariff_versions
 
@@ -67,19 +62,18 @@ def sample_days() -> list[datetime]:
     return days
 
 
-def matching_rates(tariff: Tariff, at: datetime) -> list[TariffRate]:
-    """The rows that decide the rate at a time: specific windows, else catch-alls."""
-    active = [
-        r
-        for r in tariff.rates
-        if is_day_match(r.days, at.weekday()) and is_season_match(r.season_months, at.month)
-    ]
-    specific = [
-        r
-        for r in active
-        if r.start_time != r.end_time
-        and is_in_time_window(at.time(), parse_time(r.start_time), parse_time(r.end_time))
-    ]
+def matching_rates(tariff: Tariff, instant: datetime) -> list[TariffRate]:
+    """The rows that decide the rate at an instant: specific windows, else catch-alls."""
+    clock = clock_for(tariff)
+
+    def applies(r: TariffRate) -> bool:
+        months = json.loads(r.season_months) if r.season_months else None
+        return window_applies(
+            r.start_time, r.end_time, r.days, r.public_holidays, months, clock, instant
+        )
+
+    active = [r for r in tariff.rates if applies(r)]
+    specific = [r for r in active if r.start_time != r.end_time]
     return specific or [r for r in active if r.start_time == r.end_time]
 
 
@@ -93,11 +87,12 @@ def test_every_half_hour_has_exactly_one_rate_or_a_defined_gap(seed_engine, dnsp
         for day in sample_days():
             for i in range(48):
                 at = day + timedelta(minutes=30 * i)
-                resolved = get_current_rate(tariff, at)
+                instant = clock_for(tariff).instant(at.date(), at.time())
+                resolved = get_current_rate(tariff, instant)
                 if no_rate_at is not None and no_rate_at(at):
                     assert resolved == ("none", None), f"{at:%a %m-%d %H:%M}: {resolved}"
                     continue
-                found = [(r.period_name, r.rate) for r in matching_rates(tariff, at)]
+                found = [(r.period_name, r.rate) for r in matching_rates(tariff, instant)]
                 assert len(found) == 1, f"{at:%a %m-%d %H:%M}: {found}"
                 assert resolved == found[0], f"{at:%a %m-%d %H:%M}: {resolved}"
 

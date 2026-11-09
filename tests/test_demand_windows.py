@@ -7,7 +7,8 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from app.services.rate_calculator import demand_windows, is_in_demand_window
+from app.services.rate_calculator import demand_windows
+from app.services.window_match import TariffClock, window_applies
 from tests.test_seed_data import load_tariff
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
@@ -154,6 +155,13 @@ RANGES = {
         datetime(2026, 5, 1, tzinfo=UTC),
     ),
 }
+
+
+def is_in_demand_window(d, t: datetime) -> bool:
+    """The predicate demand_windows follows: local clock, weekdays, no holidays."""
+    clock = TariffClock(zone=t.tzinfo, basis="local", state="")
+    months = json.loads(d.months) if d.months else None
+    return window_applies(d.start, d.end, d.days, None, months, clock, t)
 
 
 @pytest.mark.parametrize("range_name", RANGES)

@@ -38,6 +38,16 @@ def in_window(client, dnsp: str, code: str, at: str) -> bool:
     return response.json()["in_demand_window"]
 
 
+def charge_active(client, dnsp: str, code: str, at: str, rate: float) -> bool:
+    """Whether the charge with this rate is active at the time; other charges are ignored."""
+    response = client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": dnsp, "tariff": code, "datetime": at},
+    )
+    assert response.status_code == 200
+    return any(c["active"] and c["rate"] == rate for c in response.json()["demand_charges"])
+
+
 def surcharge(client, dnsp: str, code: str, peak_kw: float = PEAK_KW) -> dict:
     response = client.get(
         "/api/v1/calculate/demand-surcharge",
@@ -59,7 +69,7 @@ class SourceCase:
     conversion). window_hours_per_month counts a weekday window as 5/7 of a
     30-day month. inside and outside are local times for /current-rate; an
     anytime window has no outside, so both are inside. schema_gap names what the
-    seed cannot hold (#31); off_season_charged is a local time when
+    seed does not yet hold (#62); off_season_charged is a local time when
     the source charges demand and the seed does not.
     """
 
@@ -120,8 +130,6 @@ SOURCE_CASES = [
         window_hours_per_month=6 * 30 * 5 / 7,
         surcharge_per_kwh=0.08923,
         monthly_charge=57.37,
-        schema_gap="off-peak season rate 2.8622 $/kW/mth (April to November) not held",
-        off_season_charged="2026-07-15T15:00:00+10:00",
     ),
     SourceCase(
         dnsp="endeavour",
@@ -395,8 +403,9 @@ def test_sweep_season_edges(seed_client, dnsp, code, tz, demand):
         assert in_window(seed_client, dnsp, code, local(tz, last, wd, start))
         if demand["season_months"]:
             before, after = (first - 2) % 12 + 1, last % 12 + 1
-            assert not in_window(seed_client, dnsp, code, local(tz, before, wd, start))
-            assert not in_window(seed_client, dnsp, code, local(tz, after, wd, start))
+            rate = demand["rate"]  # a tariff's other season may have its own charge
+            assert not charge_active(seed_client, dnsp, code, local(tz, before, wd, start), rate)
+            assert not charge_active(seed_client, dnsp, code, local(tz, after, wd, start), rate)
 
 
 @pytest.mark.parametrize(("dnsp", "code", "tz", "demand"), DEMAND_TARIFFS, ids=SWEEP_IDS)
@@ -432,7 +441,7 @@ GAP_CASES = [
     pytest.param(
         case,
         id=f"{case.dnsp}-{case.code}",
-        marks=pytest.mark.xfail(reason=f"#31: {case.schema_gap}", strict=True),
+        marks=pytest.mark.xfail(reason=f"#62: {case.schema_gap}", strict=True),
     )
     for case in SOURCE_CASES
     if case.schema_gap
@@ -444,5 +453,5 @@ def test_demand_tariff_schema_gap(seed_client, case):
     """Each known schema gap reports as xfail. Where the API can show the source's
     off-season demand charge, the test asserts it; strict, so a fix shows as XPASS."""
     if case.off_season_charged is None:
-        pytest.xfail(f"#31: {case.schema_gap}")
+        pytest.xfail(f"#62: {case.schema_gap}")
     assert in_window(seed_client, case.dnsp, case.code, case.off_season_charged) is True

@@ -8,7 +8,12 @@ from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from app.models.tariff import Tariff, TariffDemandCharge
-from app.services.window_match import is_in_time_window, parse_time
+from app.services.window_match import (
+    clock_for,
+    is_in_time_window,  # noqa: F401  (tests name the time helpers here)
+    parse_time,
+    window_applies,
+)
 
 NO_RATE_IN_FORCE: tuple[str, None] = ("none", None)
 CONSUMPTION_BLOCK_PREFIX = "block_"
@@ -41,8 +46,13 @@ def is_season_match(season_months: str | None, month: int) -> bool:
     return month in months
 
 
-def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float | None]:
-    """Determine which rate period applies at the given datetime.
+def _stored_months(stored: str | None) -> list[int] | None:
+    """Decode a JSON month list from the database; None means all year."""
+    return None if stored is None else json.loads(stored)
+
+
+def get_current_rate(tariff: Tariff, instant: datetime) -> tuple[str, float | None]:
+    """Determine which rate period applies at an aware instant, on the tariff's clock.
 
     Returns:
         Tuple of (period_name, rate_per_kwh). NO_RATE_IN_FORCE when no rate
@@ -51,25 +61,25 @@ def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float | None]:
     if any(rate.period_name.startswith(CONSUMPTION_BLOCK_PREFIX) for rate in tariff.rates):
         return NO_RATE_IN_FORCE
 
-    current_time = dt.time()
-    weekday = dt.weekday()
-    month = dt.month
-
+    clock = clock_for(tariff)
     catchall_rate = None
     for rate in tariff.rates:
-        if not is_day_match(rate.days, weekday):
+        if not window_applies(
+            rate.start_time,
+            rate.end_time,
+            rate.days,
+            rate.public_holidays,
+            _stored_months(rate.season_months),
+            clock,
+            instant,
+        ):
             continue
-        if not is_season_match(rate.season_months, month):
-            continue
-        start = parse_time(rate.start_time)
-        end = parse_time(rate.end_time)
-        if start == end:
-            # "Applies at all other times" catch-all — only used if no
-            # specific window matches, regardless of row iteration order.
+        if parse_time(rate.start_time) == parse_time(rate.end_time):
+            # "Applies at all other times" catch-all, only used if no specific
+            # window matches, regardless of row iteration order.
             catchall_rate = rate
             continue
-        if is_in_time_window(current_time, start, end):
-            return rate.period_name, rate.rate
+        return rate.period_name, rate.rate
 
     if catchall_rate is not None:
         return catchall_rate.period_name, catchall_rate.rate
@@ -77,23 +87,26 @@ def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float | None]:
     return NO_RATE_IN_FORCE
 
 
-def is_in_demand_window(demand: TariffDemandCharge | None, dt: datetime) -> bool:
-    """Check if the given datetime falls within the demand window."""
-    if demand is None:
-        return False
+def demand_charges_at(
+    tariff: Tariff, instant: datetime
+) -> list[tuple[TariffDemandCharge, bool]]:
+    """Every demand charge in season at an aware instant, with whether it is active.
 
-    current_time = dt.time()
-    weekday = dt.weekday()
-    month = dt.month
-
-    if not is_day_match(demand.days, weekday):
-        return False
-    if not is_season_match(demand.months, month):
-        return False
-
-    start = parse_time(demand.start)
-    end = parse_time(demand.end)
-    return is_in_time_window(current_time, start, end)
+    In season means its months cover the date on the tariff's clock. A charge in
+    season is listed even when its window does not apply, as on a public holiday.
+    """
+    clock = clock_for(tariff)
+    month = clock.wall(instant).month
+    in_force = []
+    for charge in tariff.demand_charges:
+        months = _stored_months(charge.months)
+        if months is not None and month not in months:
+            continue
+        active = window_applies(
+            charge.start, charge.end, charge.days, charge.public_holidays, months, clock, instant
+        )
+        in_force.append((charge, active))
+    return in_force
 
 
 def demand_windows(
@@ -101,8 +114,7 @@ def demand_windows(
 ) -> list[tuple[datetime, datetime]]:
     """The demand windows within [start, end), resolved in the DNSP's time zone.
 
-    Membership equals is_in_demand_window at every instant: each local date is
-    kept by is_day_match and is_season_match, and its in-window times follow
+    Each local date is kept by is_day_match and is_season_match, and its in-window times follow
     is_in_time_window (start == end is the whole day, end < start spans
     midnight). Windows are half-open, clipped to the range, sorted and merged,
     as aware datetimes in tz.

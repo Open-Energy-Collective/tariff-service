@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+from app.models.tariff import Tariff
 from app.services.public_holidays import is_public_holiday
 
 WEEKDAYS_END = 5  # date.weekday() below this is Monday to Friday
@@ -67,6 +68,13 @@ class TariffClock:
             return zoned.astimezone(UTC)
         fixed = timezone(_standard_offset(zoned))
         return datetime.combine(day, t, tzinfo=fixed).astimezone(UTC)
+
+
+def clock_for(tariff: Tariff) -> TariffClock:
+    """The clock this tariff's windows are written on, in its DNSP's zone and state."""
+    return TariffClock(
+        zone=ZoneInfo(tariff.dnsp.timezone), basis=tariff.time_basis, state=tariff.dnsp.state
+    )
 
 
 def day_applies(days: str, public_holidays: str | None, day: date, state: str) -> bool:

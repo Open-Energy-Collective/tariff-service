@@ -600,6 +600,7 @@ def test_current_rate_resolution_is_order_independent():
         start_time="15:00",
         end_time="21:00",
         days="all",
+        public_holidays=None,
         season_months=None,
     )
     catchall = SimpleNamespace(
@@ -608,14 +609,16 @@ def test_current_rate_resolution_is_order_independent():
         start_time="00:00",
         end_time="00:00",
         days="all",
+        public_holidays=None,
         season_months=None,
     )
+    dnsp = SimpleNamespace(timezone="Australia/Brisbane", state="QLD")
     at_peak_time = datetime.fromisoformat("2026-07-20T18:00:00+10:00")
 
     # Catch-all listed first...
-    tariff_a = SimpleNamespace(rates=[catchall, specific])
+    tariff_a = SimpleNamespace(rates=[catchall, specific], dnsp=dnsp, time_basis="local")
     # ...and specific window listed first.
-    tariff_b = SimpleNamespace(rates=[specific, catchall])
+    tariff_b = SimpleNamespace(rates=[specific, catchall], dnsp=dnsp, time_basis="local")
 
     assert get_current_rate(tariff_a, at_peak_time) == ("peak", 0.32516)
     assert get_current_rate(tariff_b, at_peak_time) == ("peak", 0.32516)
