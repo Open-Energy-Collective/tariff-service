@@ -282,6 +282,9 @@ class DemandWindow(BaseModel):
     end: str = Field(
         description="Window end, ISO 8601 in the DNSP's local offset; exclusive"
     )
+    rate: float = Field(
+        description="Demand rate of this stretch, the highest charge covering it"
+    )
 
 
 class DemandWindowsResponse(BaseModel):
@@ -292,8 +295,9 @@ class DemandWindowsResponse(BaseModel):
     windows: list[DemandWindow] = Field(
         description=(
             "Demand windows within [start, end): half-open, clipped to the range, "
-            "sorted, merged when adjacent or overlapping. Empty for a tariff with "
-            "no demand charge."
+            "sorted. Where charges overlap the higher rate takes the stretch; "
+            "adjacent stretches merge only at an equal rate. Empty for a tariff "
+            "with no demand charge."
         )
     )
 

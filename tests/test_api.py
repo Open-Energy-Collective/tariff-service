@@ -646,7 +646,9 @@ def test_rate_limit_enforced_per_ip():
 # ─────────────────────────────────────────────────────────────────────────────
 
 DEMAND_WINDOWS = "/api/v1/calculate/demand-windows"
-DAY_3800 = [{"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00"}]
+DAY_3800 = [
+    {"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00", "rate": 7.0}
+]
 
 
 @pytest.fixture
@@ -996,7 +998,7 @@ def demand_windows_for(client, tariff: str, start: str, end: str):
 
 
 def window(day: str, start: str, end: str) -> dict:
-    return {"start": f"{day}T{start}:00+10:00", "end": f"{day}T{end}:00+10:00"}
+    return {"start": f"{day}T{start}:00+10:00", "end": f"{day}T{end}:00+10:00", "rate": 10.0}
 
 
 def test_demand_windows_use_the_version_of_the_requested_range(
@@ -1025,7 +1027,7 @@ def test_demand_windows_range_across_two_versions_uses_each_days_version(client,
 def test_demand_windows_merge_across_a_version_boundary(client, demand_versions):
     response = demand_windows_for(client, "DA", "2026-06-30", "2026-07-02")
     assert response.json()["windows"] == [
-        {"start": "2026-06-30T00:00:00+10:00", "end": "2026-07-02T00:00:00+10:00"}
+        {"start": "2026-06-30T00:00:00+10:00", "end": "2026-07-02T00:00:00+10:00", "rate": 10.0}
     ]
 
 

@@ -222,11 +222,11 @@ def demand_windows_in_range(
 ) -> DemandWindowsResponse:
     """Demand windows of a tariff over [start, end), at most 31 days.
 
-    Windows are resolved in the DNSP's local time by the rules of
-    `/calculate/current-rate`'s `in_demand_window`: half-open, clipped to the
-    range, sorted and merged, each bound in the DNSP's local offset. Each local
-    date uses the tariff version in force on that date; a range with a date no
-    version covers returns 404.
+    Windows follow `/calculate/current-rate`'s `in_demand_window`, on the tariff's
+    clock: half-open, clipped to the range, sorted, each bound in the DNSP's local
+    offset. Where charges overlap the higher rate takes the stretch, and adjacent
+    stretches merge only at an equal rate. Each local date uses the tariff version
+    in force on that date; a range with a date no version covers returns 404.
     """
     not_found = HTTPException(
         status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
@@ -258,5 +258,8 @@ def demand_windows_in_range(
         tariff=tariff,
         start=start,
         end=end,
-        windows=[DemandWindow(start=s.isoformat(), end=e.isoformat()) for s, e in spans],
+        windows=[
+            DemandWindow(start=s.isoformat(), end=e.isoformat(), rate=rate)
+            for s, e, rate in spans
+        ],
     )

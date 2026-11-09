@@ -9,33 +9,15 @@ from zoneinfo import ZoneInfo
 
 from app.models.tariff import Tariff, TariffDemandCharge
 from app.services.window_match import (
+    TariffClock,
     clock_for,
-    is_in_time_window,  # noqa: F401  (tests name the time helpers here)
+    day_applies,
     parse_time,
     window_applies,
 )
 
 NO_RATE_IN_FORCE: tuple[str, None] = ("none", None)
 CONSUMPTION_BLOCK_PREFIX = "block_"
-
-
-def is_day_match(day_type: str, weekday: int) -> bool:
-    """Check if the day type matches. weekday: 0=Monday, 6=Sunday.
-
-    Accepts both singular and plural forms -- real seed data uses the plural
-    "weekdays"/"weekends" (per TariffRateResponse's own documented values,
-    see seed/powercor.json, seed/ausnet.json), but this only special-cased
-    the singular until now, so any weekday-restricted rate on those tariffs
-    silently fell through to the "unrecognized -> always matches" default
-    below and matched every day, weekends included. Found live 2026-08-10.
-    """
-    if day_type == "all":
-        return True
-    if day_type in ("weekday", "weekdays"):
-        return weekday < 5
-    if day_type in ("weekend", "weekends"):
-        return weekday >= 5
-    return True
 
 
 def is_season_match(season_months: str | None, month: int) -> bool:
@@ -109,52 +91,77 @@ def demand_charges_at(
     return in_force
 
 
-def demand_windows(
-    demand: TariffDemandCharge | None, tz: ZoneInfo, start: datetime, end: datetime
+def _charge_parts(
+    charge: TariffDemandCharge, day: date, clock: TariffClock
 ) -> list[tuple[datetime, datetime]]:
-    """The demand windows within [start, end), resolved in the DNSP's time zone.
+    """The spans `charge` covers on `day` of `clock`, as instants, each inside that date.
 
-    Each local date is kept by is_day_match and is_season_match, and its in-window times follow
-    is_in_time_window (start == end is the whole day, end < start spans
-    midnight). Windows are half-open, clipped to the range, sorted and merged,
-    as aware datetimes in tz.
+    window_applies as intervals: the date alone decides its parts of an overnight
+    window, so they never cross midnight. start == end is the whole day.
+    test_matches_is_in_demand_window_every_minute guards against the two drifting apart.
     """
-    if demand is None:
+    if not is_season_match(charge.months, day.month):
         return []
-    ws = parse_time(demand.start)
-    we = parse_time(demand.end)
+    if not day_applies(charge.days, charge.public_holidays, day, clock.state):
+        return []
+    ws, we = parse_time(charge.start), parse_time(charge.end)
     midnight = time(0, 0)
+    next_midnight = clock.instant(day + timedelta(days=1), midnight)
+    if ws == we:
+        return [(clock.instant(day, midnight), next_midnight)]
+    if ws < we:
+        return [(clock.instant(day, ws), clock.instant(day, we))]
+    return [
+        (clock.instant(day, midnight), clock.instant(day, we)),
+        (clock.instant(day, ws), next_midnight),
+    ]
 
-    def at(day: date, t: time) -> datetime:
-        return datetime.combine(day, t, tzinfo=tz).astimezone(UTC)
 
+def merge_demand_stretches(
+    parts: list[tuple[datetime, datetime, float]], zone: ZoneInfo
+) -> list[tuple[datetime, datetime, float]]:
+    """Sweep (start, end, rate) parts into sorted, non-overlapping stretches.
+
+    The highest rate covering a stretch wins, and neighbours merge only at an equal
+    rate. Sweeps in UTC, since datetimes sharing a zone compare by wall clock across
+    a daylight saving change. The stretches come back in `zone`.
+    """
+    spans = [(s.astimezone(UTC), e.astimezone(UTC), rate) for s, e, rate in parts if s < e]
+    boundaries = sorted({moment for s, e, _ in spans for moment in (s, e)})
+    stretches: list[tuple[datetime, datetime, float]] = []
+    for lo, hi in zip(boundaries, boundaries[1:]):
+        covering = [rate for s, e, rate in spans if s <= lo and hi <= e]
+        if not covering:
+            continue
+        rate = max(covering)
+        if stretches and stretches[-1][1] == lo and stretches[-1][2] == rate:
+            stretches[-1] = (stretches[-1][0], hi, rate)
+        else:
+            stretches.append((lo, hi, rate))
+    return [(s.astimezone(zone), e.astimezone(zone), rate) for s, e, rate in stretches]
+
+
+def demand_windows(
+    tariff: Tariff, start: datetime, end: datetime
+) -> list[tuple[datetime, datetime, float]]:
+    """Each demand charge's windows within [start, end), with the rate of each stretch.
+
+    Dates run on the tariff's clock. Windows are half-open, clipped to the range,
+    sorted and merged by merge_demand_stretches, as aware datetimes in the DNSP's
+    local offset.
+    """
+    clock = clock_for(tariff)
     lo, hi = start.astimezone(UTC), end.astimezone(UTC)
-    spans: list[tuple[datetime, datetime]] = []
-    day = start.astimezone(tz).date()
-    while day <= end.astimezone(tz).date():
-        next_day = day + timedelta(days=1)
-        if is_day_match(demand.days, day.weekday()) and is_season_match(
-            demand.months, day.month
-        ):
-            # The three cases of is_in_time_window, as intervals. A point
-            # predicate cannot yield intervals; test_matches_is_in_demand_window_every_minute
-            # guards against the two drifting apart.
-            if ws == we:
-                parts = [(at(day, midnight), at(next_day, midnight))]
-            elif ws < we:
-                parts = [(at(day, ws), at(day, we))]
-            else:
-                parts = [(at(day, midnight), at(day, we)), (at(day, ws), at(next_day, midnight))]
-            for s, e in parts:
-                s, e = max(s, lo), min(e, hi)
-                if s >= e:
-                    continue
-                if spans and s <= spans[-1][1]:
-                    spans[-1] = (spans[-1][0], max(spans[-1][1], e))
-                else:
-                    spans.append((s, e))
-        day = next_day
-    return [(s.astimezone(tz), e.astimezone(tz)) for s, e in spans]
+    # Every part lies inside its own date, so the two end dates bound the range.
+    day = clock.wall(lo).date()
+    last = clock.wall(hi).date()
+    parts: list[tuple[datetime, datetime, float]] = []
+    while day <= last:
+        for charge in tariff.demand_charges:
+            for s, e in _charge_parts(charge, day, clock):
+                parts.append((max(s, lo), min(e, hi), charge.rate))
+        day += timedelta(days=1)
+    return merge_demand_stretches(parts, clock.zone)
 
 
 def calculate_demand_surcharge(

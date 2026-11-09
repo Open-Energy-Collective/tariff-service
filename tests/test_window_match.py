@@ -197,4 +197,3 @@ def test_holiday_is_judged_on_the_tariff_clock():
 
 def test_rate_calculator_keeps_the_time_helpers_under_the_same_names():
     assert rate_calculator.parse_time is window_match.parse_time
-    assert rate_calculator.is_in_time_window is window_match.is_in_time_window
