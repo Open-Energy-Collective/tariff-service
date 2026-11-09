@@ -24,7 +24,7 @@ Each tariff version row gains:
 | Field | Values | Rule |
 |---|---|---|
 | `time_basis` | `local`, `standard` | Required. Applies to every energy, demand and export window of the tariff |
-| `prices_expected_until` | date or null | Drives #61 alerts only. Seeded from the file-level `effective_to` plus one day: 2027-06-30 becomes 2027-07-01 |
+| `prices_expected_until` | date or null | Drives #61 alerts only. Seeded on each tariff's last version from the file-level `effective_to` plus one day: 2027-06-30 becomes 2027-07-01. Citipower, Powercor, United Energy and Energex files state no end, and use 2027-07-01, the next annual price change |
 
 `tariff_demand_charge` replaces `tariff_demand`, with one row per charge and season:
 
@@ -70,9 +70,12 @@ Every seed moves to the new shape with its existing values.
 | Field | Migrated value |
 |---|---|
 | `time_basis` | `local`, except Jemena A180 `standard`. #56 checks each DNSP and marks the rest |
-| `public_holidays`, Ausgrid, Endeavour, CitiPower, Powercor, United Energy | Weekdays `excluded`, weekends `included` |
+| `public_holidays`, Ausgrid, Endeavour, CitiPower, Powercor, United Energy | Weekdays `excluded`. No seeded row is weekends-only, so a holiday falls to the tariff's all-days rate |
 | `public_holidays`, Power and Water | Weekdays `included` |
 | `public_holidays`, every other DNSP | `included`, which keeps today's result. #62 checks each source |
+| `period`, demand | `anytime` where `start` equals `end`, otherwise `peak` |
+| `unit`, demand | `kW`. #62 corrects kVA tariffs |
+| `peak_period`, demand | `month`. #62 corrects rolling 12-month tariffs |
 | `free_threshold_period` | `day` where a threshold is seeded |
 | `free_threshold_rollover` | `billing_period` for SAPN RSR, BSR, RTOU, RESELE; `billing_period_like_days` for SAPN SBTOU, MBTOUD, SBELE; `none` for AusNet RCER11 |
 
@@ -169,13 +172,13 @@ Tests use the real seed through the database build. Each behaviour has a failing
 | Seasons | NASN12 on Wednesday 10:00 and 17:00 in November (2.862, inactive then active), Wednesday 17:00 in December (11.473, active), and the 31 March and 1 April boundaries |
 | Clock | A180 at 2026-11-11 07:30+11:00 returns its off-peak rate and 23:30+11:00 returns `none`. Winter results are unchanged. A `standard` window at 23:30 standard time is judged on that date |
 | No daylight saving | A `standard` tariff in Queensland matches `local` |
-| Public holidays | Christmas Day on a weekday: Ausgrid has its weekend rate and no demand window, Power and Water keeps its weekday peak. A holiday in one state does not affect a DNSP in another |
+| Public holidays | Christmas Day 2026, a Friday, at 17:00: Ausgrid EA302 returns `off_peak` and no demand window, Power and Water T5 stays in its demand window. A holiday in one state does not affect a DNSP in another |
 | Several charges | A synthetic tariff with peak and shoulder charges: splitting, the higher rate taking an overlap, merging only at an equal rate |
 | `active` | In season with the window shut, in season with it open, out of season is not listed |
-| `demand` | For every seeded tariff it equals the 0.8.0 response, apart from the NASN12 and A180 corrections |
+| `demand` | For every seeded tariff it equals the 0.8.0 response. The NASN12 and A180 corrections leave it unchanged |
 | Seed rejection | No `time_basis`, no required `public_holidays`, unknown `days`, kW and kVA mixed |
 | Exports | RSR is `billing_period`, SBTOU is `billing_period_like_days` |
-| `prices_expected_until` | Set for every tariff, and changing it never changes the version in force |
+| `prices_expected_until` | Set on every tariff's last version, and changing it never changes the version in force |
 
 The `#31` strict xfails pass as each gap gets a place in the model. A gap that also needs
 corrected data keeps its xfail, pointing at #62 or #46.
