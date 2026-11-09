@@ -129,6 +129,11 @@ def test_aligned_versions_are_accepted():
         pytest.param([version("2026-07-01", None), version("2027-07-01", None)], id="no-end"),
         pytest.param([version("2026-07-01", None), version("2026-07-01", None)], id="same-start"),
         pytest.param([version("2026-07-01", "2026-07-01")], id="empty-version"),
+        pytest.param([version("2026-07-01", "2027-07-01")], id="end-on-only-version"),
+        pytest.param(
+            [version("2026-07-01", "2027-07-01"), version("2027-07-01", "2028-07-01")],
+            id="end-on-last-version",
+        ),
     ],
 )
 def test_misaligned_versions_are_rejected(tariffs):

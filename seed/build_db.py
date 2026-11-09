@@ -33,7 +33,11 @@ def load_seed_files() -> list[dict]:
 
 
 def validate_tariff_versions(seed_files: list[dict]) -> None:
-    """Raise ValueError unless each version ends on the date the next one starts."""
+    """Raise ValueError unless each version ends on the date the next one starts.
+
+    A tariff's last version must have no end date, so prices never expire by accident
+    while new versions are loaded by hand.
+    """
     versions: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for data in seed_files:
         for tariff in data.get("tariffs", []):
@@ -45,6 +49,8 @@ def validate_tariff_versions(seed_files: list[dict]) -> None:
             start, end = row["effective_from"], row.get("effective_to")
             if end is not None and end <= start:
                 raise ValueError(f"{dnsp}/{code}: version from {start} ends on {end}")
+            if following is None and end is not None:
+                raise ValueError(f"{dnsp}/{code}: last version from {start} has end date {end}")
             if following is not None and end != following["effective_from"]:
                 raise ValueError(
                     f"{dnsp}/{code}: version from {start} must end on "
