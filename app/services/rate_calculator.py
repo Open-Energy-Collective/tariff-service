@@ -8,30 +8,10 @@ from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from app.models.tariff import Tariff, TariffDemandCharge
+from app.services.window_match import is_in_time_window, parse_time
 
 NO_RATE_IN_FORCE: tuple[str, None] = ("none", None)
 CONSUMPTION_BLOCK_PREFIX = "block_"
-
-
-def parse_time(time_str: str) -> time:
-    """Parse HH:MM string to time object."""
-    parts = time_str.split(":")
-    return time(int(parts[0]), int(parts[1]))
-
-
-def is_in_time_window(current: time, start: time, end: time) -> bool:
-    """Check if current time is within a window, handling overnight spans.
-
-    start == end is the seed data's "applies at all other times" convention
-    (e.g. an off-peak catch-all window of 00:00-00:00) and always matches.
-    """
-    if start == end:
-        return True
-    if start <= end:
-        return start <= current < end
-    else:
-        # Overnight span (e.g., 21:00 to 00:00)
-        return current >= start or current < end
 
 
 def is_day_match(day_type: str, weekday: int) -> bool:
