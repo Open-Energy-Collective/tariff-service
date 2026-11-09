@@ -59,7 +59,7 @@ class SourceCase:
     conversion). window_hours_per_month counts a weekday window as 5/7 of a
     30-day month. inside and outside are local times for /current-rate; an
     anytime window has no outside, so both are inside. schema_gap names what the
-    seed cannot hold (feat/0.8.0, #31); off_season_charged is a local time when
+    seed cannot hold (#31); off_season_charged is a local time when
     the source charges demand and the seed does not.
     """
 
