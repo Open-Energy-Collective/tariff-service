@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.tariff import Dnsp, Tariff, TariffDemand
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge
 
 router = APIRouter(prefix="/api/v1/docs", tags=["Documentation"])
 
@@ -106,7 +106,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
         # Find a representative demand tariff for this DNSP
         demand_tariff = (
             db.query(Tariff)
-            .join(TariffDemand)
+            .join(TariffDemandCharge)
             .filter(Tariff.dnsp_id == dnsp.id)
             .first()
         )
@@ -122,7 +122,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
             continue
 
         demand = demand_tariff.demand
-        season_key = demand.season_months if demand.season_months else None
+        season_key = demand.months if demand.months else None
 
         dnsp_methods.append(
             DnspDemandMethodology(
@@ -133,7 +133,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
                 measurement_explanation=MEASUREMENT_EXPLANATIONS.get(
                     demand.measurement_method
                 ),
-                window=f"{demand.window_start} to {demand.window_end} (local time)",
+                window=f"{demand.start} to {demand.end} (local time)",
                 days=(
                     "All days (including weekends)"
                     if demand.days == "all"

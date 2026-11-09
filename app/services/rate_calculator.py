@@ -7,7 +7,7 @@ import json
 from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
-from app.models.tariff import Tariff, TariffDemand
+from app.models.tariff import Tariff, TariffDemandCharge
 
 NO_RATE_IN_FORCE: tuple[str, None] = ("none", None)
 CONSUMPTION_BLOCK_PREFIX = "block_"
@@ -97,7 +97,7 @@ def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float | None]:
     return NO_RATE_IN_FORCE
 
 
-def is_in_demand_window(demand: TariffDemand | None, dt: datetime) -> bool:
+def is_in_demand_window(demand: TariffDemandCharge | None, dt: datetime) -> bool:
     """Check if the given datetime falls within the demand window."""
     if demand is None:
         return False
@@ -108,16 +108,16 @@ def is_in_demand_window(demand: TariffDemand | None, dt: datetime) -> bool:
 
     if not is_day_match(demand.days, weekday):
         return False
-    if not is_season_match(demand.season_months, month):
+    if not is_season_match(demand.months, month):
         return False
 
-    start = parse_time(demand.window_start)
-    end = parse_time(demand.window_end)
+    start = parse_time(demand.start)
+    end = parse_time(demand.end)
     return is_in_time_window(current_time, start, end)
 
 
 def demand_windows(
-    demand: TariffDemand | None, tz: ZoneInfo, start: datetime, end: datetime
+    demand: TariffDemandCharge | None, tz: ZoneInfo, start: datetime, end: datetime
 ) -> list[tuple[datetime, datetime]]:
     """The demand windows within [start, end), resolved in the DNSP's time zone.
 
@@ -129,8 +129,8 @@ def demand_windows(
     """
     if demand is None:
         return []
-    ws = parse_time(demand.window_start)
-    we = parse_time(demand.window_end)
+    ws = parse_time(demand.start)
+    we = parse_time(demand.end)
     midnight = time(0, 0)
 
     def at(day: date, t: time) -> datetime:
@@ -142,7 +142,7 @@ def demand_windows(
     while day <= end.astimezone(tz).date():
         next_day = day + timedelta(days=1)
         if is_day_match(demand.days, day.weekday()) and is_season_match(
-            demand.season_months, day.month
+            demand.months, day.month
         ):
             # The three cases of is_in_time_window, as intervals. A point
             # predicate cannot yield intervals; test_matches_is_in_demand_window_every_minute
@@ -166,15 +166,15 @@ def demand_windows(
 
 
 def calculate_demand_surcharge(
-    demand: TariffDemand, peak_demand_kw: float, days_in_month: int = 30
+    demand: TariffDemandCharge, peak_demand_kw: float, days_in_month: int = 30
 ) -> tuple[float, float, float]:
     """Calculate demand surcharge.
 
     Returns:
         Tuple of (surcharge_per_kwh, monthly_demand_charge, window_hours_per_month)
     """
-    start = parse_time(demand.window_start)
-    end = parse_time(demand.window_end)
+    start = parse_time(demand.start)
+    end = parse_time(demand.end)
 
     # Calculate window hours per day
     if start == end:

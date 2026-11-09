@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
 
 from app.database import Base, engine, get_db  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffRate  # noqa: E402
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffRate  # noqa: E402
 from seed.build_db import load_seed_files, populate  # noqa: E402
 
 
@@ -49,14 +49,17 @@ def setup_db():
         session.add(tariff)
         session.flush()
 
-        demand = TariffDemand(
+        demand = TariffDemandCharge(
+            period="peak",
+            unit="kW",
+            peak_period="month",
             tariff_id=tariff.id,
             rate=7.434,
-            window_start="16:00",
-            window_end="21:00",
+            start="16:00",
+            end="21:00",
             measurement_method="30min_avg",
             days="all",
-            season_months=None,
+            months=None,
         )
         session.add(demand)
 
@@ -150,14 +153,17 @@ def setup_db():
         session.flush()
 
         session.add(
-            TariffDemand(
+            TariffDemandCharge(
+                period="peak",
+                unit="kW",
+                peak_period="month",
                 tariff_id=ausgrid_demand.id,
                 rate=11.8455,
-                window_start="15:00",
-                window_end="21:00",
+                start="15:00",
+                end="21:00",
                 measurement_method="30min_max",
                 days="all",
-                season_months=high_season,
+                months=high_season,
             )
         )
         session.add(
@@ -201,14 +207,17 @@ def setup_db():
         session.flush()
 
         session.add(
-            TariffDemand(
+            TariffDemandCharge(
+                period="anytime",
+                unit="kW",
+                peak_period="month",
                 tariff_id=ausgrid_alldaydemand.id,
                 rate=11.473,
-                window_start="00:00",
-                window_end="00:00",
+                start="00:00",
+                end="00:00",
                 measurement_method="monthly_peak",
                 days="all",
-                season_months=None,
+                months=None,
             )
         )
         session.add(
@@ -287,6 +296,13 @@ def seed_engine(tmp_path_factory):
     with Session(seed_db) as session:
         populate(session, load_seed_files())
     return seed_db
+
+
+@pytest.fixture
+def seed_session(seed_engine):
+    """A database session on the real seed data."""
+    with Session(seed_engine) as session:
+        yield session
 
 
 @pytest.fixture

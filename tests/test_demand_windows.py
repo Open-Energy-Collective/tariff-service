@@ -132,7 +132,7 @@ def seed_demand_tariffs() -> list[tuple[str, str, str]]:
     for path in sorted(SEED_DIR.glob("*.json")):
         data = json.loads(path.read_text())
         (tz,) = {d["timezone"] for d in data["dnsps"]}
-        cases += [(path.stem, t["code"], tz) for t in data["tariffs"] if t.get("demand")]
+        cases += [(path.stem, t["code"], tz) for t in data["tariffs"] if t.get("demand_charges")]
     return cases
 
 

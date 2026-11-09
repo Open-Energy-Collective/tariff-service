@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from app.models.tariff import Tariff, TariffDemand, TariffRate
+from app.models.tariff import Tariff, TariffDemandCharge, TariffRate
 from app.services.rate_calculator import get_current_rate, is_in_demand_window
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
@@ -26,7 +26,13 @@ def load_tariff(dnsp_file: str, code: str) -> Tariff:
     """Build an unsaved Tariff with its rates and demand from one seed file."""
     data = json.loads((SEED_DIR / f"{dnsp_file}.json").read_text())
     (tariff_data,) = [t for t in data["tariffs"] if t["code"] == code]
-    tariff = Tariff(code=code, name=tariff_data["name"], tariff_type=tariff_data["tariff_type"])
+    tariff = Tariff(
+        code=code,
+        name=tariff_data["name"],
+        tariff_type=tariff_data["tariff_type"],
+        time_basis=tariff_data["time_basis"],
+        prices_expected_until=tariff_data.get("prices_expected_until"),
+    )
     tariff.rates = [
         TariffRate(
             period_name=r["period_name"],
@@ -34,19 +40,26 @@ def load_tariff(dnsp_file: str, code: str) -> Tariff:
             start_time=r["start_time"],
             end_time=r["end_time"],
             days=r.get("days", "all"),
+            public_holidays=r.get("public_holidays"),
             season_months=_months(r.get("season_months")),
         )
         for r in tariff_data["rates"]
     ]
-    if demand := tariff_data.get("demand"):
-        tariff.demand = TariffDemand(
-            rate=demand["rate"],
-            window_start=demand["window_start"],
-            window_end=demand["window_end"],
-            measurement_method=demand["measurement_method"],
-            days=demand.get("days", "all"),
-            season_months=_months(demand.get("season_months")),
+    tariff.demand_charges = [
+        TariffDemandCharge(
+            period=c["period"],
+            rate=c["rate"],
+            unit=c["unit"],
+            start=c["start"],
+            end=c["end"],
+            days=c.get("days", "all"),
+            public_holidays=c.get("public_holidays"),
+            months=_months(c.get("months")),
+            measurement_method=c["measurement_method"],
+            peak_period=c["peak_period"],
         )
+        for c in tariff_data["demand_charges"]
+    ]
     return tariff
 
 

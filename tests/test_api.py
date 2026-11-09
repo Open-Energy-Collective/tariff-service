@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.database import engine
 from app.main import app
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffRate
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffRate
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Health
@@ -663,14 +663,17 @@ def energex_3800():
         session.add(tariff)
         session.flush()
         session.add(
-            TariffDemand(
+            TariffDemandCharge(
+                period="peak",
+                unit="kW",
+                peak_period="month",
                 tariff_id=tariff.id,
                 rate=7.0,
-                window_start="17:00",
-                window_end="20:00",
+                start="17:00",
+                end="20:00",
                 measurement_method="30min_avg",
                 days="weekdays",
-                season_months=None,
+                months=None,
             )
         )
         session.commit()
@@ -963,11 +966,14 @@ def demand_versions():
             session.add(tariff)
             session.flush()
             session.add(
-                TariffDemand(
+                TariffDemandCharge(
+                    period="peak",
+                    unit="kW",
+                    peak_period="month",
                     tariff_id=tariff.id,
                     rate=10.0,
-                    window_start=window_start,
-                    window_end=window_end,
+                    start=window_start,
+                    end=window_end,
                     measurement_method="peak_kw",
                 )
             )

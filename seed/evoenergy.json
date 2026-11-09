@@ -3,7 +3,6 @@
     "source": "Evoenergy Final Schedule of Electricity Network Charges 2026-27",
     "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
     "effective_from": "2026-07-01",
-    "effective_to": "2027-06-30",
     "extracted_date": "2026-07-21",
     "notes": "Prices exclude GST. Rates include LFiT (ACT Large-scale Feed-in Tariff) adjustment of 3.035 c/kWh. All times in AEST. ACT uses Australia/Sydney timezone (with daylight saving)."
   },
@@ -22,13 +21,15 @@
       "name": "New Residential TOU",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.39331,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -75,25 +76,32 @@
       "name": "New Residential Demand",
       "tariff_class": "residential",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.39391,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-10-23T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): second seasonal demand rate Seasonal kW Demand (Low) 13.083 c/kW/day (3.9249 $/kW/month), 5pm-9pm every day in non-winter months (seed months 1-5 and 9-12); extra demand charge Off-peak kW Demand 2.076 c/kW/day (0.6228 $/kW/month), 9pm-9am every day; seeded as the winter Seasonal kW Demand (High) charge only, 6.5424 $/kW/month 17:00-21:00 in months 6-8, with no demand charge in other months or windows. Winter months June to August per the revised TSS 2024-29: knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29.md.",
-      "demand": {
-        "rate": 6.5424,
-        "window_start": "17:00",
-        "window_end": "21:00",
-        "measurement_method": "30min_max",
-        "days": "all",
-        "season_months": [
-          6,
-          7,
-          8
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 6.5424,
+          "unit": "kW",
+          "start": "17:00",
+          "end": "21:00",
+          "days": "all",
+          "months": [
+            6,
+            7,
+            8
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "solar_soak",
@@ -122,13 +130,15 @@
       "name": "Controlled Load 1",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -148,13 +158,15 @@
       "name": "General TOU",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.73453,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -162,6 +174,7 @@
           "start_time": "07:00",
           "end_time": "17:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -171,6 +184,7 @@
           "start_time": "17:00",
           "end_time": "22:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -192,21 +206,29 @@
       "name": "LV TOU kVA Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.82761,
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): peak demand is priced per kVA (44.217 c/kVA/day, 13.2651 $/kVA/month, 7am-5pm weekdays); seeded as a kW demand rate of 13.2651 $/kW/month.",
-      "demand": {
-        "rate": 13.2651,
-        "window_start": "07:00",
-        "window_end": "17:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": null
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 13.2651,
+          "unit": "kW",
+          "start": "07:00",
+          "end": "17:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": null,
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -214,6 +236,7 @@
           "start_time": "07:00",
           "end_time": "17:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -223,6 +246,7 @@
           "start_time": "17:00",
           "end_time": "22:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },

@@ -47,7 +47,7 @@ def get_tariff_detail(
         select(Tariff)
         .join(Dnsp)
         .options(
-            joinedload(Tariff.demand),
+            joinedload(Tariff.demand_charges),
             joinedload(Tariff.rates),
             joinedload(Tariff.exports),
             joinedload(Tariff.dnsp),
@@ -100,7 +100,7 @@ def get_tariff_history(db: Session, dnsp_code: str, tariff_code: str) -> list[Ta
             select(Tariff)
             .join(Dnsp)
             .options(
-                joinedload(Tariff.demand),
+                joinedload(Tariff.demand_charges),
                 joinedload(Tariff.rates),
                 joinedload(Tariff.exports),
             )

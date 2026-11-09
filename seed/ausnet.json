@@ -3,7 +3,6 @@
     "source": "AusNet Services Network Tariff Schedule 2026-27",
     "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
     "effective_from": "2026-07-01",
-    "effective_to": "2027-06-30",
     "extracted_date": "2026-07-21",
     "notes": "Prices exclude GST. Residential ToU: Peak 4pm-9pm every day, Solar soak 11am-4pm (1c/kWh), Off-peak all other times. Standing charges $/year converted to $/day. Demand: $/kW/month."
   },
@@ -22,13 +21,15 @@
       "name": "Residential Single Rate",
       "tariff_class": "residential",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.3981,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -48,13 +49,15 @@
       "name": "Residential Time of Use",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.3981,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -92,13 +95,15 @@
       "name": "Residential CER (Export)",
       "tariff_class": "residential",
       "tariff_type": "tou_export",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.3981,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-11-09T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -139,6 +144,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": 1.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "none",
           "days": "all"
         }
       ]
@@ -149,13 +156,15 @@
       "name": "Dedicated Circuit 24hr",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -175,13 +184,15 @@
       "name": "Small Business Time of Use",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.40805,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -189,6 +200,7 @@
           "start_time": "07:00",
           "end_time": "23:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -210,26 +222,55 @@
       "name": "Small Business Single Rate Demand",
       "tariff_class": "business",
       "tariff_type": "demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.40805,
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-11-09T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): second seasonal demand rate of 2.862 $/kW/month for the off-peak season (April to November, 15:00-21:00 weekdays); seeded as the peak-season rate of 11.473 $/kW/month for December to March only, with no demand charge April to November.",
-      "demand": {
-        "rate": 11.473,
-        "window_start": "15:00",
-        "window_end": "21:00",
-        "measurement_method": "monthly_peak",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          12
-        ]
-      },
+      "notes": "Demand rates from knowledge/documents/ausnet/2026-10-21-network-tariff-schedule-2026-27 (structure 15): 11.4725 $/kW/month peak season (December to March), 2.8622 $/kW/month off-peak season (April to November), both 15:00-21:00 weekdays.",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 11.473,
+          "unit": "kW",
+          "start": "15:00",
+          "end": "21:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": [
+            1,
+            2,
+            3,
+            12
+          ],
+          "measurement_method": "monthly_peak",
+          "peak_period": "month"
+        },
+        {
+          "period": "peak",
+          "rate": 2.8622,
+          "unit": "kW",
+          "start": "15:00",
+          "end": "21:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "measurement_method": "monthly_peak",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "anytime",

@@ -17,9 +17,12 @@ from sqlalchemy.orm import Session
 
 from app.config import DATA_DIR, DB_PATH
 from app.database import Base, engine
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffExport, TariffRate
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffExport, TariffRate
 
 SEED_DIR = Path(__file__).resolve().parent
+TIME_BASES = ("local", "standard")
+DAY_TYPES = ("all", "weekdays", "weekends")
+PUBLIC_HOLIDAY_TREATMENTS = ("included", "excluded")
 
 
 def load_seed_files() -> list[dict]:
@@ -58,9 +61,42 @@ def validate_tariff_versions(seed_files: list[dict]) -> None:
                 )
 
 
+def validate_tariff_fields(seed_files: list[dict]) -> None:
+    """Raise ValueError unless each tariff's time basis, windows and demand units are usable."""
+    for data in seed_files:
+        for tariff in data.get("tariffs", []):
+            name = f"{tariff['dnsp']}/{tariff['code']}"
+            if tariff.get("time_basis") not in TIME_BASES:
+                raise ValueError(f"{name}: time_basis must be one of {TIME_BASES}")
+
+            charges = tariff.get("demand_charges", [])
+            exports = tariff.get("exports", [])
+            for row in [*tariff.get("rates", []), *charges, *exports]:
+                days = row.get("days", "all")
+                if days not in DAY_TYPES:
+                    raise ValueError(f"{name}: unrecognised days value {days!r}")
+                if days != "all" and row.get("public_holidays") not in PUBLIC_HOLIDAY_TREATMENTS:
+                    raise ValueError(
+                        f"{name}: a {days} window needs public_holidays, one of "
+                        f"{PUBLIC_HOLIDAY_TREATMENTS}"
+                    )
+
+            units = {charge.get("unit") for charge in charges}
+            if len(units) > 1:
+                raise ValueError(f"{name}: demand charges mix units {sorted(map(str, units))}")
+
+            for export in exports:
+                if (
+                    export.get("free_threshold_kwh") is not None
+                    and export.get("free_threshold_period") is None
+                ):
+                    raise ValueError(f"{name}: free threshold has no free_threshold_period")
+
+
 def populate(session: Session, seed_files: list[dict]) -> None:
-    """Add every DNSP, tariff, rate, demand and export in seed_files, then commit."""
+    """Add every DNSP, tariff, rate, demand charge and export in seed_files, then commit."""
     validate_tariff_versions(seed_files)
+    validate_tariff_fields(seed_files)
     dnsp_map: dict[str, Dnsp] = {}
 
     for data in seed_files:
@@ -88,6 +124,8 @@ def populate(session: Session, seed_files: list[dict]) -> None:
                 tariff_type=tariff_data["tariff_type"],
                 effective_from=tariff_data["effective_from"],
                 effective_to=tariff_data.get("effective_to"),
+                time_basis=tariff_data["time_basis"],
+                prices_expected_until=tariff_data.get("prices_expected_until"),
                 daily_supply_charge=tariff_data.get("daily_supply_charge"),
                 source_url=tariff_data.get("source_url"),
                 last_verified=tariff_data.get("last_verified"),
@@ -96,22 +134,22 @@ def populate(session: Session, seed_files: list[dict]) -> None:
             session.add(tariff)
             session.flush()
 
-            # Demand
-            if demand_data := tariff_data.get("demand"):
-                demand = TariffDemand(
+            # Demand charges
+            for charge_data in tariff_data.get("demand_charges", []):
+                charge = TariffDemandCharge(
                     tariff_id=tariff.id,
-                    rate=demand_data["rate"],
-                    window_start=demand_data["window_start"],
-                    window_end=demand_data["window_end"],
-                    measurement_method=demand_data["measurement_method"],
-                    days=demand_data.get("days", "all"),
-                    season_months=(
-                        json.dumps(demand_data["season_months"])
-                        if demand_data.get("season_months")
-                        else None
-                    ),
+                    period=charge_data["period"],
+                    rate=charge_data["rate"],
+                    unit=charge_data["unit"],
+                    start=charge_data["start"],
+                    end=charge_data["end"],
+                    days=charge_data.get("days", "all"),
+                    public_holidays=charge_data.get("public_holidays"),
+                    months=json.dumps(charge_data["months"]) if charge_data.get("months") else None,
+                    measurement_method=charge_data["measurement_method"],
+                    peak_period=charge_data["peak_period"],
                 )
-                session.add(demand)
+                session.add(charge)
 
             # Rates
             for rate_data in tariff_data.get("rates", []):
@@ -122,6 +160,7 @@ def populate(session: Session, seed_files: list[dict]) -> None:
                     start_time=rate_data["start_time"],
                     end_time=rate_data["end_time"],
                     days=rate_data.get("days", "all"),
+                    public_holidays=rate_data.get("public_holidays"),
                     season=rate_data.get("season", "all"),
                     season_months=(
                         json.dumps(rate_data["season_months"])
@@ -161,7 +200,10 @@ def populate(session: Session, seed_files: list[dict]) -> None:
                     charge_window_start=export_data.get("charge_window_start"),
                     charge_window_end=export_data.get("charge_window_end"),
                     free_threshold_kwh=export_data.get("free_threshold_kwh"),
+                    free_threshold_period=export_data.get("free_threshold_period"),
+                    free_threshold_rollover=export_data.get("free_threshold_rollover"),
                     days=export_data.get("days", "all"),
+                    public_holidays=export_data.get("public_holidays"),
                 )
                 session.add(export)
 
@@ -175,6 +217,7 @@ def build_database() -> None:
     # Load and check the seed first: a failed build keeps the existing database
     seed_files = load_seed_files()
     validate_tariff_versions(seed_files)
+    validate_tariff_fields(seed_files)
 
     # Ensure data directory exists
     DATA_DIR.mkdir(parents=True, exist_ok=True)

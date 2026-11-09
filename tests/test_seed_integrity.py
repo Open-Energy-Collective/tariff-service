@@ -17,7 +17,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from app.database import Base
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffExport, TariffRate
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffExport, TariffRate
 from app.services.rate_calculator import (
     get_current_rate,
     is_day_match,
@@ -195,16 +195,19 @@ def expected_rate(rate: dict) -> dict:
     }
 
 
-def expected_demand(demand: dict | None) -> dict | None:
-    if demand is None:
+def expected_demand(tariff: dict) -> dict | None:
+    """The `demand` object: the highest-rate charge, a tie going to the earliest start."""
+    charges = tariff.get("demand_charges") or []
+    if not charges:
         return None
+    charge = min(charges, key=lambda c: (-c["rate"], c["start"]))
     return {
-        "rate": demand["rate"],
-        "window_start": demand["window_start"],
-        "window_end": demand["window_end"],
-        "measurement_method": demand["measurement_method"],
-        "days": demand.get("days", "all"),
-        "season_months": demand.get("season_months") or None,
+        "rate": charge["rate"],
+        "window_start": charge["start"],
+        "window_end": charge["end"],
+        "measurement_method": charge["measurement_method"],
+        "days": charge.get("days", "all"),
+        "season_months": charge.get("months") or None,
     }
 
 
@@ -244,12 +247,11 @@ def test_api_returns_the_seed_tariff(seed_client, seed):
     assert body["source_url"] == seed.get("source_url")
     assert body["last_verified"] == seed.get("last_verified")
     assert by_content(body["rates"]) == by_content([expected_rate(r) for r in seed["rates"]])
-    if body["demand"] is None or seed.get("demand") is None:
-        assert body["demand"] == seed.get("demand")
+    demand = expected_demand(seed)
+    if body["demand"] is None or demand is None:
+        assert body["demand"] == demand
     else:
-        assert {k: body["demand"][k] for k in expected_demand(seed["demand"])} == expected_demand(
-            seed["demand"]
-        )
+        assert {k: body["demand"][k] for k in demand} == demand
     assert by_content(body["export"]) == by_content(
         [expected_export(e) for e in seed.get("exports", [])]
     )
@@ -262,7 +264,7 @@ def test_seed_has_tariffs_with_exports():
 
 @pytest.mark.parametrize(
     ("section", "model"),
-    [("rates", TariffRate), ("demand", TariffDemand), ("exports", TariffExport)],
+    [("rates", TariffRate), ("demand_charges", TariffDemandCharge), ("exports", TariffExport)],
 )
 def test_seed_values_all_have_a_column(section, model):
     """A populated seed key with no model column would be dropped without an error."""
@@ -290,6 +292,7 @@ def test_populate_rejects_an_export_in_the_rates_shape():
                 "name": "T",
                 "tariff_type": "tou_export",
                 "effective_from": "2026-07-01",
+                "time_basis": "local",
                 "rates": [],
                 "exports": [{"period_name": "peak", "rate": 0.1}],
             }

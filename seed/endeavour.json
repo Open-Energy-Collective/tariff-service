@@ -3,7 +3,6 @@
     "source": "Endeavour Energy Network Price List: Network Tariffs 2026-2027",
     "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
     "effective_from": "2026-07-01",
-    "effective_to": "2027-06-30",
     "extracted_date": "2026-07-20",
     "notes": "Prices exclude GST. Peak: 16:00-20:00 business days only. Solar Soak: 10:00-14:00 all days. High season: Nov-Mar. Low season: Apr-Oct. Demand: highest 30-min in peak window, \u00a2/kW/day \u00d7 days in month."
   },
@@ -22,13 +21,15 @@
       "name": "Residential Flat",
       "tariff_class": "residential",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.70192,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -48,13 +49,15 @@
       "name": "Residential Seasonal ToU",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.70192,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -62,6 +65,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "high",
           "season_months": [
             1,
@@ -77,6 +81,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "low",
           "season_months": [
             4,
@@ -115,27 +120,35 @@
       "name": "Residential Demand",
       "tariff_class": "residential",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.70192,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): second seasonal demand rate, low-season (Apr-Oct) peak demand 2.781 $/kW/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 5.454,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 5.454,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "solar_soak",
@@ -164,27 +177,35 @@
       "name": "Residential Demand Transitional",
       "tariff_class": "residential",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.70192,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): second seasonal demand rate, low-season (Apr-Oct) peak demand 2.502 $/kW/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 4.908,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 4.908,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "solar_soak",
@@ -213,13 +234,15 @@
       "name": "Controlled Load 1",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.11872,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -239,13 +262,15 @@
       "name": "Controlled Load 2",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.11872,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -265,13 +290,15 @@
       "name": "General Supply Block",
       "tariff_class": "business",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.98882,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "block_1",
@@ -300,13 +327,15 @@
       "name": "General Supply Seasonal ToU",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.98882,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -314,6 +343,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "high",
           "season_months": [
             1,
@@ -329,6 +359,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "low",
           "season_months": [
             4,
@@ -367,27 +398,35 @@
       "name": "General Supply Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.98882,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): second seasonal demand rate, low-season (Apr-Oct) peak demand 3.576 $/kW/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 7.254,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 7.254,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "solar_soak",
@@ -416,27 +455,35 @@
       "name": "General Supply Demand Transitional",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.98882,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): second seasonal demand rate, low-season (Apr-Oct) peak demand 3.219 $/kW/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 6.528,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 6.528,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "solar_soak",
@@ -465,27 +512,35 @@
       "name": "LV Seasonal ToU Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 24.14,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA; second seasonal demand rate, low-season (Apr-Oct) peak demand 14.499 $/kVA/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only in $/kW/month, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 15.933,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 15.933,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -493,6 +548,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "high",
           "season_months": [
             1,
@@ -508,6 +564,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "low",
           "season_months": [
             4,
@@ -537,27 +594,35 @@
       "name": "HV Seasonal ToU Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 84.65,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA; second seasonal demand rate, low-season (Apr-Oct) peak demand 12.42 $/kVA/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only in $/kW/month, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 12.588,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 12.588,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -565,6 +630,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "high",
           "season_months": [
             1,
@@ -580,6 +646,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "low",
           "season_months": [
             4,
@@ -609,27 +676,35 @@
       "name": "ST Seasonal ToU Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 136.77,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
       "notes": "Schema gap (feat/0.8.0): demand priced per kVA; second seasonal demand rate, low-season (Apr-Oct) peak demand 11.061 $/kVA/month (weekdays 16:00-20:00); seeded as the high-season (Nov-Mar) demand rate only in $/kW/month, with no demand charge Apr-Oct.",
-      "demand": {
-        "rate": 11.22,
-        "window_start": "16:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          11,
-          12
-        ]
-      },
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 11.22,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "excluded",
+          "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -637,6 +712,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "high",
           "season_months": [
             1,
@@ -652,6 +728,7 @@
           "start_time": "16:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "excluded",
           "season": "low",
           "season_months": [
             4,
@@ -681,13 +758,15 @@
       "name": "Unmetered Supply",
       "tariff_class": "business",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",

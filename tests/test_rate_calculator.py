@@ -5,7 +5,7 @@ from datetime import time
 
 import pytest
 
-from app.models.tariff import TariffDemand
+from app.models.tariff import TariffDemandCharge
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
     is_day_match,
@@ -72,11 +72,14 @@ def test_is_season_match_within_and_outside_season():
     assert is_season_match(months, 6) is False
 
 
-def _demand(days: str) -> TariffDemand:
-    return TariffDemand(
+def _demand(days: str) -> TariffDemandCharge:
+    return TariffDemandCharge(
+        period="peak",
+        unit="kW",
+        peak_period="month",
         rate=7.0,
-        window_start="17:00",
-        window_end="20:00",
+        start="17:00",
+        end="20:00",
         measurement_method="30min_avg",
         days=days,
     )

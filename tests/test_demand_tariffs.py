@@ -269,7 +269,7 @@ def test_source_cases_cover_every_dnsp_with_a_demand_tariff():
         tariff["dnsp"]
         for f in SEED_DIR.glob("*.json")
         for tariff in json.loads(f.read_text())["tariffs"]
-        if tariff.get("demand")
+        if tariff.get("demand_charges")
     }
     assert {case.dnsp for case in SOURCE_CASES} == with_demand
 
@@ -308,8 +308,15 @@ def seeded_demand_tariffs() -> list[tuple[str, str, str, dict]]:
         data = json.loads(f.read_text())
         zones = {d["code"]: d["timezone"] for d in data["dnsps"]}
         for t in data["tariffs"]:
-            if t.get("demand"):
-                found.append((t["dnsp"], t["code"], zones[t["dnsp"]], t["demand"]))
+            if t.get("demand_charges"):
+                charge = min(t["demand_charges"], key=lambda c: (-c["rate"], c["start"]))
+                demand = {
+                    **charge,
+                    "window_start": charge["start"],
+                    "window_end": charge["end"],
+                    "season_months": charge["months"],
+                }
+                found.append((t["dnsp"], t["code"], zones[t["dnsp"]], demand))
     return found
 
 

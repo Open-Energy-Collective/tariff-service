@@ -268,8 +268,8 @@ Business ToU (NAST12):
 - **Off-peak**: All other times
 
 Demand (NASN12):
-- **Demand window**: 3pm–9pm (15:00–21:00) weekdays, December to March (sheet "Tariff structures", structure 15)
-- **Off-peak season** (April to November): 2.862 $/kW/month, not seeded (one demand rate per tariff)
+- **Demand window**: 3pm–9pm (15:00–21:00) weekdays, all year (sheet "Tariff structures", structure 15)
+- **Demand rates**: 11.473 $/kW/month December to March; 2.8622 $/kW/month April to November (off-peak season), same window
 - **Energy**: anytime 16.796 c/kWh (sheet "Network 2026-27")
 
 ---
