@@ -283,10 +283,11 @@ Demand (NASN12):
 
 | Source | URL | Notes |
 |--------|-----|-------|
-| **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates — the doc explicitly references a separate "CitiPower - 2026-27 Tariff Summary" attachment for those, which CitiPower does not co-publish alongside this PDF (confirmed absent from every public CitiPower/AER page checked). |
-| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes cross-checked against the structural PDF above — exact match. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final retail price list like the other DNSPs in this file — a revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
+| **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates. It defers them to a separate "CitiPower - 2026-27 Tariff Summary" attachment (next row). Knowledge entry: `knowledge/documents/citipower/2026-10-21-pricing-2026-27.md`. |
+| **CitiPower 2026-27 Tariff Summary (rates for CRSTOU)** | https://media.powercor.com.au/documents/Network-pricing/CitiPower-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `CP_2026-27_NUOS` row 7 gives CRSTOU: fixed 31.51 c/day, peak 19.76, off-peak 4.95, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/citipower/2026-11-10-tariff-summary-2026-27.md`. |
+| **AER TSS.01, SCS indicative prices (rates for every tariff except CRSTOU)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes match the structural PDF above exactly. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final price list. A revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
 
-Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+CRSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the Tariff Summary.
 
 ### Tariff Codes (CitiPower) — seeded subset only
 
@@ -302,9 +303,10 @@ Only tariffs with an unambiguous single rate/period mapping in the indicative-pr
 
 ### Time Windows (CitiPower)
 
-Residential ToU (CRSTOU):
-- **Peak**: 4pm–9pm every day
-- **Off-peak**: all other times (structurally includes a "Saver" 11am–4pm window per the PDF's eligibility table, but the indicative-prices sheet has no separate Saver rate column for 2026-27 — priced as one off-peak rate rather than guessing a distinct Saver value)
+Residential ToU (CRSTOU), every day, public holidays included:
+- **Peak**: 4pm to 9pm
+- **Saver**: 11am to 4pm
+- **Off-peak**: 9pm to 11am
 
 Business ToU (CGTOU):
 - **Peak**: 9am–9pm weekdays (confirmed directly against CitiPower's TSS compliance document text, not assumed)
@@ -317,9 +319,10 @@ Business ToU (CGTOU):
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Powercor 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/Powercor%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower's PDF (see above) — Powercor and CitiPower are commonly-owned/co-filed with near-identical document templates, confirmed by direct side-by-side comparison, not assumed. |
-| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes cross-checked against the structural PDF — exact match. |
+| **Powercor 2026-27 Tariff Summary (rates for PRSTOU)** | https://media.powercor.com.au/documents/Network-pricing/Powercor-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `PAL_2026-27_NUOS` row 7 gives PRSTOU: fixed 43.84 c/day, peak 22.09, off-peak 5.52, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/powercor/2026-11-10-tariff-summary-2026-27.md`. |
+| **AER TSS.01, SCS indicative prices (rates for every tariff except PRSTOU)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes match the structural PDF exactly. |
 
-Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+PRSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the Tariff Summary.
 
 ### Tariff Codes (Powercor) — seeded subset only
 
@@ -335,7 +338,9 @@ Same exclusions as CitiPower (see above): PRCER, NDD/NDM/NDMO, and all large/HV/
 
 ### Time Windows (Powercor)
 
-Same as CitiPower — Peak 4pm–9pm (residential) / 9am–9pm weekdays (business ToU, confirmed against Powercor's own TSS compliance document text), off-peak all other times.
+Residential ToU (PRSTOU) has the CitiPower CRSTOU windows: peak 4pm to 9pm, saver 11am to 4pm, off-peak 9pm to 11am, every day (`knowledge/documents/powercor/2026-10-21-pricing-2026-27.md`).
+
+Business ToU (NDTOU): peak 9am to 9pm weekdays (confirmed against Powercor's own TSS compliance document text), off-peak all other times.
 
 ---
 
@@ -344,9 +349,10 @@ Same as CitiPower — Peak 4pm–9pm (residential) / 9am–9pm weekdays (busines
 | Source | URL | Notes |
 |--------|-----|-------|
 | **United Energy 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower/Powercor's PDFs. |
-| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes cross-checked against the structural PDF — exact match. |
+| **United Energy 2026-27 SCS pricing model (rates for URSTOU)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20SCS%20pricing%20model%20%E2%80%93%207%20May%202026.xlsm | United Energy's pricing model filed with the AER, 7 May 2026, excluding GST. United Energy's own Tariff Summary was not found. Sheet `Tariff schedule`, Tariff schedule 3, row 88 gives URSTOU: fixed 31.51 c/day, peak 20.92, off-peak 5.22, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27.md`. |
+| **AER TSS.01, SCS indicative prices (rates for every tariff except URSTOU)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes match the structural PDF exactly. |
 
-Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+URSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the AER SCS pricing model (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the SCS pricing model.
 
 ### Tariff Codes (United Energy) — seeded subset only
 
@@ -362,7 +368,9 @@ Same exclusions as CitiPower/Powercor: URCER, LVMKW1R/UMBD/UMBO, and all large/H
 
 ### Time Windows (United Energy)
 
-Same as CitiPower/Powercor — Peak 4pm–9pm (residential) / 9am–9pm weekdays (business ToU, confirmed against United Energy's own TSS compliance document text), off-peak all other times.
+Residential ToU (URSTOU) has the CitiPower CRSTOU windows: peak 4pm to 9pm, saver 11am to 4pm, off-peak 9pm to 11am, every day (`knowledge/documents/united-energy/2026-10-21-pricing-2026-27.md`).
+
+Business ToU (LVTOU): peak 9am to 9pm weekdays (confirmed against United Energy's own TSS compliance document text), off-peak all other times.
 
 ---
 

@@ -357,15 +357,6 @@ def current_rate(client, dnsp: str, tariff: str, at: str = NOON):
     )
 
 
-@pytest.mark.xfail(reason="#46: saver period 11:00-16:00 not seeded", strict=True)
-@pytest.mark.parametrize(
-    ("dnsp", "tariff"),
-    [("citipower", "CRSTOU"), ("powercor", "PRSTOU"), ("united_energy", "URSTOU")],
-)
-def test_victorian_residential_tou_has_a_saver_period(seed_client, dnsp, tariff):
-    assert current_rate(seed_client, dnsp, tariff).json()["period"] == "saver"
-
-
 def assert_no_rate_in_force(response) -> None:
     assert response.status_code == 200
     body = response.json()
@@ -399,16 +390,23 @@ def test_n90_still_lists_both_blocks(seed_client):
 
 # Sources are knowledge/documents/<entry> in the OEC root, ex GST. Expected values are
 # written in the source's own units and were read from the source, not from the seed.
-# CitiPower, Powercor and United Energy have no captured 2026-27 rates (#46).
+# CitiPower, Powercor and United Energy have captured 2026-27 rates for their residential ToU
+# tariffs only (#46); their other tariffs keep the AER January 2025 indicative figures.
 AUSGRID = "ausgrid/2026-10-21-network-price-list-2026-27.pdf"
 AUSNET = "ausnet/2026-10-21-network-tariff-schedule-2026-27.xlsx, sheet Network 2026-27"
+CITIPOWER = "citipower/2026-11-10-tariff-summary-2026-27.xlsx, sheet CP_2026-27_NUOS row 7"
 ENDEAVOUR = "endeavour-energy/2026-10-21-network-price-list-2026-27.pdf"
 ENERGEX = "energex/2026-10-21-network-price-list-2026-27.xlsx"
 ESSENTIAL = "essential-energy/2026-10-21-price-list-explanatory-notes-2026-27.pdf"
 EVOENERGY = "evoenergy/2026-10-21-schedule-of-charges-2026-27.pdf, excluding metering"
 JEMENA = "jemena/2026-10-21-network-tariff-schedule-2026-27.pdf"
+POWERCOR = "powercor/2026-11-10-tariff-summary-2026-27.xlsx, sheet PAL_2026-27_NUOS row 7"
 POWERWATER = "power-and-water/2026-10-21-network-tariffs-2026-27.pdf"
 SAPN = "sa-power-networks/2026-10-21-tariff-price-list-2026-27.pdf, Table 1"
+UNITED_ENERGY = (
+    "united-energy/2026-11-10-scs-pricing-model-2026-27.xlsm, sheet Tariff schedule, "
+    "Tariff schedule 3, row 88"
+)
 
 
 def cents(value: float) -> float:
@@ -475,6 +473,13 @@ SOURCE_PRICES = [
         AUSNET,
         per_year(148.93785),
         (("anytime", cents(16.79589)),),
+    ),
+    SourcePrices(
+        "citipower",
+        "CRSTOU",
+        CITIPOWER,
+        cents(31.51),
+        (("peak", cents(19.76)), ("off_peak", cents(4.95)), ("saver", cents(1.00))),
     ),
     flat("endeavour", "N70", ENDEAVOUR, cents(70.1921), cents(12.0348)),
     SourcePrices(
@@ -576,6 +581,13 @@ SOURCE_PRICES = [
         per_year(494.463),
         (("peak", cents(9.809)), ("off_peak", cents(3.442))),
     ),
+    SourcePrices(
+        "powercor",
+        "PRSTOU",
+        POWERCOR,
+        cents(43.84),
+        (("peak", cents(22.09)), ("off_peak", cents(5.52)), ("saver", cents(1.00))),
+    ),
     flat("powerwater", "T1", POWERWATER, 2.4599, 0.0659),
     SourcePrices(
         "powerwater",
@@ -599,6 +611,13 @@ SOURCE_PRICES = [
         SAPN,
         1.5082,
         (("peak", 0.2073), ("off_peak", 0.0780), ("shoulder", 0.1442)),
+    ),
+    SourcePrices(
+        "united_energy",
+        "URSTOU",
+        UNITED_ENERGY,
+        cents(31.51),
+        (("peak", cents(20.92)), ("off_peak", cents(5.22)), ("saver", cents(1.00))),
     ),
 ]
 
@@ -635,10 +654,48 @@ def test_each_dnsp_and_type_with_captured_rates_has_a_source_check():
         for t in SEED_TARIFFS
         if (t["dnsp"], t["code"]) == (c.dnsp, c.code)
     }
-    unpriced = {"citipower", "powercor", "united_energy"}
     assert {
-        (t["dnsp"], t["tariff_type"]) for t in SEED_TARIFFS if t["dnsp"] not in unpriced
+        (t["dnsp"], t["tariff_type"])
+        for t in SEED_TARIFFS
+        if t["verified_by"] != "aer_tss01_indicative_jan2025"
     } == covered
+
+
+VICTORIAN_RESIDENTIAL_TOU = [
+    ("citipower", "CRSTOU"),
+    ("powercor", "PRSTOU"),
+    ("united_energy", "URSTOU"),
+]
+
+
+@pytest.mark.parametrize(("dnsp", "tariff"), VICTORIAN_RESIDENTIAL_TOU)
+def test_victorian_residential_tou_has_a_saver_period(seed_client, dnsp, tariff):
+    """#46: the 2026-27 saver period 11:00-16:00 every day, at 1.00 c/kWh."""
+    body = current_rate(seed_client, dnsp, tariff).json()
+    assert (body["period"], body["rate"]) == ("saver", pytest.approx(cents(1.00)))
+
+
+# <dnsp>/2026-10-21-pricing-2026-27.pdf: peak all days 4pm to 9pm, off-peak 9pm to 11am,
+# saver 11am to 4pm. Times are Melbourne wall clock (AEDT, +11:00).
+VICTORIAN_TOU_PERIODS = [
+    ("2026-11-11T10:59:00+11:00", "off_peak"),  # Wednesday
+    ("2026-11-11T11:00:00+11:00", "saver"),
+    ("2026-11-11T15:59:00+11:00", "saver"),
+    ("2026-11-11T16:00:00+11:00", "peak"),
+    ("2026-11-11T20:59:00+11:00", "peak"),
+    ("2026-11-11T21:00:00+11:00", "off_peak"),
+    ("2026-11-11T03:00:00+11:00", "off_peak"),
+    ("2026-11-14T12:00:00+11:00", "saver"),  # Saturday
+    ("2026-11-15T17:00:00+11:00", "peak"),  # Sunday
+    ("2026-11-03T12:00:00+11:00", "saver"),  # Melbourne Cup, a Victorian public holiday
+    ("2026-11-03T17:00:00+11:00", "peak"),
+]
+
+
+@pytest.mark.parametrize(("dnsp", "tariff"), VICTORIAN_RESIDENTIAL_TOU)
+@pytest.mark.parametrize(("at", "period"), VICTORIAN_TOU_PERIODS)
+def test_victorian_residential_tou_periods_match_the_source(seed_client, dnsp, tariff, at, period):
+    assert current_rate(seed_client, dnsp, tariff, at).json()["period"] == period
 
 
 def test_rcer11_export_windows_match_the_source(seed_client):

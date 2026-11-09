@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "source": "United Energy 2026-27 Pricing (structure) + AER-published TSS 2026-31 SCS Indicative Prices (rates)",
+    "source": "United Energy 2026-27 Pricing (structure) + AER-published TSS 2026-31 SCS Indicative Prices (rates) + United Energy 2026-27 SCS pricing model filed with the AER (7 May 2026; URSTOU rates)",
     "source_url": "https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf",
     "effective_from": "2026-07-01",
-    "notes": "Excluding GST. Peak 4pm-9pm all days; off_peak covers all other times (includes the structural 'Saver' 11am-4pm window, which the indicative-prices model does not price separately from off-peak for 2026-27 -- no distinct Saver rate was published, so it is not modeled as its own period here rather than guessing a value). Small business ToU peak is 9am-9pm workdays. Residential/export CER tariffs and all demand-charge tariffs (LVMKW1R/UMBD/UMBO/large/HV) are NOT seeded -- same reasoning as citipower.json/powercor.json (single-window demand schema can't represent United Energy's two-season summer/non-summer demand charge without an unmade modeling decision). Source PDF gives tariff codes/structure but not $ rates -- those live in a separate 'Tariff Summary' attachment United Energy doesn't co-publish; rates instead sourced from AER's regulator-hosted TSS.01 indicative-prices spreadsheet (2026-31 Tariff Structure Statement, Jan2025 proposal), cross-checked against the structural PDF's tariff codes (exact match: LVS1R, LVDed, URSTOU, LVM1R, LVTOU). 'Indicative' prices, not a final DNSP-published price list -- flagged as a slightly different provenance tier than other seeded DNSPs.",
+    "notes": "Excluding GST. Residential ToU URSTOU: peak 4pm-9pm, saver 11am-4pm, off-peak 9pm-11am, all days, rates from the United Energy 2026-27 SCS pricing model filed with the AER (7 May 2026; knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27). Small business ToU peak is 9am-9pm workdays. Residential/export CER tariffs and all demand-charge tariffs (LVMKW1R/UMBD/UMBO/large/HV) are NOT seeded -- same reasoning as citipower.json/powercor.json (single-window demand schema can't represent United Energy's two-season summer/non-summer demand charge without an unmade modeling decision). Source PDF gives tariff codes/structure but not $ rates -- those live in the United Energy 2026-27 SCS pricing model filed with the AER (7 May 2026), which gives URSTOU rates; rates for the other tariffs here are still sourced from AER's regulator-hosted TSS.01 indicative-prices spreadsheet (2026-31 Tariff Structure Statement, Jan2025 proposal), cross-checked against the structural PDF's tariff codes (exact match: LVS1R, LVDed, URSTOU, LVM1R, LVTOU). 'Indicative' prices, not a final DNSP-published price list -- flagged as a slightly different provenance tier than other seeded DNSPs.",
     "last_verified": "2026-08-03"
   },
   "dnsps": [
@@ -53,16 +53,16 @@
       "effective_from": "2026-07-01",
       "effective_to": null,
       "prices_expected_until": "2027-07-01",
-      "daily_supply_charge": 0.30137,
-      "source_url": "https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx",
-      "last_verified": "2026-08-03T00:00:00+10:00",
-      "verified_by": "aer_tss01_indicative_jan2025",
-      "notes": "Saver period 11:00-16:00 every day has no published 2026-27 rate (the 2026-27 Tariff Summary is not published) and is not seeded; it prices as off-peak. knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md.",
+      "daily_supply_charge": 0.3151,
+      "source_url": "https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20SCS%20pricing%20model%20%E2%80%93%207%20May%202026.xlsm",
+      "last_verified": "2026-11-10T00:00:00+11:00",
+      "verified_by": "official_price_list",
+      "notes": "Rates checked 2026-11-10 against knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27 (sheet Tariff schedule, Tariff schedule 3, row 88, excluding GST): fixed 31.51 c/day, peak 20.92, off-peak 5.22 and saver 1.00 c/kWh. Windows from knowledge/documents/united-energy/2026-10-21-pricing-2026-27: peak 16:00-21:00, saver 11:00-16:00, off-peak 21:00-11:00, all days. The source states no time basis for this tariff; time_basis stays local (#68).",
       "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
-          "rate": 0.191382,
+          "rate": 0.2092,
           "start_time": "16:00",
           "end_time": "21:00",
           "days": "all",
@@ -70,10 +70,19 @@
           "season_months": null
         },
         {
-          "period_name": "off_peak",
-          "rate": 0.047845,
-          "start_time": "21:00",
+          "period_name": "saver",
+          "rate": 0.01,
+          "start_time": "11:00",
           "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0522,
+          "start_time": "21:00",
+          "end_time": "11:00",
           "days": "all",
           "season": "all",
           "season_months": null

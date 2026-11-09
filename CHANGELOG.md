@@ -32,6 +32,9 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
   demand tariffs, Evoenergy 101, Power and Water T5 and T6 and SA Power Networks MBTOUD and LBAD are
   priced per kVA. Ausgrid EA302 to EA390, Jemena A230 and SA Power Networks MBTOUD and LBAD charge on
   the peak of the last 12 months. `demand` is unchanged for every tariff.
+- CitiPower CRSTOU, Powercor PRSTOU and United Energy URSTOU carry their approved 2026-27 rates and
+  daily charges, replacing the January 2025 AER indicative figures, and gain a `saver` period
+  11:00-16:00 every day at 1.00 c/kWh. Off-peak is now 21:00-11:00 (#46).
 
 ## [0.8.0] - 2026-11-09
 
