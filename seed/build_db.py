@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 from app.config import DATA_DIR, DB_PATH
 from app.database import Base, engine
 from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffExport, TariffRate
+from app.services.public_holidays import is_known_state
 
 SEED_DIR = Path(__file__).resolve().parent
 TIME_BASES = ("local", "standard")
@@ -64,6 +65,9 @@ def validate_tariff_versions(seed_files: list[dict]) -> None:
 def validate_tariff_fields(seed_files: list[dict]) -> None:
     """Raise ValueError unless each tariff's time basis, windows and demand units are usable."""
     for data in seed_files:
+        for dnsp in data.get("dnsps", []):
+            if not is_known_state(dnsp["state"]):
+                raise ValueError(f"{dnsp['code']}: unknown state {dnsp['state']!r}")
         for tariff in data.get("tariffs", []):
             name = f"{tariff['dnsp']}/{tariff['code']}"
             if tariff.get("time_basis") not in TIME_BASES:
