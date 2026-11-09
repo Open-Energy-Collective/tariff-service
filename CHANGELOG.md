@@ -5,6 +5,23 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
+## [0.8.0] - 2026-11-09
+
+### Breaking
+- `/api/v1/calculate/current-rate`: `rate` can now be `null`, with `period` set to `none`, when no single
+  rate is in force. This applies outside a tariff's rate windows (Jemena A180), to a tariff with no energy
+  rates (Ausgrid EA029), and when the rate depends on consumption (Endeavour N90). These cases previously
+  returned a rate that was not in force, or zero.
+- `/api/v1/calculate/current-rate` uses the tariff version in force on the requested date, and returns 404
+  for a date before a tariff's first version. It previously used today's version for every date.
+- `/api/v1/calculate/demand-windows` uses the tariff version in force on each date in the range, and returns
+  404 when any date in the range has no version.
+
+### Fixed
+- AusNet NASN12: the energy rate is now 16.796 c/kWh, replacing another tariff's value.
+- AusNet RCER11 and seven SA Power Networks tariffs now include their export terms.
+- `/api/v1/tariffs/{dnsp}` lists each tariff once when a newer version has started.
+
 ## [0.7.1] - 2026-10-24
 
 ### Changed
