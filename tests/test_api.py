@@ -1096,7 +1096,7 @@ def test_detail_has_demand_charges_and_keeps_demand(seed_client):
     assert body["demand"]["season_months"] == [1, 2, 3, 12]
 
 
-def test_detail_without_demand_has_empty_list(client):
+def test_detail_demand_charges_single_charge_and_none(client):
     body = client.get("/api/v1/tariffs/energex/T12A").json()
     assert body["demand"] is not None
     assert len(body["demand_charges"]) == 1
