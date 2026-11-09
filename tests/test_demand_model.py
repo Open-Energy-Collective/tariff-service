@@ -67,7 +67,7 @@ def test_nasn12_has_both_seasons(seed_session):
     assert set(charges) == {(1, 2, 3, 12), (4, 5, 6, 7, 8, 9, 10, 11)}
     assert charges[(1, 2, 3, 12)].rate == 11.473
     off_season = charges[(4, 5, 6, 7, 8, 9, 10, 11)]
-    assert off_season.rate == pytest.approx(2.862, abs=0.001)
+    assert off_season.rate == 2.862
     assert (off_season.start, off_season.end, off_season.days) == ("15:00", "21:00", "weekdays")
     assert (off_season.unit, off_season.peak_period) == ("kW", "month")
 

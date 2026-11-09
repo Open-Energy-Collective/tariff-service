@@ -223,6 +223,7 @@ Business (A210):
 
 Dedicated circuit (A180):
 - **Off-peak**: 11pm–7am AEST all days (supply only in that window)
+- **Time basis**: `standard`, the source fixes the window to AEST all year
 
 Export (A10E):
 - **Export charge**: 3.000 c/kWh, solar soak 11am–4pm every day
@@ -269,7 +270,7 @@ Business ToU (NAST12):
 
 Demand (NASN12):
 - **Demand window**: 3pm–9pm (15:00–21:00) weekdays, all year (sheet "Tariff structures", structure 15)
-- **Demand rates**: 11.473 $/kW/month December to March; 2.8622 $/kW/month April to November (off-peak season), same window
+- **Demand rates**: 11.473 $/kW/month December to March; 2.862 $/kW/month April to November (off-peak season), same window
 - **Energy**: anytime 16.796 c/kWh (sheet "Network 2026-27")
 
 ---

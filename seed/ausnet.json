@@ -230,7 +230,7 @@
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-11-09T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Demand rates from knowledge/documents/ausnet/2026-10-21-network-tariff-schedule-2026-27 (structure 15): 11.4725 $/kW/month peak season (December to March), 2.8622 $/kW/month off-peak season (April to November), both 15:00-21:00 weekdays.",
+      "notes": "Demand rates from knowledge/documents/ausnet/2026-10-21-network-tariff-schedule-2026-27 (structure 15): 11.4725 $/kW/month peak season (December to March), 2.8622 $/kW/month off-peak season, seeded to 3 dp as 2.862 (April to November), both 15:00-21:00 weekdays.",
       "demand_charges": [
         {
           "period": "peak",
@@ -251,7 +251,7 @@
         },
         {
           "period": "peak",
-          "rate": 2.8622,
+          "rate": 2.862,
           "unit": "kW",
           "start": "15:00",
           "end": "21:00",

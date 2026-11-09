@@ -164,6 +164,7 @@
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "time_basis standard: window stated as 11 pm to 7 am AEST in knowledge/documents/jemena/2026-10-21-network-tariff-schedule-2026-27.",
       "demand_charges": [],
       "rates": [
         {
