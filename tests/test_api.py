@@ -1067,3 +1067,98 @@ def test_demand_windows_unknown_tariff_is_404_before_bad_dates_are_400(client, d
         params={"dnsp": "energex", "tariff": "NOPE", "start": "bad", "end": "bad"},
     )
     assert response.status_code == 404
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Tariff detail: demand charges, time basis, export allowance terms
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_detail_has_demand_charges_and_keeps_demand(seed_client):
+    body = seed_client.get("/api/v1/tariffs/ausnet/NASN12").json()
+    charges = body["demand_charges"]
+    assert [c["rate"] for c in charges] == [11.473, 2.862]
+    assert charges[0] == {
+        "period": "peak",
+        "rate": 11.473,
+        "unit": "kW",
+        "start": "15:00",
+        "end": "21:00",
+        "days": "weekdays",
+        "public_holidays": "included",
+        "months": [1, 2, 3, 12],
+        "measurement_method": "monthly_peak",
+        "peak_period": "month",
+    }
+    assert charges[1]["months"] == [4, 5, 6, 7, 8, 9, 10, 11]
+    assert body["demand"]["rate"] == 11.473
+    assert body["demand"]["window_start"] == "15:00"
+    assert body["demand"]["season_months"] == [1, 2, 3, 12]
+
+
+def test_detail_without_demand_has_empty_list(client):
+    body = client.get("/api/v1/tariffs/energex/T12A").json()
+    assert body["demand"] is not None
+    assert len(body["demand_charges"]) == 1
+    assert body["demand_charges"][0]["months"] is None
+    flat = client.get("/api/v1/tariffs/ausgrid/EA025").json()
+    assert flat["demand"] is None
+    assert flat["demand_charges"] == []
+
+
+def test_detail_time_basis_and_prices_expected_until(seed_client):
+    nasn12 = seed_client.get("/api/v1/tariffs/ausnet/NASN12").json()
+    assert nasn12["time_basis"] == "local"
+    assert nasn12["prices_expected_until"] == "2027-07-01"
+    a180 = seed_client.get("/api/v1/tariffs/jemena/A180").json()
+    assert a180["time_basis"] == "standard"
+    for rate in nasn12["rates"]:
+        assert "public_holidays" in rate
+
+
+def test_rate_public_holidays_published(seed_client):
+    rates = seed_client.get("/api/v1/tariffs/ausgrid/EA302").json()["rates"]
+    weekday = [r for r in rates if r["days"] == "weekdays"]
+    assert weekday and {r["public_holidays"] for r in weekday} == {"excluded"}
+
+
+@pytest.mark.parametrize(
+    ("dnsp", "code", "rollover"),
+    [
+        ("sapn", "RSR", "billing_period"),
+        ("sapn", "SBTOU", "billing_period_like_days"),
+        ("ausnet", "RCER11", "none"),
+    ],
+)
+def test_export_rollover(seed_client, dnsp, code, rollover):
+    (export,) = seed_client.get(f"/api/v1/tariffs/{dnsp}/{code}").json()["export"]
+    assert export["free_threshold_period"] == "day"
+    assert export["free_threshold_rollover"] == rollover
+    assert "public_holidays" in export
+
+
+def test_changing_prices_expected_until_keeps_version_in_force(client):
+    url = "/api/v1/tariffs/energex/T12A"
+    with Session(engine) as session:
+        tariff = session.query(Tariff).filter_by(code="T12A").one()
+        tariff.prices_expected_until = "2027-07-01"
+        session.commit()
+    before = client.get(url).json()
+    with Session(engine) as session:
+        tariff = session.query(Tariff).filter_by(code="T12A").one()
+        tariff.prices_expected_until = "2020-01-01"
+        session.commit()
+    after = client.get(url).json()
+    assert before["prices_expected_until"] == "2027-07-01"
+    assert after["prices_expected_until"] == "2020-01-01"
+    assert after["effective_from"] == before["effective_from"]
+    assert after["effective_to"] == before["effective_to"]
+    assert len(client.get(url + "/history").json()) == 1
+
+
+def test_tariff_type_description_says_read_export(client):
+    schemas = client.get("/openapi.json").json()["components"]["schemas"]
+    for name in ("TariffDetailResponse", "TariffSummaryResponse"):
+        description = schemas[name]["properties"]["tariff_type"]["description"]
+        assert "does not indicate" in description
+        assert "export" in description

@@ -187,6 +187,7 @@ def expected_rate(rate: dict) -> dict:
         "days": rate.get("days", "all"),
         "season": rate.get("season", "all"),
         "season_months": rate.get("season_months") or None,
+        "public_holidays": rate.get("public_holidays"),
     }
 
 
@@ -206,6 +207,21 @@ def expected_demand(tariff: dict) -> dict | None:
     }
 
 
+def expected_charge(charge: dict) -> dict:
+    return {
+        "period": charge["period"],
+        "rate": charge["rate"],
+        "unit": charge["unit"],
+        "start": charge["start"],
+        "end": charge["end"],
+        "days": charge.get("days", "all"),
+        "public_holidays": charge.get("public_holidays"),
+        "months": charge.get("months") or None,
+        "measurement_method": charge["measurement_method"],
+        "peak_period": charge["peak_period"],
+    }
+
+
 EXPORT_FIELDS = (
     "credit_rate",
     "credit_window_start",
@@ -214,6 +230,9 @@ EXPORT_FIELDS = (
     "charge_window_start",
     "charge_window_end",
     "free_threshold_kwh",
+    "free_threshold_period",
+    "free_threshold_rollover",
+    "public_holidays",
 )
 
 
@@ -249,6 +268,13 @@ def test_api_returns_the_seed_tariff(seed_client, seed):
         assert {k: body["demand"][k] for k in demand} == demand
     assert by_content(body["export"]) == by_content(
         [expected_export(e) for e in seed.get("exports", [])]
+    )
+    assert body["time_basis"] == seed["time_basis"]
+    assert body["prices_expected_until"] == seed.get("prices_expected_until")
+    order = [(-c["rate"], c["start"]) for c in body["demand_charges"]]
+    assert order == sorted(order)
+    assert by_content(body["demand_charges"]) == by_content(
+        [expected_charge(c) for c in seed.get("demand_charges", [])]
     )
 
 
