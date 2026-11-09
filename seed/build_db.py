@@ -7,6 +7,7 @@ Reads all JSON files in seed/ directory and creates data/tariffs.db.
 
 import json
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 # Add project root to path
@@ -31,8 +32,29 @@ def load_seed_files() -> list[dict]:
     return data
 
 
+def validate_tariff_versions(seed_files: list[dict]) -> None:
+    """Raise ValueError unless each version ends on the date the next one starts."""
+    versions: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for data in seed_files:
+        for tariff in data.get("tariffs", []):
+            versions[(tariff["dnsp"], tariff["code"])].append(tariff)
+
+    for (dnsp, code), rows in versions.items():
+        rows.sort(key=lambda row: row["effective_from"])
+        for row, following in zip(rows, [*rows[1:], None]):
+            start, end = row["effective_from"], row.get("effective_to")
+            if end is not None and end <= start:
+                raise ValueError(f"{dnsp}/{code}: version from {start} ends on {end}")
+            if following is not None and end != following["effective_from"]:
+                raise ValueError(
+                    f"{dnsp}/{code}: version from {start} must end on "
+                    f"{following['effective_from']}, the next version's start, not {end}"
+                )
+
+
 def populate(session: Session, seed_files: list[dict]) -> None:
     """Add every DNSP, tariff, rate, demand and export in seed_files, then commit."""
+    validate_tariff_versions(seed_files)
     dnsp_map: dict[str, Dnsp] = {}
 
     for data in seed_files:

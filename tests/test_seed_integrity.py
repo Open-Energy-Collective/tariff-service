@@ -25,7 +25,7 @@ from app.services.rate_calculator import (
     is_season_match,
     parse_time,
 )
-from seed.build_db import populate
+from seed.build_db import populate, validate_tariff_versions
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
 
@@ -99,6 +99,57 @@ def test_every_half_hour_has_exactly_one_rate_or_a_defined_gap(seed_engine, dnsp
                 found = [(r.period_name, r.rate) for r in matching_rates(tariff, at)]
                 assert len(found) == 1, f"{at:%a %m-%d %H:%M}: {found}"
                 assert resolved == found[0], f"{at:%a %m-%d %H:%M}: {resolved}"
+
+
+# ── Version dates are aligned ──
+
+
+def version(start: str, end: str | None, code: str = "T1", dnsp: str = "d") -> dict:
+    return {"dnsp": dnsp, "code": code, "effective_from": start, "effective_to": end}
+
+
+def seed_with(*tariffs: dict) -> list[dict]:
+    return [{"tariffs": list(tariffs)}]
+
+
+def test_aligned_versions_are_accepted():
+    validate_tariff_versions(
+        seed_with(version("2027-07-01", None), version("2026-07-01", "2027-07-01"))
+    )
+
+
+@pytest.mark.parametrize(
+    "tariffs",
+    [
+        pytest.param([version("2026-07-01", "2027-06-30"), version("2027-07-01", None)], id="gap"),
+        pytest.param(
+            [version("2026-07-01", "2027-08-01"), version("2027-07-01", None)], id="overlap"
+        ),
+        pytest.param([version("2026-07-01", None), version("2027-07-01", None)], id="no-end"),
+        pytest.param([version("2026-07-01", None), version("2026-07-01", None)], id="same-start"),
+        pytest.param([version("2026-07-01", "2026-07-01")], id="empty-version"),
+    ],
+)
+def test_misaligned_versions_are_rejected(tariffs):
+    with pytest.raises(ValueError, match="d/T1"):
+        validate_tariff_versions(seed_with(*tariffs))
+
+
+def test_versions_are_checked_per_tariff():
+    validate_tariff_versions(
+        seed_with(
+            version("2026-07-01", None, code="T1"),
+            version("2027-07-01", None, code="T2"),
+            version("2027-07-01", None, code="T1", dnsp="e"),
+        )
+    )
+
+
+def test_populate_rejects_misaligned_versions_before_writing():
+    engine = create_engine("sqlite://")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session, pytest.raises(ValueError):
+        populate(session, seed_with(version("2026-07-01", None), version("2027-07-01", None)))
 
 
 # ── 2. The API returns what the seed holds ──
