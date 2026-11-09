@@ -43,6 +43,10 @@ Public REST API serving curated Australian DNSP network tariff data, including t
 | GET | `/api/v1/calculate/demand-windows` | Demand windows of a tariff over a time range (at most 31 days) |
 | GET | `/api/v1/docs/demand-methodology` | Per-DNSP demand charge methodology |
 
+`/api/v1/calculate/current-rate` returns `period: "none"` and `rate: null` when no single rate is
+in force: the time is outside the tariff's rate windows, the tariff has no energy rates, or the
+rate depends on consumption.
+
 ## Data Sources
 
 See `DATA_SOURCES.md` for authoritative tariff data sources and methodology notes.

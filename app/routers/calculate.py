@@ -16,11 +16,15 @@ from app.schemas.tariff import (
 )
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
-    demand_windows,
     get_current_rate,
     is_in_demand_window,
 )
-from app.services.tariff_service import get_tariff_detail
+from app.services.tariff_service import (
+    demand_windows_in_force,
+    get_dnsp,
+    get_tariff_detail,
+    get_tariff_history,
+)
 
 router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
 
@@ -38,7 +42,13 @@ def _errors(bad_request: str) -> dict:
 @router.get(
     "/current-rate",
     response_model=CurrentRateResponse,
-    responses=_errors("Invalid datetime, or outside the supported date range"),
+    responses={
+        **_errors("Invalid datetime, or outside the supported date range"),
+        404: {
+            "model": ErrorResponse,
+            "description": "Tariff not found for the DNSP, or no version in force on that date",
+        },
+    },
 )
 def current_rate(
     dnsp: str = Query(
@@ -54,18 +64,20 @@ def current_rate(
         alias="datetime",
         description=(
             "ISO 8601 datetime, e.g. '2026-07-20T17:30:00+10:00'. Resolved in the "
-            "DNSP's local time; a value without an offset is taken as that local time."
+            "DNSP's local time; a value without an offset is taken as that local time. "
+            "The tariff version in force on that local date is used."
         ),
         json_schema_extra={"example": "2026-07-20T17:30:00+10:00"},
     ),
     db: Session = Depends(get_db),
 ) -> CurrentRateResponse:
     """Get the active rate for a given DNSP, tariff, and datetime."""
-    tariff_obj = get_tariff_detail(db, dnsp, tariff)
-    if not tariff_obj:
-        raise HTTPException(
-            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
-        )
+    not_found = HTTPException(
+        status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+    )
+    dnsp_obj = get_dnsp(db, dnsp)
+    if not dnsp_obj:
+        raise not_found
 
     try:
         parsed_dt = datetime.fromisoformat(dt.replace(" ", "+"))
@@ -76,9 +88,12 @@ def current_rate(
     if parsed_dt.tzinfo is not None:
         # Resolve in the DNSP's local time; a naive datetime already is (#39).
         try:
-            parsed_dt = parsed_dt.astimezone(ZoneInfo(tariff_obj.dnsp.timezone))
+            parsed_dt = parsed_dt.astimezone(ZoneInfo(dnsp_obj.timezone))
         except OverflowError:
             raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
+    tariff_obj = get_tariff_detail(db, dnsp, tariff, on=parsed_dt.date())
+    if not tariff_obj:
+        raise not_found
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
     in_window = is_in_demand_window(tariff_obj.demand, parsed_dt)
 
@@ -162,10 +177,16 @@ def _parse_aware(name: str, value: str) -> datetime:
 @router.get(
     "/demand-windows",
     response_model=DemandWindowsResponse,
-    responses=_errors(
-        "Invalid or naive datetime, end not after start, range over 31 days, "
-        "or outside the supported date range"
-    ),
+    responses={
+        **_errors(
+            "Invalid or naive datetime, end not after start, range over 31 days, "
+            "or outside the supported date range"
+        ),
+        404: {
+            "model": ErrorResponse,
+            "description": "Tariff not found for the DNSP, or a date in the range has no version",
+        },
+    },
 )
 def demand_windows_in_range(
     dnsp: str = Query(
@@ -190,13 +211,15 @@ def demand_windows_in_range(
 
     Windows are resolved in the DNSP's local time by the rules of
     `/calculate/current-rate`'s `in_demand_window`: half-open, clipped to the
-    range, sorted and merged, each bound in the DNSP's local offset.
+    range, sorted and merged, each bound in the DNSP's local offset. Each local
+    date uses the tariff version in force on that date; a range with a date no
+    version covers returns 404.
     """
-    tariff_obj = get_tariff_detail(db, dnsp, tariff)
-    if not tariff_obj:
-        raise HTTPException(
-            status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
-        )
+    not_found = HTTPException(
+        status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
+    )
+    if not get_tariff_history(db, dnsp, tariff):
+        raise not_found
 
     range_start = _parse_aware("start", start)
     range_end = _parse_aware("end", end)
@@ -207,11 +230,16 @@ def demand_windows_in_range(
             status_code=400, detail="Range from start to end must be at most 31 days"
         )
 
-    tz = ZoneInfo(tariff_obj.dnsp.timezone)
+    tz = ZoneInfo(get_dnsp(db, dnsp).timezone)
     try:
-        spans = demand_windows(tariff_obj.demand, tz, range_start, range_end)
+        spans = demand_windows_in_force(db, dnsp, tariff, tz, range_start, range_end)
     except OverflowError:
         raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
+    if spans is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Tariff '{tariff}' has no version in force for every date in the range",
+        )
     return DemandWindowsResponse(
         dnsp=dnsp,
         tariff=tariff,

@@ -9,6 +9,9 @@ from zoneinfo import ZoneInfo
 
 from app.models.tariff import Tariff, TariffDemand
 
+NO_RATE_IN_FORCE: tuple[str, None] = ("none", None)
+CONSUMPTION_BLOCK_PREFIX = "block_"
+
 
 def parse_time(time_str: str) -> time:
     """Parse HH:MM string to time object."""
@@ -58,12 +61,16 @@ def is_season_match(season_months: str | None, month: int) -> bool:
     return month in months
 
 
-def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float]:
+def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float | None]:
     """Determine which rate period applies at the given datetime.
 
     Returns:
-        Tuple of (period_name, rate_per_kwh)
+        Tuple of (period_name, rate_per_kwh). NO_RATE_IN_FORCE when no rate
+        applies at that time, or when the rate depends on consumption.
     """
+    if any(rate.period_name.startswith(CONSUMPTION_BLOCK_PREFIX) for rate in tariff.rates):
+        return NO_RATE_IN_FORCE
+
     current_time = dt.time()
     weekday = dt.weekday()
     month = dt.month
@@ -87,10 +94,7 @@ def get_current_rate(tariff: Tariff, dt: datetime) -> tuple[str, float]:
     if catchall_rate is not None:
         return catchall_rate.period_name, catchall_rate.rate
 
-    # Fallback: return first rate (shouldn't happen with properly configured data)
-    if tariff.rates:
-        return tariff.rates[0].period_name, tariff.rates[0].rate
-    return "unknown", 0.0
+    return NO_RATE_IN_FORCE
 
 
 def is_in_demand_window(demand: TariffDemand | None, dt: datetime) -> bool:

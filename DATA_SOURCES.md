@@ -183,6 +183,12 @@ From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (
 - **RESELE**: peak 5pm–9pm (17:00–21:00) all days, solar sponge 10am–4pm (10:00–16:00) all days, shoulder all other times (the 14 hours outside peak and solar sponge); no off-peak (customer overview Table 2)
 - **SBELE**: peak 5pm–9pm all days, shoulder 7am–10am and 4pm–5pm workdays, off-peak all other times (customer overview Table 4). Off-peak $0.1072/kWh and shoulder $0.1875/kWh, from the Off-Peak and Shoulder columns of the NUoS schedule (Table 9)
 
+Exports, 0-30 kW export capacity (price list Table 1; overview Tables 2 and 4):
+- **RSR, BSR**: charge 0.75 c/kWh above 11 kWh per day
+- **RTOU, SBTOU, MBTOUD**: charge 1 c/kWh 10am–4pm above 9 kWh per day
+- **RESELE, SBELE**: as RTOU, plus credit 13.22 c/kWh 5pm–9pm November–March
+- Rollover of unused allowance within a billing period is not seeded (#31)
+
 Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT).
 
 ---
@@ -253,6 +259,10 @@ Residential ToU (NASS11, RCER11):
 - **Solar Soak**: 11am–4pm every day (1 c/kWh)
 - **Off-peak**: All other times
 
+Export (RCER11, sheet "Tariff structures", structure 20):
+- **Export charge**: 11am–4pm every day, 1 c/kWh above a basic export level of 1 kWh per day
+- **Export reward**: 4pm–9pm every day, 10 c/kWh
+
 Business ToU (NAST12):
 - **Peak**: 7am–11pm weekdays
 - **Off-peak**: All other times
@@ -260,6 +270,7 @@ Business ToU (NAST12):
 Demand (NASN12):
 - **Demand window**: 3pm–9pm (15:00–21:00) weekdays, December to March (sheet "Tariff structures", structure 15)
 - **Off-peak season** (April to November): 2.862 $/kW/month, not seeded (one demand rate per tariff)
+- **Energy**: anytime 16.796 c/kWh (sheet "Network 2026-27")
 
 ---
 

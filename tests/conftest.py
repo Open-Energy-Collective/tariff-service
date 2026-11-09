@@ -23,7 +23,12 @@ from seed.build_db import load_seed_files, populate  # noqa: E402
 
 @pytest.fixture(autouse=True)
 def setup_db():
-    """Create tables and seed test data before each test, drop after."""
+    """Create tables and synthetic test data before each test, drop after.
+
+    These rows exercise API behaviour only and are not checked against any source.
+    Seed correctness is tested on the real seed: test_seed_data.py,
+    test_seed_integrity.py and test_demand_tariffs.py.
+    """
     Base.metadata.create_all(engine)
 
     with Session(engine) as session:
@@ -218,7 +223,7 @@ def setup_db():
             )
         )
 
-        # ── SA Power Networks (solar sponge, peak 17:00-21:00) ──
+        # ── SA Power Networks (solar sponge, off-peak, peak all other times) ──
         sapn = Dnsp(
             code="sapn", name="SA Power Networks", state="SA", timezone="Australia/Adelaide"
         )
@@ -237,50 +242,23 @@ def setup_db():
         session.add(sapn_tou)
         session.flush()
 
-        session.add(
-            TariffRate(
-                tariff_id=sapn_tou.id,
-                period_name="peak",
-                rate=0.2133,
-                start_time="17:00",
-                end_time="21:00",
-                days="all",
-                season="all",
+        # The structure of seed/sapn.json RTOU: peak is every hour not listed.
+        for period, rate, start, end in [
+            ("off_peak", 0.1067, "00:00", "06:00"),
+            ("solar_sponge", 0.0535, "10:00", "16:00"),
+            ("peak", 0.2133, "00:00", "00:00"),
+        ]:
+            session.add(
+                TariffRate(
+                    tariff_id=sapn_tou.id,
+                    period_name=period,
+                    rate=rate,
+                    start_time=start,
+                    end_time=end,
+                    days="all",
+                    season="all",
+                )
             )
-        )
-        session.add(
-            TariffRate(
-                tariff_id=sapn_tou.id,
-                period_name="solar_sponge",
-                rate=0.0535,
-                start_time="10:00",
-                end_time="15:00",
-                days="all",
-                season="all",
-            )
-        )
-        session.add(
-            TariffRate(
-                tariff_id=sapn_tou.id,
-                period_name="shoulder",
-                rate=0.1067,
-                start_time="06:00",
-                end_time="10:00",
-                days="all",
-                season="all",
-            )
-        )
-        session.add(
-            TariffRate(
-                tariff_id=sapn_tou.id,
-                period_name="off_peak",
-                rate=0.0535,
-                start_time="01:00",
-                end_time="06:00",
-                days="all",
-                season="all",
-            )
-        )
 
         session.commit()
 
