@@ -25,6 +25,7 @@ from app.services.rate_calculator import (
     is_season_match,
     parse_time,
 )
+from seed import build_db
 from seed.build_db import populate, validate_tariff_versions
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
@@ -148,8 +149,27 @@ def test_versions_are_checked_per_tariff():
 def test_populate_rejects_misaligned_versions_before_writing():
     engine = create_engine("sqlite://")
     Base.metadata.create_all(engine)
-    with Session(engine) as session, pytest.raises(ValueError):
-        populate(session, seed_with(version("2026-07-01", None), version("2027-07-01", None)))
+    dnsp = {"code": "d", "name": "D", "state": "QLD", "timezone": "Australia/Brisbane"}
+    misaligned = [version("2026-07-01", None), version("2027-07-01", None)]
+    files = [{"dnsps": [dnsp], "tariffs": misaligned}]
+    with Session(engine) as session:
+        with pytest.raises(ValueError):
+            populate(session, files)
+        assert session.query(Dnsp).count() == 0
+
+
+def test_failed_build_keeps_the_existing_database(tmp_path, monkeypatch):
+    existing = tmp_path / "tariffs.db"
+    existing.write_text("previous build")
+    monkeypatch.setattr(build_db, "DB_PATH", existing)
+    monkeypatch.setattr(
+        build_db,
+        "load_seed_files",
+        lambda: seed_with(version("2026-07-01", None), version("2027-07-01", None)),
+    )
+    with pytest.raises(ValueError):
+        build_db.build_database()
+    assert existing.read_text() == "previous build"
 
 
 # ── 2. The API returns what the seed holds ──

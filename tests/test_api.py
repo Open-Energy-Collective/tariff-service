@@ -875,6 +875,12 @@ def test_list_shows_a_superseding_version_once_it_starts(client, versioned_tarif
     assert [t["effective_from"] for t in listed] == ["2027-07-01"]
 
 
+def test_list_is_ordered_by_code(client, demand_versions):
+    codes = [t["code"] for t in client.get("/api/v1/tariffs/energex").json()]
+    assert len(codes) > 1
+    assert codes == sorted(codes)
+
+
 def test_history_returns_every_version_newest_first(client, versioned_tariff):
     history = client.get("/api/v1/tariffs/energex/V1/history").json()
     assert [t["effective_from"] for t in history] == ["2027-07-01", "2026-07-01", "2025-07-01"]
@@ -942,6 +948,8 @@ def demand_versions():
             ("DA", "2025-07-01", "2026-07-01", "00:00", "00:00"),
             ("DA", "2026-07-01", None, "00:00", "00:00"),
             ("DE", "2025-07-01", "2026-07-01", "17:00", "20:00"),
+            ("DG", "2025-07-01", "2025-08-01", "17:00", "20:00"),
+            ("DG", "2025-08-03", None, "17:00", "20:00"),
         ]:
             tariff = Tariff(
                 dnsp_id=energex.id,
@@ -1025,6 +1033,10 @@ def test_demand_windows_404_when_the_range_starts_before_the_first_version(
 
 def test_demand_windows_404_when_the_range_runs_past_the_last_version(client, demand_versions):
     assert demand_windows_for(client, "DE", "2026-06-30", "2026-07-02").status_code == 404
+
+
+def test_demand_windows_404_for_a_gap_inside_the_range(client, demand_versions):
+    assert demand_windows_for(client, "DG", "2025-07-31", "2025-08-05").status_code == 404
 
 
 def test_demand_windows_ok_up_to_the_last_versions_end(client, demand_versions):

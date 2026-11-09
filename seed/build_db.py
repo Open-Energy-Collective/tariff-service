@@ -166,6 +166,10 @@ def populate(session: Session, seed_files: list[dict]) -> None:
 
 def build_database() -> None:
     """Create SQLite database from seed data."""
+    # Load and check the seed first: a failed build keeps the existing database
+    seed_files = load_seed_files()
+    validate_tariff_versions(seed_files)
+
     # Ensure data directory exists
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -177,9 +181,6 @@ def build_database() -> None:
     # Create tables
     Base.metadata.create_all(engine)
     print(f"  Created {DB_PATH.name}")
-
-    # Load seed data
-    seed_files = load_seed_files()
 
     with Session(engine) as session:
         populate(session, seed_files)
