@@ -455,3 +455,45 @@ def test_demand_tariff_schema_gap(seed_client, case):
     if case.off_season_charged is None:
         pytest.xfail(f"#62: {case.schema_gap}")
     assert in_window(seed_client, case.dnsp, case.code, case.off_season_charged) is True
+
+
+def test_weekend_public_holiday_matches_an_ordinary_weekend_day(seed_client):
+    """Energex 3800: Saturday Christmas Day 2027 is judged like an ordinary Saturday."""
+    results = {}
+    times = {"holiday": "2027-12-25T17:30:00+10:00", "ordinary": "2027-12-18T17:30:00+10:00"}
+    for label, at in times.items():
+        response = seed_client.get(
+            "/api/v1/calculate/current-rate",
+            params={"dnsp": "energex", "tariff": "3800", "datetime": at},
+        )
+        assert response.status_code == 200
+        body = response.json()
+        results[label] = (body["period"], body["in_demand_window"])
+    assert results["holiday"] == results["ordinary"]
+    assert results["holiday"][1] is False
+
+    windows = seed_client.get(
+        "/api/v1/calculate/demand-windows",
+        params={
+            "dnsp": "energex",
+            "tariff": "3800",
+            "start": "2027-12-25T00:00:00+10:00",
+            "end": "2027-12-26T00:00:00+10:00",
+        },
+    )
+    assert windows.status_code == 200
+    assert windows.json()["windows"] == []
+
+
+def test_current_rate_lists_demand_charges_highest_rate_first():
+    from app.models.tariff import TariffDemandCharge
+    from app.services.rate_calculator import demand_charge_order
+
+    def c(rate, start):
+        return TariffDemandCharge(
+            period="p", rate=rate, unit="kW", start=start, end="22:00", days="all"
+        )
+
+    charges = [c(2.0, "07:00"), c(9.0, "17:00"), c(9.0, "15:00")]
+    ordered = sorted(charges, key=demand_charge_order)
+    assert [(x.rate, x.start) for x in ordered] == [(9.0, "15:00"), (9.0, "17:00"), (2.0, "07:00")]

@@ -43,7 +43,8 @@ class TariffDemandResponse(BaseModel):
         description=(
             "Which days the demand window applies. Values: "
             "'all' = every day including weekends; "
-            "'weekdays' = Monday to Friday only (excludes public holidays)"
+            "'weekdays' = Monday to Friday. Public holiday treatment is given by "
+            "demand_charges[].public_holidays"
         )
     )
     season_months: list[int] | None = Field(

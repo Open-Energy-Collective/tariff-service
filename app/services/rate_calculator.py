@@ -69,6 +69,11 @@ def get_current_rate(tariff: Tariff, instant: datetime) -> tuple[str, float | No
     return NO_RATE_IN_FORCE
 
 
+def demand_charge_order(charge: TariffDemandCharge) -> tuple[float, str]:
+    """Sort key for listing demand charges: highest rate first, then earliest start."""
+    return (-charge.rate, charge.start)
+
+
 def demand_charges_at(
     tariff: Tariff, instant: datetime
 ) -> list[tuple[TariffDemandCharge, bool]]:

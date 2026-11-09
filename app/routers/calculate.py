@@ -17,6 +17,7 @@ from app.schemas.tariff import (
 )
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
+    demand_charge_order,
     demand_charges_at,
     get_current_rate,
 )
@@ -115,7 +116,7 @@ def current_rate(
                 peak_period=charge.peak_period,
                 active=active,
             )
-            for charge, active in charges
+            for charge, active in sorted(charges, key=lambda ca: demand_charge_order(ca[0]))
         ],
     )
 

@@ -81,15 +81,19 @@ def day_applies(days: str, public_holidays: str | None, day: date, state: str) -
     """Whether a window with this `days` and holiday marker runs on `day` in `state`.
 
     `days` is all, weekdays or weekends; anything else raises ValueError. all runs
-    every day. On a public holiday a marker of included or excluded decides;
-    otherwise `days` decides by weekday.
+    every day. On a public holiday, excluded switches the window off and included
+    switches a weekends window on; every other case follows the weekday rule, so a
+    weekdays window stays off on a weekend holiday.
     """
     if days not in ("all", "weekdays", "weekends"):
         raise ValueError(f"unknown days value: {days!r}")
     if days == "all":
         return True
     if public_holidays in ("included", "excluded") and is_public_holiday(state, day):
-        return public_holidays == "included"
+        if public_holidays == "excluded":
+            return False
+        if days == "weekends":
+            return True
     is_weekday = day.weekday() < WEEKDAYS_END
     return is_weekday if days == "weekdays" else not is_weekday
 

@@ -14,6 +14,7 @@ from app.schemas.tariff import (
     TariffRateResponse,
     TariffSummaryResponse,
 )
+from app.services.rate_calculator import demand_charge_order
 from app.services.tariff_service import get_tariff_detail, get_tariff_history, get_tariffs_for_dnsp
 
 router = APIRouter(prefix="/api/v1/tariffs", tags=["Tariffs"])
@@ -84,7 +85,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
             measurement_method=c.measurement_method,
             peak_period=c.peak_period,
         )
-        for c in sorted(tariff.demand_charges, key=lambda c: (-c.rate, c.start))
+        for c in sorted(tariff.demand_charges, key=demand_charge_order)
     ]
 
     return TariffDetailResponse(

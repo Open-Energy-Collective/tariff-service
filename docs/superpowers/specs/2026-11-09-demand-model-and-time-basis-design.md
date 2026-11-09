@@ -41,8 +41,8 @@ Each tariff version row gains:
 | `measurement_method` | str | As `tariff_demand` |
 | `peak_period` | str | `month`, `rolling_12_months` |
 
-`public_holidays` means whether the window applies on a public holiday. Energy rate and export
-rows gain the same field with the same rule. Ausgrid weekdays are `excluded` and its weekends
+`public_holidays` decides a window on a public holiday. `excluded` switches the window off. `included` switches a `weekends` window on, and leaves a `weekdays` or `all` window to its `days` value, so a `weekdays` window applies on a weekday holiday and not on a weekend holiday. Energy rate and export
+rows gain the same field with the same rule. The tariff version in force is chosen on the DNSP's local date. Ausgrid weekdays are `excluded` and its weekends
 `included`. Power and Water weekdays are `included`.
 
 Export rows gain:

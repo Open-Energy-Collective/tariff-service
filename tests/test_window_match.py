@@ -94,6 +94,26 @@ def test_included_weekend_window_on_on_a_weekday_holiday():
     assert day_applies("weekends", "included", CHRISTMAS_2026, "VIC") is True
 
 
+def test_included_weekday_window_off_on_a_saturday_holiday():
+    christmas_2027 = date(2027, 12, 25)  # Saturday
+    assert christmas_2027.weekday() == 5
+    assert day_applies("weekdays", "included", christmas_2027, "QLD") is False
+
+
+def test_included_weekday_window_off_on_a_sunday_holiday():
+    anzac_2027 = date(2027, 4, 25)  # Sunday
+    assert anzac_2027.weekday() == 6
+    assert day_applies("weekdays", "included", anzac_2027, "NSW") is False
+
+
+def test_included_weekend_window_on_on_a_weekend_holiday():
+    assert day_applies("weekends", "included", date(2027, 12, 25), "QLD") is True
+
+
+def test_included_all_days_window_on_on_a_weekend_holiday():
+    assert day_applies("all", "included", date(2027, 12, 25), "QLD") is True
+
+
 def test_excluded_weekend_window_off_on_a_weekend_holiday():
     new_years_day_2028 = date(2028, 1, 1)  # Saturday
     assert new_years_day_2028.weekday() == 5
