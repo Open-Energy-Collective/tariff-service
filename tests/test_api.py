@@ -934,6 +934,7 @@ def demand_versions():
             ("DW", "2026-07-01", None, "18:00", "21:00"),
             ("DA", "2025-07-01", "2026-07-01", "00:00", "00:00"),
             ("DA", "2026-07-01", None, "00:00", "00:00"),
+            ("DE", "2025-07-01", "2026-07-01", "17:00", "20:00"),
         ]:
             tariff = Tariff(
                 dnsp_id=energex.id,
@@ -1009,9 +1010,19 @@ def test_demand_windows_404_when_no_version_covers_the_range(client, demand_vers
     assert response.status_code == 404
 
 
-def test_demand_windows_skip_days_before_the_first_version(client, demand_versions):
-    response = demand_windows_for(client, "DW", "2025-06-30", "2025-07-02")
-    assert response.json()["windows"] == [window("2025-07-01", "17:00", "20:00")]
+def test_demand_windows_404_when_the_range_starts_before_the_first_version(
+    client, demand_versions
+):
+    assert demand_windows_for(client, "DW", "2025-06-30", "2025-07-02").status_code == 404
+
+
+def test_demand_windows_404_when_the_range_runs_past_the_last_version(client, demand_versions):
+    assert demand_windows_for(client, "DE", "2026-06-30", "2026-07-02").status_code == 404
+
+
+def test_demand_windows_ok_up_to_the_last_versions_end(client, demand_versions):
+    response = demand_windows_for(client, "DE", "2026-06-29", "2026-07-01")
+    assert response.status_code == 200
 
 
 def test_demand_windows_404_when_the_range_ends_as_the_first_version_starts(

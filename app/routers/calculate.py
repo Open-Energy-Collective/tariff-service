@@ -184,7 +184,7 @@ def _parse_aware(name: str, value: str) -> datetime:
         ),
         404: {
             "model": ErrorResponse,
-            "description": "Tariff not found for the DNSP, or no version in force in the range",
+            "description": "Tariff not found for the DNSP, or a date in the range has no version",
         },
     },
 )
@@ -212,7 +212,8 @@ def demand_windows_in_range(
     Windows are resolved in the DNSP's local time by the rules of
     `/calculate/current-rate`'s `in_demand_window`: half-open, clipped to the
     range, sorted and merged, each bound in the DNSP's local offset. Each local
-    date uses the tariff version in force on that date.
+    date uses the tariff version in force on that date; a range with a date no
+    version covers returns 404.
     """
     not_found = HTTPException(
         status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
@@ -235,7 +236,10 @@ def demand_windows_in_range(
     except OverflowError:
         raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
     if spans is None:
-        raise not_found
+        raise HTTPException(
+            status_code=404,
+            detail=f"Tariff '{tariff}' has no version in force for every date in the range",
+        )
     return DemandWindowsResponse(
         dnsp=dnsp,
         tariff=tariff,
