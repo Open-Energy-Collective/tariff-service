@@ -1,6 +1,6 @@
 ---
 scope: tariff-service
-status: in-progress
+status: done
 priority: now
 depends_on: []
 tracking: ["tariff-service#31", "tariff-service#56"]
