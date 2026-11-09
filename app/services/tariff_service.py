@@ -16,20 +16,21 @@ def get_all_dnsps(db: Session) -> list[Dnsp]:
 
 
 def get_tariffs_for_dnsp(db: Session, dnsp_code: str) -> list[Tariff]:
-    """Return all active tariffs for a given DNSP code."""
+    """Return the version in force today of each tariff for a DNSP; the newest start wins."""
     today = date.today().isoformat()
-    return list(
+    in_force = (
         db.execute(
             select(Tariff)
             .join(Dnsp)
             .where(Dnsp.code == dnsp_code)
             .where(Tariff.effective_from <= today)
             .where((Tariff.effective_to.is_(None)) | (Tariff.effective_to > today))
-            .order_by(Tariff.code)
+            .order_by(Tariff.code, Tariff.effective_from.desc())
         )
         .scalars()
         .all()
     )
+    return list({tariff.code: tariff for tariff in reversed(in_force)}.values())[::-1]
 
 
 def get_dnsp(db: Session, dnsp_code: str) -> Dnsp | None:

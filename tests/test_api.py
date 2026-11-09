@@ -868,6 +868,13 @@ def test_list_shows_only_the_version_in_force(client, versioned_tariff, monkeypa
     assert [t["effective_from"] for t in listed] == ["2026-07-01"]
 
 
+def test_list_shows_a_superseding_version_once_it_starts(client, versioned_tariff, monkeypatch):
+    # V1's 2026-07-01 row has no end date; the 2027-07-01 row supersedes it.
+    set_today(monkeypatch, date(2027, 7, 1))
+    listed = [t for t in client.get("/api/v1/tariffs/energex").json() if t["code"] == "V1"]
+    assert [t["effective_from"] for t in listed] == ["2027-07-01"]
+
+
 def test_history_returns_every_version_newest_first(client, versioned_tariff):
     history = client.get("/api/v1/tariffs/energex/V1/history").json()
     assert [t["effective_from"] for t in history] == ["2027-07-01", "2026-07-01", "2025-07-01"]
