@@ -1,7 +1,7 @@
 """demand_windows against the seed demand charges (#31, #36, #56)."""
 
 import json
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import UTC, date, datetime, time, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -363,3 +363,80 @@ def test_matches_is_in_demand_window_every_minute(dnsp_file, code, tz_name, rang
 )
 def test_matches_demand_charges_at_on_a_standard_clock_every_minute(tariff, first, last):
     assert_matches_demand_charges_at(tariff, first, last)
+
+
+# Bounds inside the daylight saving hour (#63). Melbourne 2026: daylight saving ends
+# 2026-04-05 03:00, back to 02:00, so 02:00-03:00 reads twice; it starts 2026-10-04
+# 02:00, on to 03:00, so 02:00-03:00 never reads. A local window is the set of
+# instants whose local clock reads inside it.
+FALL_BACK = date(2026, 4, 5)
+SPRING_FORWARD = date(2026, 10, 4)
+AEST_FIXED = timezone(timedelta(hours=10))
+
+
+def windows_on(tariff: Tariff, day: date) -> list[tuple[str, str]]:
+    s = datetime.combine(day, time(0), tzinfo=MEL)
+    e = datetime.combine(day + timedelta(days=1), time(0), tzinfo=MEL)
+    return [(a.isoformat(), b.isoformat()) for a, b, _ in demand_windows(tariff, s, e)]
+
+
+@pytest.mark.parametrize(
+    ("start", "end", "day", "expected"),
+    [
+        # Fall back: the repeated half hour 02:00-02:30 is in the window both times.
+        ("01:30", "02:30", FALL_BACK, [
+            ("2026-04-05T01:30:00+11:00", "2026-04-05T02:30:00+11:00"),
+            ("2026-04-05T02:00:00+10:00", "2026-04-05T02:30:00+10:00"),
+        ]),
+        ("02:00", "03:00", FALL_BACK, [
+            ("2026-04-05T02:00:00+11:00", "2026-04-05T03:00:00+10:00"),
+        ]),
+        ("02:30", "03:00", FALL_BACK, [
+            ("2026-04-05T02:30:00+11:00", "2026-04-05T02:00:00+10:00"),
+            ("2026-04-05T02:30:00+10:00", "2026-04-05T03:00:00+10:00"),
+        ]),
+        # Spring forward: the clock skips 02:00-03:00, so that part matches nothing.
+        ("01:30", "02:30", SPRING_FORWARD, [
+            ("2026-10-04T01:30:00+10:00", "2026-10-04T03:00:00+11:00"),
+        ]),
+        ("02:00", "03:00", SPRING_FORWARD, []),
+        ("02:30", "04:00", SPRING_FORWARD, [
+            ("2026-10-04T03:00:00+11:00", "2026-10-04T04:00:00+11:00"),
+        ]),
+    ],
+)
+def test_local_window_bound_in_the_daylight_saving_hour(start, end, day, expected):
+    assert windows_on(tariff_of(charge(start, end, 1.0)), day) == expected
+
+
+@pytest.mark.parametrize("day", [FALL_BACK, SPRING_FORWARD])
+def test_standard_window_bound_in_the_daylight_saving_hour(day):
+    # UTC+10 all year: 01:30-02:30 standard is one hour whatever the local clock does.
+    ((a, b),) = windows_on(tariff_of(charge("01:30", "02:30", 1.0), basis="standard"), day)
+    a, b = datetime.fromisoformat(a), datetime.fromisoformat(b)
+    assert a == datetime.combine(day, time(1, 30), tzinfo=AEST_FIXED)
+    assert b - a == timedelta(hours=1)
+
+
+# Bounds at, inside and either side of the shifted hour, including overnight spans.
+SHIFTED_HOUR_WINDOWS = [
+    ("01:30", "02:30"), ("02:00", "03:00"), ("02:30", "03:00"), ("02:00", "02:30"),
+    ("01:00", "02:00"), ("03:00", "04:00"), ("02:30", "06:00"), ("22:00", "02:30"),
+    ("02:30", "02:00"), ("03:00", "02:00"), ("00:00", "00:00"),
+]
+
+
+@pytest.mark.parametrize("basis", ["local", "standard"])
+@pytest.mark.parametrize("day", [FALL_BACK, SPRING_FORWARD], ids=["fall-back", "spring-forward"])
+@pytest.mark.parametrize(("start", "end"), SHIFTED_HOUR_WINDOWS)
+def test_windows_agree_with_active_every_15_minutes_across_transitions(start, end, day, basis):
+    tariff = tariff_of(charge(start, end, 1.0), basis=basis)
+    first = datetime.combine(day - timedelta(days=1), time(0), tzinfo=MEL)
+    last = datetime.combine(day + timedelta(days=2), time(0), tzinfo=MEL)
+    windows = demand_windows(tariff, first, last)
+    t = first.astimezone(UTC)
+    while t < last.astimezone(UTC):
+        inside = any(a <= t < b for a, b, _ in windows)
+        active = any(on for _, on in demand_charges_at(tariff, t))
+        assert inside == active, t.astimezone(MEL).isoformat()
+        t += timedelta(minutes=15)

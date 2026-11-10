@@ -101,9 +101,14 @@ def _charge_parts(
 ) -> list[tuple[datetime, datetime]]:
     """The spans `charge` covers on `day` of `clock`, as instants, each inside that date.
 
-    window_applies as intervals: the date alone decides its parts of an overnight
-    window, so they never cross midnight. start == end is the whole day.
-    test_matches_is_in_demand_window_every_minute guards against the two drifting apart.
+    window_applies as intervals. A window is a set of times on the tariff's clock, and
+    an instant is in it when the clock reads `day` and one of those times there. On a
+    local clock a time skipped at a daylight saving start matches no instant, and a
+    time repeated at its end matches both. TariffClock.spans inverts the same wall()
+    window_applies reads, so the two cannot drift. The date alone decides its parts
+    of an overnight window, so they never cross midnight. start == end is the whole
+    day. test_matches_is_in_demand_window_every_minute and
+    test_windows_agree_with_active_every_15_minutes_across_transitions guard the match.
     """
     if not is_season_match(charge.months, day.month):
         return []
@@ -111,15 +116,11 @@ def _charge_parts(
         return []
     ws, we = parse_time(charge.start), parse_time(charge.end)
     midnight = time(0, 0)
-    next_midnight = clock.instant(day + timedelta(days=1), midnight)
     if ws == we:
-        return [(clock.instant(day, midnight), next_midnight)]
+        return clock.spans(day, midnight, None)
     if ws < we:
-        return [(clock.instant(day, ws), clock.instant(day, we))]
-    return [
-        (clock.instant(day, midnight), clock.instant(day, we)),
-        (clock.instant(day, ws), next_midnight),
-    ]
+        return clock.spans(day, ws, we)
+    return clock.spans(day, midnight, we) + clock.spans(day, ws, None)
 
 
 def merge_demand_stretches(

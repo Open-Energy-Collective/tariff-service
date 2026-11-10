@@ -44,6 +44,9 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 - CitiPower CRSTOU, Powercor PRSTOU and United Energy URSTOU carry their approved 2026-27 rates and
   daily charges, replacing the January 2025 AER indicative figures, and gain a `saver` period
   11:00-16:00 every day at 1.00 c/kWh. Off-peak is now 21:00-11:00 (#46).
+- `/api/v1/calculate/demand-windows` agrees with `in_demand_window` when a window bound falls in the hour
+  a daylight saving change skips or repeats. On a local clock a skipped time is in no window and a
+  repeated time is in the window both times. No seeded window has such a bound, so no result changes (#63).
 
 ## [0.8.0] - 2026-11-09
 

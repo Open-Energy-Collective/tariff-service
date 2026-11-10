@@ -77,6 +77,52 @@ def test_instant_round_trips_through_wall(clock):
     assert clock.wall(clock.instant(day, t)) == datetime.combine(day, t)
 
 
+def test_spans_on_an_ordinary_day_is_one_utc_span():
+    got = MELB_LOCAL.spans(date(2026, 11, 11), time(15), time(21))
+    assert got == [(datetime(2026, 11, 11, 4, tzinfo=UTC), datetime(2026, 11, 11, 10, tzinfo=UTC))]
+
+
+def test_spans_end_none_runs_to_the_next_midnight():
+    ((s, e),) = MELB_LOCAL.spans(date(2026, 10, 4), time(0), None)
+    assert (s, e) == (datetime(2026, 10, 3, 14, tzinfo=UTC), datetime(2026, 10, 4, 13, tzinfo=UTC))
+
+
+def test_spans_skips_the_hour_daylight_saving_skips():
+    # 2026-10-04 02:00 AEST becomes 03:00 AEDT, both 16:00 UTC.
+    assert MELB_LOCAL.spans(date(2026, 10, 4), time(2), time(3)) == []
+    assert MELB_LOCAL.spans(date(2026, 10, 4), time(1, 30), time(2, 30)) == [
+        (datetime(2026, 10, 3, 15, 30, tzinfo=UTC), datetime(2026, 10, 3, 16, tzinfo=UTC))
+    ]
+
+
+def test_spans_repeats_the_hour_daylight_saving_repeats():
+    # 2026-04-05 03:00 AEDT becomes 02:00 AEST, both 16:00 UTC.
+    assert MELB_LOCAL.spans(date(2026, 4, 5), time(1, 30), time(2, 30)) == [
+        (datetime(2026, 4, 4, 14, 30, tzinfo=UTC), datetime(2026, 4, 4, 15, 30, tzinfo=UTC)),
+        (datetime(2026, 4, 4, 16, tzinfo=UTC), datetime(2026, 4, 4, 16, 30, tzinfo=UTC)),
+    ]
+
+
+@pytest.mark.parametrize("day", [date(2026, 4, 5), date(2026, 10, 4)])
+def test_spans_on_a_standard_clock_ignore_daylight_saving(day):
+    ((s, e),) = MELB_STD.spans(day, time(1, 30), time(2, 30))
+    assert s == datetime.combine(day, time(1, 30), tzinfo=AEST)
+    assert e - s == timedelta(hours=1)
+
+
+@pytest.mark.parametrize("clock", [MELB_STD, MELB_LOCAL])
+@pytest.mark.parametrize("day", [date(2026, 4, 5), date(2026, 10, 4)])
+def test_spans_invert_wall_every_minute(clock, day):
+    lo, hi = time(1, 30), time(2, 30)
+    got = clock.spans(day, lo, hi)
+    t = datetime.combine(day, time(0), tzinfo=AEST) - timedelta(hours=2)
+    while t < datetime.combine(day, time(6), tzinfo=AEST):
+        wall = clock.wall(t)
+        expected = wall.date() == day and lo <= wall.time() < hi
+        assert any(s <= t < e for s, e in got) == expected, t.isoformat()
+        t += timedelta(minutes=1)
+
+
 def test_unknown_basis_raises_value_error():
     with pytest.raises(ValueError):
         TariffClock(ZoneInfo("Australia/Melbourne"), "solar", "VIC")
