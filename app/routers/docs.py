@@ -54,17 +54,28 @@ class DemandMethodologyResponse(BaseModel):
 
 MEASUREMENT_EXPLANATIONS = {
     "30min_avg": (
-        "The average power draw (kW) over the highest 30-minute interval within "
+        "The average power draw ({unit}) over the highest 30-minute interval within "
         "the demand window during the billing month. Your meter records consumption "
         "in 30-minute blocks; the block with the highest average is your peak demand "
         "for that month."
     ),
     "30min_max": (
-        "The maximum power draw (kW) recorded in any 30-minute interval within "
+        "The maximum power draw ({unit}) recorded in any 30-minute interval within "
         "the demand window during the billing month. This is typically the single "
         "highest 30-minute reading your meter records during peak hours."
     ),
 }
+
+MEASUREMENT_QUANTITY = {"kW": "power draw", "kVA": "apparent power"}
+
+
+def measurement_explanation(method: str | None, unit: str) -> str | None:
+    """The measurement text for `method`, worded in the tariff's demand unit."""
+    template = MEASUREMENT_EXPLANATIONS.get(method)
+    if template is None:
+        return None
+    return template.replace("power draw ({unit})", f"{MEASUREMENT_QUANTITY[unit]} ({unit})")
+
 
 SEASON_EXPLANATIONS = {
     None: "Year-round — demand charges apply every month.",
@@ -134,8 +145,8 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
                 dnsp_name=dnsp.name,
                 has_demand_tariffs=True,
                 measurement_method=demand.measurement_method,
-                measurement_explanation=MEASUREMENT_EXPLANATIONS.get(
-                    demand.measurement_method
+                measurement_explanation=measurement_explanation(
+                    demand.measurement_method, demand.unit
                 ),
                 window=f"{demand.start} to {demand.end} (local time)",
                 days=(
@@ -157,8 +168,9 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
         title="Demand Charge Methodology by DNSP",
         description=(
             "Demand charges are a component of certain network tariffs that charge "
-            "customers based on their peak electricity demand (measured in kW) during "
-            "specified time windows. Unlike energy charges ($/kWh) which are based on "
+            "customers based on their peak electricity demand (measured in kW or kVA, "
+            "as each tariff states) during specified time windows. Unlike energy charges "
+            "($/kWh) which are based on "
             "total consumption, demand charges incentivise reducing peak usage — "
             "the single highest draw during the billing period determines the charge. "
             "This means running multiple high-power appliances simultaneously during "

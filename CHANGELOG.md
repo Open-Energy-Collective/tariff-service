@@ -26,6 +26,9 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 - `/api/v1/docs/demand-methodology` `rate_unit` follows the tariff: `$/kVA/month` for a kVA tariff
   and `$/kW/month` for a kW tariff. Essential, Power and Water and SA Power Networks now read `$/kVA/month`,
   from the one tariff each DNSP's entry describes (#71).
+- `/api/v1/docs/demand-methodology` words `measurement_explanation` by the tariff's unit: maximum apparent power
+  (kVA) for a kVA tariff, unchanged for a kW tariff. The description says demand is measured in kW or kVA,
+  as each tariff states (#77).
 - No field is removed or renamed. `demand` keeps its 0.8.0 fields and is due for removal in a later release. Read
   `demand_charges` instead.
 

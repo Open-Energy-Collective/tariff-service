@@ -44,14 +44,17 @@ def test_demand_methodology_matches_0_8_0(seed_client):
     """0.9.0 sets `rate_unit` from the tariff's demand unit (#71); the rest is unchanged."""
     body = seed_client.get("/api/v1/docs/demand-methodology").json()
     expected = FIXTURE["methodology"]
-    assert {k: v for k, v in body.items() if k != "dnsps"} == {
-        k: v for k, v in expected.items() if k != "dnsps"
+    assert {k: v for k, v in body.items() if k not in ("dnsps", "description")} == {
+        k: v for k, v in expected.items() if k not in ("dnsps", "description")
     }
     assert len(body["dnsps"]) == len(expected["dnsps"])
     for got, want in zip(body["dnsps"], expected["dnsps"], strict=True):
         assert got["rate_unit"] in ("$/kW/month", "$/kVA/month"), got["dnsp_code"]
-        assert {k: v for k, v in got.items() if k != "rate_unit"} == {
-            k: v for k, v in want.items() if k != "rate_unit"
+        skip = ("rate_unit",)
+        if got["rate_unit"] == "$/kVA/month":
+            skip += ("measurement_explanation",)
+        assert {k: v for k, v in got.items() if k not in skip} == {
+            k: v for k, v in want.items() if k not in skip
         }
 
 
@@ -341,3 +344,35 @@ def test_methodology_without_demand_tariffs_keeps_the_0_8_0_rate_unit(seed_clien
     for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]:
         if not d["has_demand_tariffs"]:
             assert d["rate_unit"] == "$/kW/month", d["dnsp_code"]
+
+
+def test_methodology_explanation_names_kva_for_a_kva_entry(seed_client):
+    """Essential is per kVA (#77): its explanation names kVA, not kW."""
+    dnsps = {
+        d["dnsp_code"]: d
+        for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]
+    }
+    text = dnsps["essential"]["measurement_explanation"]
+    assert dnsps["essential"]["rate_unit"] == "$/kVA/month"
+    assert "maximum apparent power (kVA)" in text
+    assert "kW" not in text
+
+
+def test_methodology_explanation_is_unchanged_for_a_kw_entry(seed_client):
+    """Energex is per kW (#77): its explanation keeps the 0.8.0 text."""
+    dnsps = {
+        d["dnsp_code"]: d
+        for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]
+    }
+    assert dnsps["energex"]["rate_unit"] == "$/kW/month"
+    assert dnsps["energex"]["measurement_explanation"] == (
+        "The average power draw (kW) over the highest 30-minute interval within "
+        "the demand window during the billing month. Your meter records consumption "
+        "in 30-minute blocks; the block with the highest average is your peak demand "
+        "for that month."
+    )
+
+
+def test_methodology_description_states_both_units(seed_client):
+    description = seed_client.get("/api/v1/docs/demand-methodology").json()["description"]
+    assert "kW or kVA" in description
