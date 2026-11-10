@@ -53,7 +53,7 @@ def test_demand_methodology_matches_0_8_0(seed_client):
     assert len(body["dnsps"]) == len(expected["dnsps"])
     for got, want in zip(body["dnsps"], expected["dnsps"], strict=True):
         assert got["rate_unit"] in ("$/kW/month", "$/kVA/month"), got["dnsp_code"]
-        skip = ("rate_unit", "measurement_explanation")
+        skip = ("rate_unit", "measurement_explanation", "window")
         assert {k: v for k, v in got.items() if k not in skip} == {
             k: v for k, v in want.items() if k not in skip
         }
@@ -61,6 +61,21 @@ def test_demand_methodology_matches_0_8_0(seed_client):
         if got["rate_unit"] == "$/kVA/month" and text is not None:
             text = text.replace("power draw (kW)", "apparent power (kVA)")
         assert got["measurement_explanation"] == text, got["dnsp_code"]
+        window = want["window"]
+        if got["dnsp_code"] == "evoenergy":
+            window = window.replace("(local time)", "(AEST, standard time)")
+        assert got["window"] == window, got["dnsp_code"]
+
+
+def test_methodology_window_names_the_tariff_time_basis(seed_client):
+    """A standard-time tariff says so; a local-time tariff keeps "(local time)" (#68)."""
+    by_code = {
+        d["dnsp_code"]: d
+        for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]
+    }
+    assert by_code["evoenergy"]["window"].endswith("(AEST, standard time)")
+    for code in ("energex", "ausgrid"):
+        assert by_code[code]["window"].endswith("(local time)"), code
 
 
 def _charge(rate: float, start: str) -> TariffDemandCharge:

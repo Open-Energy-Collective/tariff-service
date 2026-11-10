@@ -29,6 +29,8 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 - `/api/v1/docs/demand-methodology` words `measurement_explanation` by the tariff's unit: maximum apparent power
   (kVA) for a kVA tariff, unchanged for a kW tariff. The description says demand is measured in kW or kVA,
   as each tariff states (#77).
+- `/api/v1/docs/demand-methodology` words `window` by the tariff's `time_basis`: `(local time)` for a `local`
+  tariff, and the zone's standard time for a `standard` one. Evoenergy now reads `(AEST, standard time)` (#68).
 - No field is removed or renamed. `demand` keeps its 0.8.0 fields and is due for removal in a later release. Read
   `demand_charges` instead.
 

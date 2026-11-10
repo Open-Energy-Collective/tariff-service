@@ -193,7 +193,7 @@ Exports, 0-30 kW export capacity (price list Table 1; overview Tables 2 and 4):
 - **RESELE, SBELE**: as RTOU, plus credit 13.22 c/kWh 5pm–9pm November–March
 - Rollover of unused allowance within a billing period is not seeded (#31)
 
-Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT).
+Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT), except BSR, which is standard time (ACST) (#68, Table 4).
 
 ---
 

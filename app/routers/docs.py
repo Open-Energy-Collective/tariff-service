@@ -105,6 +105,25 @@ CALCULATION_EXAMPLES = {
 }
 
 
+STANDARD_TIME_NAMES = {
+    "Australia/Sydney": "AEST",
+    "Australia/Melbourne": "AEST",
+    "Australia/Brisbane": "AEST",
+    "Australia/Hobart": "AEST",
+    "Australia/Adelaide": "ACST",
+    "Australia/Darwin": "ACST",
+    "Australia/Perth": "AWST",
+}
+
+
+def window_basis(time_basis: str, timezone: str) -> str:
+    """Names the clock a demand window runs on: local time, or the zone's standard time."""
+    if time_basis != "standard":
+        return "local time"
+    name = STANDARD_TIME_NAMES.get(timezone)
+    return f"{name}, standard time" if name else "standard time"
+
+
 @router.get("/demand-methodology", response_model=DemandMethodologyResponse)
 def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyResponse:
     """Explains how demand charges are calculated for each DNSP.
@@ -148,7 +167,10 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
                 measurement_explanation=measurement_explanation(
                     demand.measurement_method, demand.unit
                 ),
-                window=f"{demand.start} to {demand.end} (local time)",
+                window=(
+                    f"{demand.start} to {demand.end} "
+                    f"({window_basis(demand_tariff.time_basis, dnsp.timezone)})"
+                ),
                 days=(
                     "All days (including weekends)"
                     if demand.days == "all"
