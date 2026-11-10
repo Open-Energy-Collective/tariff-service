@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.tariff import Dnsp, Tariff
-from app.services.rate_calculator import demand_windows
+from app.services.rate_calculator import demand_windows, merge_demand_stretches
 
 
 def get_all_dnsps(db: Session) -> list[Dnsp]:
@@ -47,7 +47,7 @@ def get_tariff_detail(
         select(Tariff)
         .join(Dnsp)
         .options(
-            joinedload(Tariff.demand),
+            joinedload(Tariff.demand_charges),
             joinedload(Tariff.rates),
             joinedload(Tariff.exports),
             joinedload(Tariff.dnsp),
@@ -63,16 +63,16 @@ def get_tariff_detail(
 
 def demand_windows_in_force(
     db: Session, dnsp_code: str, tariff_code: str, tz: ZoneInfo, start: datetime, end: datetime
-) -> list[tuple[datetime, datetime]] | None:
+) -> list[tuple[datetime, datetime, float]] | None:
     """Demand windows over [start, end), each local date using the version in force that day.
 
-    Windows that touch across a version boundary are merged. None when any date in the
-    range has no version in force.
+    Each window carries its rate. Neighbours merge at an equal rate, across a version
+    boundary too. None when any date in the range has no version in force.
     """
     lo, hi = start.astimezone(UTC), end.astimezone(UTC)
     last = hi.astimezone(tz).date()
     day = lo.astimezone(tz).date()
-    spans: list[tuple[datetime, datetime]] = []
+    parts: list[tuple[datetime, datetime, float]] = []
     while day <= last:
         next_day = day + timedelta(days=1)
         day_start = datetime.combine(day, time(0, 0), tzinfo=tz).astimezone(UTC)
@@ -82,15 +82,9 @@ def demand_windows_in_force(
             version = get_tariff_detail(db, dnsp_code, tariff_code, on=day)
             if version is None:
                 return None
-            for window_start, window_end in demand_windows(version.demand, tz, s, e):
-                window_start = window_start.astimezone(UTC)
-                window_end = window_end.astimezone(UTC)
-                if spans and window_start <= spans[-1][1]:
-                    spans[-1] = (spans[-1][0], max(spans[-1][1], window_end))
-                else:
-                    spans.append((window_start, window_end))
+            parts.extend(demand_windows(version, s, e))
         day = next_day
-    return [(s.astimezone(tz), e.astimezone(tz)) for s, e in spans]
+    return merge_demand_stretches(parts, tz)
 
 
 def get_tariff_history(db: Session, dnsp_code: str, tariff_code: str) -> list[Tariff]:
@@ -100,7 +94,7 @@ def get_tariff_history(db: Session, dnsp_code: str, tariff_code: str) -> list[Ta
             select(Tariff)
             .join(Dnsp)
             .options(
-                joinedload(Tariff.demand),
+                joinedload(Tariff.demand_charges),
                 joinedload(Tariff.rates),
                 joinedload(Tariff.exports),
             )

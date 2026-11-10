@@ -11,8 +11,9 @@ from pathlib import Path
 
 import pytest
 
-from app.models.tariff import Tariff, TariffDemand, TariffRate
-from app.services.rate_calculator import get_current_rate, is_in_demand_window
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffRate
+from app.services.rate_calculator import demand_charges_at, get_current_rate
+from app.services.window_match import clock_for
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
 
@@ -26,7 +27,17 @@ def load_tariff(dnsp_file: str, code: str) -> Tariff:
     """Build an unsaved Tariff with its rates and demand from one seed file."""
     data = json.loads((SEED_DIR / f"{dnsp_file}.json").read_text())
     (tariff_data,) = [t for t in data["tariffs"] if t["code"] == code]
-    tariff = Tariff(code=code, name=tariff_data["name"], tariff_type=tariff_data["tariff_type"])
+    tariff = Tariff(
+        code=code,
+        name=tariff_data["name"],
+        tariff_type=tariff_data["tariff_type"],
+        time_basis=tariff_data["time_basis"],
+        prices_expected_until=tariff_data.get("prices_expected_until"),
+    )
+    (dnsp,) = [d for d in data["dnsps"] if d["code"] == tariff_data["dnsp"]]
+    tariff.dnsp = Dnsp(
+        code=dnsp["code"], name=dnsp["name"], state=dnsp["state"], timezone=dnsp["timezone"]
+    )
     tariff.rates = [
         TariffRate(
             period_name=r["period_name"],
@@ -34,20 +45,40 @@ def load_tariff(dnsp_file: str, code: str) -> Tariff:
             start_time=r["start_time"],
             end_time=r["end_time"],
             days=r.get("days", "all"),
+            public_holidays=r.get("public_holidays"),
             season_months=_months(r.get("season_months")),
         )
         for r in tariff_data["rates"]
     ]
-    if demand := tariff_data.get("demand"):
-        tariff.demand = TariffDemand(
-            rate=demand["rate"],
-            window_start=demand["window_start"],
-            window_end=demand["window_end"],
-            measurement_method=demand["measurement_method"],
-            days=demand.get("days", "all"),
-            season_months=_months(demand.get("season_months")),
+    tariff.demand_charges = [
+        TariffDemandCharge(
+            period=c["period"],
+            rate=c["rate"],
+            unit=c["unit"],
+            start=c["start"],
+            end=c["end"],
+            days=c.get("days", "all"),
+            public_holidays=c.get("public_holidays"),
+            months=_months(c.get("months")),
+            measurement_method=c["measurement_method"],
+            peak_period=c["peak_period"],
         )
+        for c in tariff_data["demand_charges"]
+    ]
     return tariff
+
+
+def on_clock(tariff: Tariff, t: datetime) -> datetime:
+    """The instant at which the tariff's own clock shows the naive time t."""
+    return clock_for(tariff).instant(t.date(), t.time())
+
+
+def rate_at(tariff: Tariff, t: datetime) -> tuple[str, float | None]:
+    return get_current_rate(tariff, on_clock(tariff, t))
+
+
+def in_demand_window(tariff: Tariff, t: datetime) -> bool:
+    return any(active for _, active in demand_charges_at(tariff, on_clock(tariff, t)))
 
 
 def half_hours(day: datetime) -> list[datetime]:
@@ -78,7 +109,7 @@ def resele_expected(t: datetime) -> tuple[str, float]:
 def test_sapn_resele_every_half_hour(day):
     tariff = load_tariff("sapn", "RESELE")
     for t in half_hours(day):
-        assert get_current_rate(tariff, t) == resele_expected(t), t
+        assert rate_at(tariff, t) == resele_expected(t), t
 
 
 def test_sapn_resele_has_no_off_peak():
@@ -100,7 +131,7 @@ def sbele_expected(t: datetime) -> tuple[str, float]:
 def test_sapn_sbele_every_half_hour(day):
     tariff = load_tariff("sapn", "SBELE")
     for t in half_hours(day):
-        assert get_current_rate(tariff, t) == sbele_expected(t), t
+        assert rate_at(tariff, t) == sbele_expected(t), t
 
 
 # ── Ausgrid ──
@@ -117,17 +148,17 @@ def test_ausgrid_capacity_window_every_month(code, month):
     tariff = load_tariff("ausgrid", code)
     first = datetime(2026, month, 1)
     weekday = first + timedelta(days=(2 - first.weekday()) % 7)  # first Wednesday
-    assert is_in_demand_window(tariff.demand, weekday.replace(hour=16))
-    assert not is_in_demand_window(tariff.demand, weekday.replace(hour=14))
+    assert in_demand_window(tariff, weekday.replace(hour=16))
+    assert not in_demand_window(tariff, weekday.replace(hour=14))
     saturday = weekday + timedelta(days=3)
-    assert not is_in_demand_window(tariff.demand, saturday.replace(hour=16))
+    assert not in_demand_window(tariff, saturday.replace(hour=16))
 
 
 @pytest.mark.parametrize("code", AUSGRID_CAPACITY)
 def test_ausgrid_capacity_peak_energy_stays_high_season(code):
     tariff = load_tariff("ausgrid", code)
-    assert get_current_rate(tariff, datetime(2026, 7, 15, 16))[0] == "peak"
-    assert get_current_rate(tariff, datetime(2026, 4, 15, 16))[0] == "off_peak"
+    assert rate_at(tariff, datetime(2026, 7, 15, 16))[0] == "peak"
+    assert rate_at(tariff, datetime(2026, 4, 15, 16))[0] == "off_peak"
 
 
 # ── Evoenergy ──
@@ -138,6 +169,8 @@ def test_ausgrid_capacity_peak_energy_stays_high_season(code):
 
 @pytest.mark.parametrize("month", range(1, 13))
 def test_evoenergy_023_demand_winter_months(month):
+    """17:00-21:00 charges Seasonal kW Demand (High) in winter and (Low) in the other months."""
     tariff = load_tariff("evoenergy", "023")
-    t = datetime(2026, month, 15, 18)
-    assert is_in_demand_window(tariff.demand, t) is (month in (6, 7, 8))
+    t = on_clock(tariff, datetime(2026, month, 15, 18))
+    active = [charge.rate for charge, on in demand_charges_at(tariff, t) if on]
+    assert active == [6.5424 if month in (6, 7, 8) else 3.9249]

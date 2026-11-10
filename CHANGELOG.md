@@ -5,6 +5,57 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
+## [0.9.0] - 2026-11-10
+
+### Added
+- Tariff detail: `demand_charges` (every demand charge, with seasons, `unit` kW or kVA and `peak_period`),
+  `time_basis`, `prices_expected_until`, `public_holidays` on `rates` and `export`, and
+  `free_threshold_period` and `free_threshold_rollover` on `export` (#31).
+- `/api/v1/calculate/current-rate` returns `demand_charges`, each with `active`.
+- `/api/v1/calculate/demand-windows` returns a `rate` on each window.
+- Tariff detail `demand` gains `unit` (`kW` or `kVA`), the unit of the charge it is built from, and
+  `/api/v1/calculate/demand-surcharge` gains `demand_unit`, the unit of `demand_rate`. `peak_demand_kw`
+  keeps its name and is read in that unit (#71).
+
+### Changed
+- `/api/v1/calculate/current-rate` and `/api/v1/calculate/demand-windows` follow public holidays by the
+  distributor's state where the tariff's windows exclude holidays (#56).
+- Both endpoints judge windows on the tariff's `time_basis`. Jemena A180 is now correct during daylight saving (#56).
+- `/api/v1/calculate/demand-windows` returns every demand charge in force, with higher rates taking overlaps.
+  AusNet NASN12 now has its April to November rate of 2.862 $/kW/month.
+- `/api/v1/docs/demand-methodology` `rate_unit` follows the tariff: `$/kVA/month` for a kVA tariff
+  and `$/kW/month` for a kW tariff. Essential, Power and Water and SA Power Networks now read `$/kVA/month`,
+  from the one tariff each DNSP's entry describes (#71).
+- `/api/v1/docs/demand-methodology` words `measurement_explanation` by the tariff's unit: maximum apparent power
+  (kVA) for a kVA tariff, unchanged for a kW tariff. The description says demand is measured in kW or kVA,
+  as each tariff states (#77).
+- `/api/v1/docs/demand-methodology` words `window` by the tariff's `time_basis`: `(local time)` for a `local`
+  tariff, and the zone's standard time for a `standard` one. Evoenergy now reads `(AEST, standard time)` (#68).
+- No field is removed or renamed. `demand` keeps its 0.8.0 fields and is due for removal in a later release. Read
+  `demand_charges` instead.
+
+### Fixed
+- Every seeded demand charge is checked against its 2026-27 source. Endeavour's seven demand tariffs,
+  Evoenergy 023 and Power and Water T5 and T6 gain their low-season or off-season charge, Evoenergy 023
+  its 21:00-09:00 off-peak charge and SA Power Networks LBAD its anytime charge, so `in_demand_window`
+  is true in those windows (#62).
+- Ausgrid EA305, EA310, EA370 and EA390, Endeavour N19, N29 and N39, Energex 8300, Essential's five
+  demand tariffs, Evoenergy 101, Power and Water T5 and T6 and SA Power Networks MBTOUD and LBAD are
+  priced per kVA. Ausgrid EA302 to EA390, Jemena A230 and SA Power Networks MBTOUD and LBAD charge on
+  the peak of the last 12 months. `demand` is unchanged for every tariff.
+- CitiPower CRSTOU, Powercor PRSTOU and United Energy URSTOU carry their approved 2026-27 rates and
+  daily charges, replacing the January 2025 AER indicative figures, and gain a `saver` period
+  11:00-16:00 every day at 1.00 c/kWh. Off-peak is now 21:00-11:00 (#46).
+- `/api/v1/calculate/demand-windows` agrees with `in_demand_window` when a window bound falls in the hour
+  a daylight saving change skips or repeats. On a local clock a skipped time is in no window and a
+  repeated time is in the window both times. No seeded window has such a bound, so no result changes (#63).
+- Evoenergy 017, 023, 060, 090 and 101 run on standard time, as the 2026-27 schedule states its times in AEST.
+  In daylight saving each window is one hour later on the Canberra clock: 101's peak and demand window is
+  08:00-18:00 AEDT. SA Power Networks BSR also runs on standard time (Table 4: accumulation meter structures are based on ACST), so its 11 kWh/day free export allowance resets at 01:00 ACDT in daylight saving. Every other DNSP's source was checked and its remaining tariffs stay `local` (#68).
+
+### Security
+- `deploy.yml`'s test job runs with a read-only token (`contents: read`) (#74).
+
 ## [0.8.0] - 2026-11-09
 
 ### Breaking

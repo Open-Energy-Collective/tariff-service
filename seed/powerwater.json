@@ -3,7 +3,6 @@
     "source": "Power and Water Corporation Power Services 2026-27 Network Tariffs",
     "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
     "effective_from": "2026-07-01",
-    "effective_to": "2027-06-30",
     "extracted_date": "2026-07-21",
     "notes": "Prices exclude GST. Rates in $/kWh and $/NMI/day. Smart meter tariffs have: High Period (Peak) 3pm-9pm weekdays Oct-Mar, Low Period (Super Off-Peak) 9am-3pm all days all year, Mid Period (Off-Peak) all other times. NT uses UTC+9:30 (no daylight saving)."
   },
@@ -22,13 +21,15 @@
       "name": "Residential Tariff",
       "tariff_class": "residential",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 2.4599,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
       "last_verified": "2026-07-21T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -48,13 +49,15 @@
       "name": "Non-residential Tariff",
       "tariff_class": "business",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 2.4596,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
       "last_verified": "2026-07-21T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -74,13 +77,15 @@
       "name": "LV Smart Meter (Residential 0-160MWh)",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 2.4596,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
       "last_verified": "2026-07-21T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -88,6 +93,7 @@
           "start_time": "15:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "high",
           "season_months": [
             1,
@@ -125,13 +131,15 @@
       "name": "LV Smart Meter (Non-Residential 0-160MWh)",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 2.9516,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
       "last_verified": "2026-07-21T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -139,6 +147,7 @@
           "start_time": "15:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "high",
           "season_months": [
             1,
@@ -176,13 +185,15 @@
       "name": "LV Smart Meter (160-750MWh)",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 9.3466,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
       "last_verified": "2026-07-21T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -190,6 +201,7 @@
           "start_time": "15:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "high",
           "season_months": [
             1,
@@ -227,28 +239,55 @@
       "name": "LV Majors (Above 750MWh)",
       "tariff_class": "business",
       "tariff_type": "demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 108.0677,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
-      "last_verified": "2026-10-21T00:00:00+09:30",
+      "last_verified": "2026-11-10T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (On Season 16.7014 $/kVA/month); second seasonal demand rate (Off Season 3.9297 $/kVA/month, 15:00-21:00 weekdays, April to September); seeded as the On Season rate only, October to March, as $/kW/month. Unit read as per month: knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md.",
-      "demand": {
-        "rate": 16.7014,
-        "window_start": "15:00",
-        "window_end": "21:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          10,
-          11,
-          12
-        ]
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/power-and-water/2026-10-21-network-tariffs-2026-27: On Season 16.7014 $/kVA (October to March) and Off Season 3.9297 $/kVA (April to September), 15:00-21:00 Monday to Friday including public holidays, on the highest recorded demand in the peak period each month. Unit read as per month: knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27. The source states no measurement interval; 30min_max is kept as seeded.",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 16.7014,
+          "unit": "kVA",
+          "start": "15:00",
+          "end": "21:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        },
+        {
+          "period": "peak",
+          "rate": 3.9297,
+          "unit": "kVA",
+          "start": "15:00",
+          "end": "21:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "anytime",
@@ -268,28 +307,55 @@
       "name": "HV Smart Meter",
       "tariff_class": "business",
       "tariff_type": "demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 117.892,
       "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
-      "last_verified": "2026-10-21T00:00:00+09:30",
+      "last_verified": "2026-11-10T00:00:00+09:30",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (On Season 8.8419 $/kVA/month); second seasonal demand rate (Off Season 2.6154 $/kVA/month, 15:00-21:00 weekdays, April to September); seeded as the On Season rate only, October to March, as $/kW/month. Unit read as per month: knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md.",
-      "demand": {
-        "rate": 8.8419,
-        "window_start": "15:00",
-        "window_end": "21:00",
-        "measurement_method": "30min_max",
-        "days": "weekdays",
-        "season_months": [
-          1,
-          2,
-          3,
-          10,
-          11,
-          12
-        ]
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/power-and-water/2026-10-21-network-tariffs-2026-27: On Season 8.8419 $/kVA (October to March) and Off Season 2.6154 $/kVA (April to September), 15:00-21:00 Monday to Friday including public holidays, on the highest recorded demand in the peak period each month. Unit read as per month: knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27. The source states no measurement interval; 30min_max is kept as seeded.",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 8.8419,
+          "unit": "kVA",
+          "start": "15:00",
+          "end": "21:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        },
+        {
+          "period": "peak",
+          "rate": 2.6154,
+          "unit": "kVA",
+          "start": "15:00",
+          "end": "21:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "anytime",

@@ -29,6 +29,6 @@ through `tooling/github-api`.
 ## Remote
 
 `https://github.com/Open-Energy-Collective/tariff-service` (public). Every push needs the
-manual security and PII review (`.agent/pre-commit-rules.md`) and the founder's go-ahead.
-The `oec-agent` token cannot push changes under `.github/workflows/`; the founder pushes
+manual security and PII review (`.agent/pre-commit-rules.md`) and the maintainer's go-ahead.
+The `oec-agent` token cannot push changes under `.github/workflows/`; the maintainer pushes
 those with their own token.

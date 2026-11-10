@@ -7,12 +7,14 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.schemas.tariff import (
+    DemandChargeResponse,
     TariffDemandResponse,
     TariffDetailResponse,
     TariffExportResponse,
     TariffRateResponse,
     TariffSummaryResponse,
 )
+from app.services.rate_calculator import demand_charge_order
 from app.services.tariff_service import get_tariff_detail, get_tariff_history, get_tariffs_for_dnsp
 
 router = APIRouter(prefix="/api/v1/tariffs", tags=["Tariffs"])
@@ -27,14 +29,16 @@ def _parse_season_months(raw: str | None) -> list[int] | None:
 def _build_detail_response(tariff) -> TariffDetailResponse:
     """Build a full tariff detail response from ORM object."""
     demand_resp = None
-    if tariff.demand:
+    demand = tariff.demand
+    if demand:
         demand_resp = TariffDemandResponse(
-            rate=tariff.demand.rate,
-            window_start=tariff.demand.window_start,
-            window_end=tariff.demand.window_end,
-            measurement_method=tariff.demand.measurement_method,
-            days=tariff.demand.days,
-            season_months=_parse_season_months(tariff.demand.season_months),
+            rate=demand.rate,
+            unit=demand.unit,
+            window_start=demand.start,
+            window_end=demand.end,
+            measurement_method=demand.measurement_method,
+            days=demand.days,
+            season_months=_parse_season_months(demand.months),
         )
 
     rates_resp = [
@@ -46,6 +50,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
             days=r.days,
             season=r.season,
             season_months=_parse_season_months(r.season_months),
+            public_holidays=r.public_holidays,
         )
         for r in tariff.rates
     ]
@@ -61,8 +66,27 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
             charge_window_end=e.charge_window_end,
             free_threshold_kwh=e.free_threshold_kwh,
             days=e.days,
+            free_threshold_period=e.free_threshold_period,
+            free_threshold_rollover=e.free_threshold_rollover,
+            public_holidays=e.public_holidays,
         )
         for e in tariff.exports
+    ]
+
+    charges_resp = [
+        DemandChargeResponse(
+            period=c.period,
+            rate=c.rate,
+            unit=c.unit,
+            start=c.start,
+            end=c.end,
+            days=c.days,
+            public_holidays=c.public_holidays,
+            months=_parse_season_months(c.months),
+            measurement_method=c.measurement_method,
+            peak_period=c.peak_period,
+        )
+        for c in sorted(tariff.demand_charges, key=demand_charge_order)
     ]
 
     return TariffDetailResponse(
@@ -74,6 +98,9 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
         effective_to=tariff.effective_to,
         daily_supply_charge=tariff.daily_supply_charge,
         demand=demand_resp,
+        demand_charges=charges_resp,
+        time_basis=tariff.time_basis,
+        prices_expected_until=tariff.prices_expected_until,
         rates=rates_resp,
         export=export_resp,
         source_url=tariff.source_url,

@@ -15,6 +15,7 @@ dependencies = [
     "pydantic==2.11.4",
     "uvicorn==0.34.3",
     "slowapi==0.1.9",
+    "holidays==0.108",
 ]
 
 [project.optional-dependencies]

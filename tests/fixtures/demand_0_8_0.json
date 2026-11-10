@@ -1,0 +1,606 @@
+{
+  "demand": {
+    "ausgrid/EA010": null,
+    "ausgrid/EA025": null,
+    "ausgrid/EA029": null,
+    "ausgrid/EA030": null,
+    "ausgrid/EA040": null,
+    "ausgrid/EA050": null,
+    "ausgrid/EA111": {
+      "days": "all",
+      "measurement_method": "30min_max",
+      "rate": 0.43752,
+      "season_months": [
+        1,
+        2,
+        3,
+        6,
+        7,
+        8,
+        11,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA116": {
+      "days": "all",
+      "measurement_method": "30min_max",
+      "rate": 11.8455,
+      "season_months": [
+        1,
+        2,
+        3,
+        6,
+        7,
+        8,
+        11,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA225": null,
+    "ausgrid/EA251": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 0.41451,
+      "season_months": [
+        1,
+        2,
+        3,
+        6,
+        7,
+        8,
+        11,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA256": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 13.35933,
+      "season_months": [
+        1,
+        2,
+        3,
+        6,
+        7,
+        8,
+        11,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA302": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 14.50191,
+      "season_months": null,
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA305": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 17.33886,
+      "season_months": null,
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA310": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 17.85894,
+      "season_months": null,
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA370": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 10.38696,
+      "season_months": null,
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausgrid/EA390": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 2.91345,
+      "season_months": null,
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausnet/NASN12": {
+      "days": "weekdays",
+      "measurement_method": "monthly_peak",
+      "rate": 11.473,
+      "season_months": [
+        1,
+        2,
+        3,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "ausnet/NASS11": null,
+    "ausnet/NAST12": null,
+    "ausnet/NEE11": null,
+    "ausnet/NEE33": null,
+    "ausnet/RCER11": null,
+    "citipower/C1G": null,
+    "citipower/C1R": null,
+    "citipower/CDS": null,
+    "citipower/CGTOU": null,
+    "citipower/CRSTOU": null,
+    "endeavour/N19": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 15.933,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N29": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 12.588,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N39": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 11.22,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N50": null,
+    "endeavour/N54": null,
+    "endeavour/N70": null,
+    "endeavour/N71": null,
+    "endeavour/N72": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 5.454,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N73": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 4.908,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N90": null,
+    "endeavour/N91": null,
+    "endeavour/N92": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 7.254,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N93": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 6.528,
+      "season_months": [
+        1,
+        2,
+        3,
+        11,
+        12
+      ],
+      "window_end": "20:00",
+      "window_start": "16:00"
+    },
+    "endeavour/N99": null,
+    "energex/3800": {
+      "days": "weekdays",
+      "measurement_method": "30min_avg",
+      "rate": 7.0,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "energex/3900": {
+      "days": "all",
+      "measurement_method": "30min_avg",
+      "rate": 7.0,
+      "season_months": null,
+      "window_end": "21:00",
+      "window_start": "16:00"
+    },
+    "energex/5700": null,
+    "energex/5800": null,
+    "energex/5900": null,
+    "energex/6700": null,
+    "energex/6800": null,
+    "energex/6900": null,
+    "energex/7200": {
+      "days": "weekdays",
+      "measurement_method": "30min_avg",
+      "rate": 15.459,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "energex/8300": {
+      "days": "all",
+      "measurement_method": "30min_avg",
+      "rate": 13.913,
+      "season_months": null,
+      "window_end": "00:00",
+      "window_start": "00:00"
+    },
+    "energex/8400": null,
+    "energex/8500": null,
+    "energex/9000": null,
+    "energex/9100": null,
+    "energex/94300": null,
+    "energex/96200": null,
+    "essential/BHND3AO": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 11.5026,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "essential/BLNBSS1": null,
+    "essential/BLNC1AU": null,
+    "essential/BLNC2AU": null,
+    "essential/BLND1AB": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 9.7035,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "essential/BLND1AR": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 5.1925,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "essential/BLND3AO": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 12.039,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "essential/BLNRSS2": null,
+    "essential/BSSD3AO": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 4.4388,
+      "season_months": null,
+      "window_end": "20:00",
+      "window_start": "17:00"
+    },
+    "evoenergy/017": null,
+    "evoenergy/023": {
+      "days": "all",
+      "measurement_method": "30min_max",
+      "rate": 6.5424,
+      "season_months": [
+        6,
+        7,
+        8
+      ],
+      "window_end": "21:00",
+      "window_start": "17:00"
+    },
+    "evoenergy/060": null,
+    "evoenergy/090": null,
+    "evoenergy/101": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 13.2651,
+      "season_months": null,
+      "window_end": "17:00",
+      "window_start": "07:00"
+    },
+    "jemena/A100": null,
+    "jemena/A10E": null,
+    "jemena/A130": null,
+    "jemena/A180": null,
+    "jemena/A210": null,
+    "jemena/A230": {
+      "days": "all",
+      "measurement_method": "rolling_12month_max",
+      "rate": 6.49075,
+      "season_months": null,
+      "window_end": "00:00",
+      "window_start": "00:00"
+    },
+    "powercor/D1": null,
+    "powercor/DD1": null,
+    "powercor/ND1": null,
+    "powercor/NDTOU": null,
+    "powercor/PRSTOU": null,
+    "powerwater/T1": null,
+    "powerwater/T2": null,
+    "powerwater/T3A": null,
+    "powerwater/T3B": null,
+    "powerwater/T3C": null,
+    "powerwater/T5": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 16.7014,
+      "season_months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "powerwater/T6": {
+      "days": "weekdays",
+      "measurement_method": "30min_max",
+      "rate": 8.8419,
+      "season_months": [
+        1,
+        2,
+        3,
+        10,
+        11,
+        12
+      ],
+      "window_end": "21:00",
+      "window_start": "15:00"
+    },
+    "sapn/BSR": null,
+    "sapn/LBAD": {
+      "days": "all",
+      "measurement_method": "30min_max",
+      "rate": 10.224,
+      "season_months": [
+        11,
+        12,
+        1,
+        2,
+        3
+      ],
+      "window_end": "21:00",
+      "window_start": "17:00"
+    },
+    "sapn/MBTOUD": {
+      "days": "all",
+      "measurement_method": "30min_max",
+      "rate": 2.583,
+      "season_months": null,
+      "window_end": "00:00",
+      "window_start": "00:00"
+    },
+    "sapn/RESELE": null,
+    "sapn/RSR": null,
+    "sapn/RTOU": null,
+    "sapn/SBELE": null,
+    "sapn/SBTOU": null,
+    "united_energy/LVDed": null,
+    "united_energy/LVM1R": null,
+    "united_energy/LVS1R": null,
+    "united_energy/LVTOU": null,
+    "united_energy/URSTOU": null
+  },
+  "methodology": {
+    "description": "Demand charges are a component of certain network tariffs that charge customers based on their peak electricity demand (measured in kW) during specified time windows. Unlike energy charges ($/kWh) which are based on total consumption, demand charges incentivise reducing peak usage — the single highest draw during the billing period determines the charge. This means running multiple high-power appliances simultaneously during peak hours costs more than spreading usage throughout the day.",
+    "dnsps": [
+      {
+        "calculation_example": null,
+        "days": "Weekdays only (Monday to Friday)",
+        "dnsp_code": "ausnet",
+        "dnsp_name": "AusNet Services",
+        "has_demand_tariffs": true,
+        "measurement_explanation": null,
+        "measurement_method": "monthly_peak",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Applies in months: [1, 2, 3, 12]",
+        "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
+        "window": "15:00 to 21:00 (local time)"
+      },
+      {
+        "calculation_example": "Example (Ausgrid EA116, Residential Demand):\n• Your highest 30-min demand this month (3pm-9pm, high season) was 5.2 kW\n• Demand rate: $11.85/kW/month\n• Monthly demand charge: 5.2 kW × $11.85 = $61.59\n• Outside high season (Apr/May/Sep/Oct), no demand charge applies\n• This is in addition to your energy charges ($/kWh) and daily supply charge",
+        "days": "All days (including weekends)",
+        "dnsp_code": "ausgrid",
+        "dnsp_name": "Ausgrid",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The maximum power draw (kW) recorded in any 30-minute interval within the demand window during the billing month. This is typically the single highest 30-minute reading your meter records during peak hours.",
+        "measurement_method": "30min_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "High season only — demand charges apply in summer (Nov-Mar) and winter (Jun-Aug). No demand charges in the shoulder months of April, May, September, and October.",
+        "source_url": "https://aopt-p-001.sitecorecontenthub.cloud/api/public/content/a6b7b18dc0e84cda9ab067f61a6bbab7?v=21f13674",
+        "window": "15:00 to 21:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": null,
+        "dnsp_code": "citipower",
+        "dnsp_name": "CitiPower",
+        "has_demand_tariffs": false,
+        "measurement_explanation": null,
+        "measurement_method": null,
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": null,
+        "source_url": null,
+        "window": null
+      },
+      {
+        "calculation_example": null,
+        "days": "Weekdays only (Monday to Friday)",
+        "dnsp_code": "endeavour",
+        "dnsp_name": "Endeavour Energy",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The maximum power draw (kW) recorded in any 30-minute interval within the demand window during the billing month. This is typically the single highest 30-minute reading your meter records during peak hours.",
+        "measurement_method": "30min_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Applies in months: [1, 2, 3, 11, 12]",
+        "source_url": "https://www.endeavourenergy.com.au/about/corporate-information/how-were-regulated/information-for-retailers",
+        "window": "16:00 to 20:00 (local time)"
+      },
+      {
+        "calculation_example": "Example (Energex NTC 3900, Residential ToU Demand & Energy):\n• Your highest 30-min average demand this month was 4.5 kW\n• Demand rate: $7.00/kW/month\n• Monthly demand charge: 4.5 kW × $7.00 = $31.50\n• This is in addition to your energy charges ($/kWh) and daily supply charge",
+        "days": "All days (including weekends)",
+        "dnsp_code": "energex",
+        "dnsp_name": "Energex",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The average power draw (kW) over the highest 30-minute interval within the demand window during the billing month. Your meter records consumption in 30-minute blocks; the block with the highest average is your peak demand for that month.",
+        "measurement_method": "30min_avg",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Year-round — demand charges apply every month.",
+        "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
+        "window": "16:00 to 21:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": "Weekdays only (Monday to Friday)",
+        "dnsp_code": "essential",
+        "dnsp_name": "Essential Energy",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The maximum power draw (kW) recorded in any 30-minute interval within the demand window during the billing month. This is typically the single highest 30-minute reading your meter records during peak hours.",
+        "measurement_method": "30min_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Year-round — demand charges apply every month.",
+        "source_url": "https://www.essentialenergy.com.au/-/media/Project/EssentialEnergy/Website/Files/Our-Network/PriceListAndExplanatoryNotes2026-27.ashx",
+        "window": "17:00 to 20:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": "All days (including weekends)",
+        "dnsp_code": "evoenergy",
+        "dnsp_name": "Evoenergy",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The maximum power draw (kW) recorded in any 30-minute interval within the demand window during the billing month. This is typically the single highest 30-minute reading your meter records during peak hours.",
+        "measurement_method": "30min_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Applies in months: [6, 7, 8]",
+        "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
+        "window": "17:00 to 21:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": "All days (including weekends)",
+        "dnsp_code": "jemena",
+        "dnsp_name": "Jemena",
+        "has_demand_tariffs": true,
+        "measurement_explanation": null,
+        "measurement_method": "rolling_12month_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Year-round — demand charges apply every month.",
+        "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
+        "window": "00:00 to 00:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": "Weekdays only (Monday to Friday)",
+        "dnsp_code": "powerwater",
+        "dnsp_name": "Power and Water Corporation",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The maximum power draw (kW) recorded in any 30-minute interval within the demand window during the billing month. This is typically the single highest 30-minute reading your meter records during peak hours.",
+        "measurement_method": "30min_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Applies in months: [1, 2, 3, 10, 11, 12]",
+        "source_url": "https://www.powerwater.com.au/__data/assets/pdf_file/0030/462909/Standard-control-service-network-tariffs-2026-27.pdf",
+        "window": "15:00 to 21:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": null,
+        "dnsp_code": "powercor",
+        "dnsp_name": "Powercor",
+        "has_demand_tariffs": false,
+        "measurement_explanation": null,
+        "measurement_method": null,
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": null,
+        "source_url": null,
+        "window": null
+      },
+      {
+        "calculation_example": null,
+        "days": "All days (including weekends)",
+        "dnsp_code": "sapn",
+        "dnsp_name": "SA Power Networks",
+        "has_demand_tariffs": true,
+        "measurement_explanation": "The maximum power draw (kW) recorded in any 30-minute interval within the demand window during the billing month. This is typically the single highest 30-minute reading your meter records during peak hours.",
+        "measurement_method": "30min_max",
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": "Year-round — demand charges apply every month.",
+        "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
+        "window": "00:00 to 00:00 (local time)"
+      },
+      {
+        "calculation_example": null,
+        "days": null,
+        "dnsp_code": "united_energy",
+        "dnsp_name": "United Energy",
+        "has_demand_tariffs": false,
+        "measurement_explanation": null,
+        "measurement_method": null,
+        "rate_unit": "$/kW/month",
+        "seasonal_applicability": null,
+        "source_url": null,
+        "window": null
+      }
+    ],
+    "title": "Demand Charge Methodology by DNSP"
+  }
+}

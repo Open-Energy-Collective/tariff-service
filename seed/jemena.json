@@ -3,7 +3,6 @@
     "source": "Jemena Electricity Networks (VIC) Ltd - Network Tariffs 2026-27",
     "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
     "effective_from": "2026-07-01",
-    "effective_to": "2027-06-30",
     "extracted_date": "2026-07-21",
     "notes": "Prices exclude GST. Residential: Peak 4pm-9pm every day, Solar soak 11am-4pm, Off-peak all other times. Business: Peak 7am-11pm weekdays (or 9am-9pm). Standing charges are $/customer/year converted to $/day."
   },
@@ -22,13 +21,15 @@
       "name": "Residential Single Rate",
       "tariff_class": "residential",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.33089,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -48,13 +49,15 @@
       "name": "Residential Daytime Saver",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.33083,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -92,13 +95,15 @@
       "name": "Residential Export",
       "tariff_class": "residential",
       "tariff_type": "tou_export",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.33155,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -139,6 +144,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": null,
+          "free_threshold_period": null,
+          "free_threshold_rollover": null,
           "days": "all"
         }
       ]
@@ -149,13 +156,16 @@
       "name": "Off-peak Dedicated Circuit",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "standard",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "notes": "time_basis standard: window stated as 11 pm to 7 am AEST in knowledge/documents/jemena/2026-10-21-network-tariff-schedule-2026-27.",
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "off_peak",
@@ -175,13 +185,15 @@
       "name": "Small Business ToU Weekdays",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.68547,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -189,6 +201,7 @@
           "start_time": "09:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -210,21 +223,28 @@
       "name": "Small Business ToU Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 1.35469,
       "source_url": "https://www.jemena.com.au/contentassets/a440c960e37a4eca8497cf44990ebe0b/jen-2026-27-network-tariff-schedule.pdf",
-      "last_verified": "2026-07-21T00:00:00+10:00",
+      "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand is the rolling 12-month peak (maximum level of the last 12 months, any time, 77.889 $/kW p.a.); seeded as 6.49075 $/kW/month (77.889 / 12) at any time with measurement_method rolling_12month_max as a label only, which the rate calculator does not apply.",
-      "demand": {
-        "rate": 6.49075,
-        "window_start": "00:00",
-        "window_end": "00:00",
-        "measurement_method": "rolling_12month_max",
-        "days": "all",
-        "season_months": null
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/jemena/2026-10-21-network-tariff-schedule-2026-27: 77.889 $/kW p.a. (/ 12), charging window any time (local time), on the maximum level of the last 12 months. The schedule states no measurement interval; measurement_method rolling_12month_max is kept as seeded.",
+      "demand_charges": [
+        {
+          "period": "anytime",
+          "rate": 6.49075,
+          "unit": "kW",
+          "start": "00:00",
+          "end": "00:00",
+          "days": "all",
+          "months": null,
+          "measurement_method": "rolling_12month_max",
+          "peak_period": "rolling_12_months"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -232,6 +252,7 @@
           "start_time": "07:00",
           "end_time": "23:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },

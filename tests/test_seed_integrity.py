@@ -17,14 +17,9 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from app.database import Base
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffExport, TariffRate
-from app.services.rate_calculator import (
-    get_current_rate,
-    is_day_match,
-    is_in_time_window,
-    is_season_match,
-    parse_time,
-)
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffExport, TariffRate
+from app.services.rate_calculator import get_current_rate
+from app.services.window_match import clock_for, window_applies
 from seed import build_db
 from seed.build_db import populate, validate_tariff_versions
 
@@ -67,19 +62,18 @@ def sample_days() -> list[datetime]:
     return days
 
 
-def matching_rates(tariff: Tariff, at: datetime) -> list[TariffRate]:
-    """The rows that decide the rate at a time: specific windows, else catch-alls."""
-    active = [
-        r
-        for r in tariff.rates
-        if is_day_match(r.days, at.weekday()) and is_season_match(r.season_months, at.month)
-    ]
-    specific = [
-        r
-        for r in active
-        if r.start_time != r.end_time
-        and is_in_time_window(at.time(), parse_time(r.start_time), parse_time(r.end_time))
-    ]
+def matching_rates(tariff: Tariff, instant: datetime) -> list[TariffRate]:
+    """The rows that decide the rate at an instant: specific windows, else catch-alls."""
+    clock = clock_for(tariff)
+
+    def applies(r: TariffRate) -> bool:
+        months = json.loads(r.season_months) if r.season_months else None
+        return window_applies(
+            r.start_time, r.end_time, r.days, r.public_holidays, months, clock, instant
+        )
+
+    active = [r for r in tariff.rates if applies(r)]
+    specific = [r for r in active if r.start_time != r.end_time]
     return specific or [r for r in active if r.start_time == r.end_time]
 
 
@@ -93,11 +87,12 @@ def test_every_half_hour_has_exactly_one_rate_or_a_defined_gap(seed_engine, dnsp
         for day in sample_days():
             for i in range(48):
                 at = day + timedelta(minutes=30 * i)
-                resolved = get_current_rate(tariff, at)
+                instant = clock_for(tariff).instant(at.date(), at.time())
+                resolved = get_current_rate(tariff, instant)
                 if no_rate_at is not None and no_rate_at(at):
                     assert resolved == ("none", None), f"{at:%a %m-%d %H:%M}: {resolved}"
                     continue
-                found = [(r.period_name, r.rate) for r in matching_rates(tariff, at)]
+                found = [(r.period_name, r.rate) for r in matching_rates(tariff, instant)]
                 assert len(found) == 1, f"{at:%a %m-%d %H:%M}: {found}"
                 assert resolved == found[0], f"{at:%a %m-%d %H:%M}: {resolved}"
 
@@ -192,19 +187,38 @@ def expected_rate(rate: dict) -> dict:
         "days": rate.get("days", "all"),
         "season": rate.get("season", "all"),
         "season_months": rate.get("season_months") or None,
+        "public_holidays": rate.get("public_holidays"),
     }
 
 
-def expected_demand(demand: dict | None) -> dict | None:
-    if demand is None:
+def expected_demand(tariff: dict) -> dict | None:
+    """The `demand` object: the highest-rate charge, a tie going to the earliest start."""
+    charges = tariff.get("demand_charges") or []
+    if not charges:
         return None
+    charge = min(charges, key=lambda c: (-c["rate"], c["start"]))
     return {
-        "rate": demand["rate"],
-        "window_start": demand["window_start"],
-        "window_end": demand["window_end"],
-        "measurement_method": demand["measurement_method"],
-        "days": demand.get("days", "all"),
-        "season_months": demand.get("season_months") or None,
+        "rate": charge["rate"],
+        "window_start": charge["start"],
+        "window_end": charge["end"],
+        "measurement_method": charge["measurement_method"],
+        "days": charge.get("days", "all"),
+        "season_months": charge.get("months") or None,
+    }
+
+
+def expected_charge(charge: dict) -> dict:
+    return {
+        "period": charge["period"],
+        "rate": charge["rate"],
+        "unit": charge["unit"],
+        "start": charge["start"],
+        "end": charge["end"],
+        "days": charge.get("days", "all"),
+        "public_holidays": charge.get("public_holidays"),
+        "months": charge.get("months") or None,
+        "measurement_method": charge["measurement_method"],
+        "peak_period": charge["peak_period"],
     }
 
 
@@ -216,6 +230,9 @@ EXPORT_FIELDS = (
     "charge_window_start",
     "charge_window_end",
     "free_threshold_kwh",
+    "free_threshold_period",
+    "free_threshold_rollover",
+    "public_holidays",
 )
 
 
@@ -244,14 +261,20 @@ def test_api_returns_the_seed_tariff(seed_client, seed):
     assert body["source_url"] == seed.get("source_url")
     assert body["last_verified"] == seed.get("last_verified")
     assert by_content(body["rates"]) == by_content([expected_rate(r) for r in seed["rates"]])
-    if body["demand"] is None or seed.get("demand") is None:
-        assert body["demand"] == seed.get("demand")
+    demand = expected_demand(seed)
+    if body["demand"] is None or demand is None:
+        assert body["demand"] == demand
     else:
-        assert {k: body["demand"][k] for k in expected_demand(seed["demand"])} == expected_demand(
-            seed["demand"]
-        )
+        assert {k: body["demand"][k] for k in demand} == demand
     assert by_content(body["export"]) == by_content(
         [expected_export(e) for e in seed.get("exports", [])]
+    )
+    assert body["time_basis"] == seed["time_basis"]
+    assert body["prices_expected_until"] == seed.get("prices_expected_until")
+    order = [(-c["rate"], c["start"]) for c in body["demand_charges"]]
+    assert order == sorted(order)
+    assert by_content(body["demand_charges"]) == by_content(
+        [expected_charge(c) for c in seed.get("demand_charges", [])]
     )
 
 
@@ -262,7 +285,7 @@ def test_seed_has_tariffs_with_exports():
 
 @pytest.mark.parametrize(
     ("section", "model"),
-    [("rates", TariffRate), ("demand", TariffDemand), ("exports", TariffExport)],
+    [("rates", TariffRate), ("demand_charges", TariffDemandCharge), ("exports", TariffExport)],
 )
 def test_seed_values_all_have_a_column(section, model):
     """A populated seed key with no model column would be dropped without an error."""
@@ -290,6 +313,7 @@ def test_populate_rejects_an_export_in_the_rates_shape():
                 "name": "T",
                 "tariff_type": "tou_export",
                 "effective_from": "2026-07-01",
+                "time_basis": "local",
                 "rates": [],
                 "exports": [{"period_name": "peak", "rate": 0.1}],
             }
@@ -333,15 +357,6 @@ def current_rate(client, dnsp: str, tariff: str, at: str = NOON):
     )
 
 
-@pytest.mark.xfail(reason="#46: saver period 11:00-16:00 not seeded", strict=True)
-@pytest.mark.parametrize(
-    ("dnsp", "tariff"),
-    [("citipower", "CRSTOU"), ("powercor", "PRSTOU"), ("united_energy", "URSTOU")],
-)
-def test_victorian_residential_tou_has_a_saver_period(seed_client, dnsp, tariff):
-    assert current_rate(seed_client, dnsp, tariff).json()["period"] == "saver"
-
-
 def assert_no_rate_in_force(response) -> None:
     assert response.status_code == 200
     body = response.json()
@@ -375,16 +390,23 @@ def test_n90_still_lists_both_blocks(seed_client):
 
 # Sources are knowledge/documents/<entry> in the OEC root, ex GST. Expected values are
 # written in the source's own units and were read from the source, not from the seed.
-# CitiPower, Powercor and United Energy have no captured 2026-27 rates (#46).
+# CitiPower, Powercor and United Energy have captured 2026-27 rates for their residential ToU
+# tariffs only (#46); their other tariffs keep the AER January 2025 indicative figures.
 AUSGRID = "ausgrid/2026-10-21-network-price-list-2026-27.pdf"
 AUSNET = "ausnet/2026-10-21-network-tariff-schedule-2026-27.xlsx, sheet Network 2026-27"
+CITIPOWER = "citipower/2026-11-10-tariff-summary-2026-27.xlsx, sheet CP_2026-27_NUOS row 7"
 ENDEAVOUR = "endeavour-energy/2026-10-21-network-price-list-2026-27.pdf"
 ENERGEX = "energex/2026-10-21-network-price-list-2026-27.xlsx"
 ESSENTIAL = "essential-energy/2026-10-21-price-list-explanatory-notes-2026-27.pdf"
 EVOENERGY = "evoenergy/2026-10-21-schedule-of-charges-2026-27.pdf, excluding metering"
 JEMENA = "jemena/2026-10-21-network-tariff-schedule-2026-27.pdf"
+POWERCOR = "powercor/2026-11-10-tariff-summary-2026-27.xlsx, sheet PAL_2026-27_NUOS row 7"
 POWERWATER = "power-and-water/2026-10-21-network-tariffs-2026-27.pdf"
 SAPN = "sa-power-networks/2026-10-21-tariff-price-list-2026-27.pdf, Table 1"
+UNITED_ENERGY = (
+    "united-energy/2026-11-10-scs-pricing-model-2026-27.xlsm, sheet Tariff schedule, "
+    "Tariff schedule 3, row 88"
+)
 
 
 def cents(value: float) -> float:
@@ -451,6 +473,13 @@ SOURCE_PRICES = [
         AUSNET,
         per_year(148.93785),
         (("anytime", cents(16.79589)),),
+    ),
+    SourcePrices(
+        "citipower",
+        "CRSTOU",
+        CITIPOWER,
+        cents(31.51),
+        (("peak", cents(19.76)), ("off_peak", cents(4.95)), ("saver", cents(1.00))),
     ),
     flat("endeavour", "N70", ENDEAVOUR, cents(70.1921), cents(12.0348)),
     SourcePrices(
@@ -552,6 +581,13 @@ SOURCE_PRICES = [
         per_year(494.463),
         (("peak", cents(9.809)), ("off_peak", cents(3.442))),
     ),
+    SourcePrices(
+        "powercor",
+        "PRSTOU",
+        POWERCOR,
+        cents(43.84),
+        (("peak", cents(22.09)), ("off_peak", cents(5.52)), ("saver", cents(1.00))),
+    ),
     flat("powerwater", "T1", POWERWATER, 2.4599, 0.0659),
     SourcePrices(
         "powerwater",
@@ -575,6 +611,13 @@ SOURCE_PRICES = [
         SAPN,
         1.5082,
         (("peak", 0.2073), ("off_peak", 0.0780), ("shoulder", 0.1442)),
+    ),
+    SourcePrices(
+        "united_energy",
+        "URSTOU",
+        UNITED_ENERGY,
+        cents(31.51),
+        (("peak", cents(20.92)), ("off_peak", cents(5.22)), ("saver", cents(1.00))),
     ),
 ]
 
@@ -611,10 +654,48 @@ def test_each_dnsp_and_type_with_captured_rates_has_a_source_check():
         for t in SEED_TARIFFS
         if (t["dnsp"], t["code"]) == (c.dnsp, c.code)
     }
-    unpriced = {"citipower", "powercor", "united_energy"}
     assert {
-        (t["dnsp"], t["tariff_type"]) for t in SEED_TARIFFS if t["dnsp"] not in unpriced
+        (t["dnsp"], t["tariff_type"])
+        for t in SEED_TARIFFS
+        if t["verified_by"] != "aer_tss01_indicative_jan2025"
     } == covered
+
+
+VICTORIAN_RESIDENTIAL_TOU = [
+    ("citipower", "CRSTOU"),
+    ("powercor", "PRSTOU"),
+    ("united_energy", "URSTOU"),
+]
+
+
+@pytest.mark.parametrize(("dnsp", "tariff"), VICTORIAN_RESIDENTIAL_TOU)
+def test_victorian_residential_tou_has_a_saver_period(seed_client, dnsp, tariff):
+    """#46: the 2026-27 saver period 11:00-16:00 every day, at 1.00 c/kWh."""
+    body = current_rate(seed_client, dnsp, tariff).json()
+    assert (body["period"], body["rate"]) == ("saver", pytest.approx(cents(1.00)))
+
+
+# <dnsp>/2026-10-21-pricing-2026-27.pdf: peak all days 4pm to 9pm, off-peak 9pm to 11am,
+# saver 11am to 4pm. Times are Melbourne wall clock (AEDT, +11:00).
+VICTORIAN_TOU_PERIODS = [
+    ("2026-11-11T10:59:00+11:00", "off_peak"),  # Wednesday
+    ("2026-11-11T11:00:00+11:00", "saver"),
+    ("2026-11-11T15:59:00+11:00", "saver"),
+    ("2026-11-11T16:00:00+11:00", "peak"),
+    ("2026-11-11T20:59:00+11:00", "peak"),
+    ("2026-11-11T21:00:00+11:00", "off_peak"),
+    ("2026-11-11T03:00:00+11:00", "off_peak"),
+    ("2026-11-14T12:00:00+11:00", "saver"),  # Saturday
+    ("2026-11-15T17:00:00+11:00", "peak"),  # Sunday
+    ("2026-11-03T12:00:00+11:00", "saver"),  # Melbourne Cup, a Victorian public holiday
+    ("2026-11-03T17:00:00+11:00", "peak"),
+]
+
+
+@pytest.mark.parametrize(("dnsp", "tariff"), VICTORIAN_RESIDENTIAL_TOU)
+@pytest.mark.parametrize(("at", "period"), VICTORIAN_TOU_PERIODS)
+def test_victorian_residential_tou_periods_match_the_source(seed_client, dnsp, tariff, at, period):
+    assert current_rate(seed_client, dnsp, tariff, at).json()["period"] == period
 
 
 def test_rcer11_export_windows_match_the_source(seed_client):

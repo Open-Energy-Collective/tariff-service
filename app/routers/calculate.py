@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.tariff import (
     CurrentRateResponse,
+    DemandChargeInForce,
     DemandSurchargeResponse,
     DemandWindow,
     DemandWindowsResponse,
@@ -16,8 +17,9 @@ from app.schemas.tariff import (
 )
 from app.services.rate_calculator import (
     calculate_demand_surcharge,
+    demand_charge_order,
+    demand_charges_at,
     get_current_rate,
-    is_in_demand_window,
 )
 from app.services.tariff_service import (
     demand_windows_in_force,
@@ -85,17 +87,19 @@ def current_rate(
         raise HTTPException(
             status_code=400, detail=f"Invalid datetime format: '{dt}'. Use ISO 8601."
         )
-    if parsed_dt.tzinfo is not None:
-        # Resolve in the DNSP's local time; a naive datetime already is (#39).
-        try:
-            parsed_dt = parsed_dt.astimezone(ZoneInfo(dnsp_obj.timezone))
-        except OverflowError:
-            raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
+    zone = ZoneInfo(dnsp_obj.timezone)
+    if parsed_dt.tzinfo is None:
+        # A value without an offset is on the DNSP's local clock (#39).
+        parsed_dt = parsed_dt.replace(tzinfo=zone)
+    try:
+        parsed_dt = parsed_dt.astimezone(zone)
+    except OverflowError:
+        raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
     tariff_obj = get_tariff_detail(db, dnsp, tariff, on=parsed_dt.date())
     if not tariff_obj:
         raise not_found
     period_name, rate = get_current_rate(tariff_obj, parsed_dt)
-    in_window = is_in_demand_window(tariff_obj.demand, parsed_dt)
+    charges = demand_charges_at(tariff_obj, parsed_dt)
 
     return CurrentRateResponse(
         dnsp=dnsp,
@@ -103,7 +107,17 @@ def current_rate(
         datetime=dt,
         period=period_name,
         rate=rate,
-        in_demand_window=in_window,
+        in_demand_window=any(active for _, active in charges),
+        demand_charges=[
+            DemandChargeInForce(
+                period=charge.period,
+                rate=charge.rate,
+                unit=charge.unit,
+                peak_period=charge.peak_period,
+                active=active,
+            )
+            for charge, active in sorted(charges, key=lambda ca: demand_charge_order(ca[0]))
+        ],
     )
 
 
@@ -122,7 +136,11 @@ def demand_surcharge(
         json_schema_extra={"example": "3900"},
     ),
     peak_demand_kw: float = Query(
-        ..., description="Peak demand in kW",
+        ...,
+        description=(
+            "Peak demand, read in the tariff's demand unit (kW or kVA, returned as "
+            "demand_unit). The name is kept for compatibility"
+        ),
         json_schema_extra={"example": 4.5},
     ),
     db: Session = Depends(get_db),
@@ -149,6 +167,7 @@ def demand_surcharge(
         tariff=tariff,
         peak_demand_kw=peak_demand_kw,
         demand_rate=tariff_obj.demand.rate,
+        demand_unit=tariff_obj.demand.unit,
         demand_window_hours_per_month=window_hours,
         surcharge_per_kwh=round(surcharge, 5),
         monthly_demand_charge=round(monthly_charge, 2),
@@ -209,11 +228,11 @@ def demand_windows_in_range(
 ) -> DemandWindowsResponse:
     """Demand windows of a tariff over [start, end), at most 31 days.
 
-    Windows are resolved in the DNSP's local time by the rules of
-    `/calculate/current-rate`'s `in_demand_window`: half-open, clipped to the
-    range, sorted and merged, each bound in the DNSP's local offset. Each local
-    date uses the tariff version in force on that date; a range with a date no
-    version covers returns 404.
+    Windows follow `/calculate/current-rate`'s `in_demand_window`, on the tariff's
+    clock: half-open, clipped to the range, sorted, each bound in the DNSP's local
+    offset. Where charges overlap the higher rate takes the stretch, and adjacent
+    stretches merge only at an equal rate. Each local date uses the tariff version
+    in force on that date; a range with a date no version covers returns 404.
     """
     not_found = HTTPException(
         status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
@@ -245,5 +264,8 @@ def demand_windows_in_range(
         tariff=tariff,
         start=start,
         end=end,
-        windows=[DemandWindow(start=s.isoformat(), end=e.isoformat()) for s, e in spans],
+        windows=[
+            DemandWindow(start=s.isoformat(), end=e.isoformat(), rate=rate)
+            for s, e, rate in spans
+        ],
     )

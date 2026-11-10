@@ -52,7 +52,8 @@ Ausgrid uses **seasonal** peak pricing (no shoulder period):
 - **No peak**: April, May, September, October (all off-peak)
 - **Demand window**: Same as peak (15:00–21:00, high season only) for EA111, EA116, EA251, EA256
 - **Capacity window (EA302, EA305, EA310, EA370, EA390)**: 15:00–21:00 working weekdays, all year; their peak energy rate stays high season only. Source: the revised TSS explanatory statement 2024-29, Table 11 note, p. 40 (`knowledge/documents/ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.md` in the OEC root)
-- **Demand measurement**: Maximum 30-minute interval in the peak window per month
+- **Capacity unit and peak period**: EA302 is priced per kW, and EA305, EA310, EA370 and EA390 per kVA (c/kVA/day x 30 / 100, `unit` `kVA`). All five charge on the highest peak-window demand of the prior 12 months (`peak_period` `rolling_12_months`)
+- **Demand measurement**: Maximum 30-minute interval in the peak window. The price list and TSS state no interval, so the seeded `30min_max` stands
 
 ---
 
@@ -98,6 +99,7 @@ Endeavour uses codes prefixed with "N" (e.g., N70, N71).
 - **High season**: November–March
 - **Low season**: April–October
 - **Demand window**: Peak periods only (16:00–20:00 weekdays), highest 30-min interval × days in month
+- **Demand rates**: every demand tariff has a high-season charge (November to March) and a low-season charge (April to October) on the same window, from Table 1a. N19, N29 and N39 are priced per kVA (`unit` `kVA`)
 
 ---
 
@@ -136,6 +138,8 @@ PSO-Int (interval meter, default for new connections):
 - **Peak**: 5pm–8pm (17:00–20:00) weekdays; also the demand window
 - **Shoulder**: 7am–5pm (07:00–17:00) and 8pm–10pm (20:00–22:00) weekdays
 - **Off-peak**: All other times (including all weekend)
+- **Public holidays**: times are unchanged when a public holiday falls on a weekday (`public_holidays` `included`)
+- **Demand**: priced per kVA per month (`unit` `kVA`), on the maximum 30-minute clocked kVA in the month. BLND3AO, BHND3AO and BSSD3AO also have shoulder and off-peak demand charges. They are not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70)
 
 Sun Soaker (SS) tariffs:
 - **Peak**: 7am–10am and 3pm–10pm all days
@@ -177,8 +181,8 @@ From the 2026-27 customer overview (Tables 2, 4, 5) and Tariff Price List v1.0 (
 
 - **RTOU**: off-peak 12am–6am (00:00–06:00), solar sponge 10am–4pm (10:00–16:00), peak all other times; no shoulder
 - **SBTOU, MBTOUD**: peak 5pm–9pm all days November–March; shoulder 7am–5pm workdays November–March and 7am–9pm workdays April–October; off-peak all other times
-- **MBTOUD demand**: anytime, highest 30-min interval in the last 12 months (seeded as a monthly anytime maximum)
-- **LBAD**: energy peak 7am–9pm workdays, off-peak all other times; demand 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays)
+- **MBTOUD demand**: anytime, per kVA, highest 30-min interval in the last 12 months (`peak_period` `rolling_12_months`)
+- **LBAD**: energy peak 7am–9pm workdays, off-peak all other times. Peak demand per kVA, 5pm–9pm all days November–March (non-CBD; CBD 11am–5pm workdays), on the highest daily average demand of the last 12 months and billed all year. No `measurement_method` value names a daily average, so the seeded `30min_max` stands (#70). Anytime demand 0.0630 $/kVA/day (1.89 $/kVA/month) on the highest 30-min interval of the last 12 months
 
 - **RESELE**: peak 5pm–9pm (17:00–21:00) all days, solar sponge 10am–4pm (10:00–16:00) all days, shoulder all other times (the 14 hours outside peak and solar sponge); no off-peak (customer overview Table 2)
 - **SBELE**: peak 5pm–9pm all days, shoulder 7am–10am and 4pm–5pm workdays, off-peak all other times (customer overview Table 4). Off-peak $0.1072/kWh and shoulder $0.1875/kWh, from the Off-Peak and Shoulder columns of the NUoS schedule (Table 9)
@@ -189,7 +193,7 @@ Exports, 0-30 kW export capacity (price list Table 1; overview Tables 2 and 4):
 - **RESELE, SBELE**: as RTOU, plus credit 13.22 c/kWh 5pm–9pm November–March
 - Rollover of unused allowance within a billing period is not seeded (#31)
 
-Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT).
+Source entries (OEC root): `knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.md` and `knowledge/documents/sa-power-networks/2026-10-21-tariff-price-list-2026-27.md`. Windows are local time (ACST/ACDT), except BSR, which is standard time (ACST) (#68, Table 4).
 
 ---
 
@@ -223,6 +227,7 @@ Business (A210):
 
 Dedicated circuit (A180):
 - **Off-peak**: 11pm–7am AEST all days (supply only in that window)
+- **Time basis**: `standard`, the source fixes the window to AEST all year
 
 Export (A10E):
 - **Export charge**: 3.000 c/kWh, solar soak 11am–4pm every day
@@ -231,7 +236,7 @@ Export (A10E):
 Business Demand (A230):
 - **Peak**: 7am–11pm weekdays
 - **Off-peak**: All other times
-- **Demand**: Rolling 12-month max at any time
+- **Demand**: 77.889 $/kW p.a., seeded as 6.49075 $/kW/month, any time, on the maximum level of the last 12 months (`peak_period` `rolling_12_months`)
 
 ---
 
@@ -268,8 +273,8 @@ Business ToU (NAST12):
 - **Off-peak**: All other times
 
 Demand (NASN12):
-- **Demand window**: 3pm–9pm (15:00–21:00) weekdays, December to March (sheet "Tariff structures", structure 15)
-- **Off-peak season** (April to November): 2.862 $/kW/month, not seeded (one demand rate per tariff)
+- **Demand window**: 3pm–9pm (15:00–21:00) weekdays, all year (sheet "Tariff structures", structure 15)
+- **Demand rates**: two seasons on the same window. 11.473 $/kW/month December to March (`months` 12, 1, 2, 3) and 2.862 $/kW/month April to November (`months` 4 to 11)
 - **Energy**: anytime 16.796 c/kWh (sheet "Network 2026-27")
 
 ---
@@ -278,10 +283,11 @@ Demand (NASN12):
 
 | Source | URL | Notes |
 |--------|-----|-------|
-| **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates — the doc explicitly references a separate "CitiPower - 2026-27 Tariff Summary" attachment for those, which CitiPower does not co-publish alongside this PDF (confirmed absent from every public CitiPower/AER page checked). |
-| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes cross-checked against the structural PDF above — exact match. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final retail price list like the other DNSPs in this file — a revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
+| **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates. It defers them to a separate "CitiPower - 2026-27 Tariff Summary" attachment (next row). Knowledge entry: `knowledge/documents/citipower/2026-10-21-pricing-2026-27.md`. |
+| **CitiPower 2026-27 Tariff Summary (rates for CRSTOU)** | https://media.powercor.com.au/documents/Network-pricing/CitiPower-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `CP_2026-27_NUOS` row 7 gives CRSTOU: fixed 31.51 c/day, peak 19.76, off-peak 4.95, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/citipower/2026-11-10-tariff-summary-2026-27.md`. |
+| **AER TSS.01, SCS indicative prices (rates for every tariff except CRSTOU)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes match the structural PDF above exactly. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final price list. A revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
 
-Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+CRSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the Tariff Summary.
 
 ### Tariff Codes (CitiPower) — seeded subset only
 
@@ -297,9 +303,10 @@ Only tariffs with an unambiguous single rate/period mapping in the indicative-pr
 
 ### Time Windows (CitiPower)
 
-Residential ToU (CRSTOU):
-- **Peak**: 4pm–9pm every day
-- **Off-peak**: all other times (structurally includes a "Saver" 11am–4pm window per the PDF's eligibility table, but the indicative-prices sheet has no separate Saver rate column for 2026-27 — priced as one off-peak rate rather than guessing a distinct Saver value)
+Residential ToU (CRSTOU), every day, public holidays included:
+- **Peak**: 4pm to 9pm
+- **Saver**: 11am to 4pm
+- **Off-peak**: 9pm to 11am
 
 Business ToU (CGTOU):
 - **Peak**: 9am–9pm weekdays (confirmed directly against CitiPower's TSS compliance document text, not assumed)
@@ -312,9 +319,10 @@ Business ToU (CGTOU):
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Powercor 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/Powercor%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower's PDF (see above) — Powercor and CitiPower are commonly-owned/co-filed with near-identical document templates, confirmed by direct side-by-side comparison, not assumed. |
-| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes cross-checked against the structural PDF — exact match. |
+| **Powercor 2026-27 Tariff Summary (rates for PRSTOU)** | https://media.powercor.com.au/documents/Network-pricing/Powercor-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `PAL_2026-27_NUOS` row 7 gives PRSTOU: fixed 43.84 c/day, peak 22.09, off-peak 5.52, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/powercor/2026-11-10-tariff-summary-2026-27.md`. |
+| **AER TSS.01, SCS indicative prices (rates for every tariff except PRSTOU)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes match the structural PDF exactly. |
 
-Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+PRSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the Tariff Summary.
 
 ### Tariff Codes (Powercor) — seeded subset only
 
@@ -330,7 +338,9 @@ Same exclusions as CitiPower (see above): PRCER, NDD/NDM/NDMO, and all large/HV/
 
 ### Time Windows (Powercor)
 
-Same as CitiPower — Peak 4pm–9pm (residential) / 9am–9pm weekdays (business ToU, confirmed against Powercor's own TSS compliance document text), off-peak all other times.
+Residential ToU (PRSTOU) has the CitiPower CRSTOU windows: peak 4pm to 9pm, saver 11am to 4pm, off-peak 9pm to 11am, every day (`knowledge/documents/powercor/2026-10-21-pricing-2026-27.md`).
+
+Business ToU (NDTOU): peak 9am to 9pm weekdays (confirmed against Powercor's own TSS compliance document text), off-peak all other times.
 
 ---
 
@@ -339,9 +349,10 @@ Same as CitiPower — Peak 4pm–9pm (residential) / 9am–9pm weekdays (busines
 | Source | URL | Notes |
 |--------|-----|-------|
 | **United Energy 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower/Powercor's PDFs. |
-| **AER TSS.01 — SCS indicative prices (rates, AUTHORITATIVE for $ values)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes cross-checked against the structural PDF — exact match. |
+| **United Energy 2026-27 SCS pricing model (rates for URSTOU)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20SCS%20pricing%20model%20%E2%80%93%207%20May%202026.xlsm | United Energy's pricing model filed with the AER, 7 May 2026, excluding GST. United Energy's own Tariff Summary was not found. Sheet `Tariff schedule`, Tariff schedule 3, row 88 gives URSTOU: fixed 31.51 c/day, peak 20.92, off-peak 5.22, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27.md`. |
+| **AER TSS.01, SCS indicative prices (rates for every tariff except URSTOU)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes match the structural PDF exactly. |
 
-Seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the 2026-27 Tariff Summary named in the pricing PDF is not published, so the AER January 2025 TSS.01 indicative prices stand in (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md` in the OEC root).
+URSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the AER SCS pricing model (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the SCS pricing model.
 
 ### Tariff Codes (United Energy) — seeded subset only
 
@@ -357,7 +368,9 @@ Same exclusions as CitiPower/Powercor: URCER, LVMKW1R/UMBD/UMBO, and all large/H
 
 ### Time Windows (United Energy)
 
-Same as CitiPower/Powercor — Peak 4pm–9pm (residential) / 9am–9pm weekdays (business ToU, confirmed against United Energy's own TSS compliance document text), off-peak all other times.
+Residential ToU (URSTOU) has the CitiPower CRSTOU windows: peak 4pm to 9pm, saver 11am to 4pm, off-peak 9pm to 11am, every day (`knowledge/documents/united-energy/2026-10-21-pricing-2026-27.md`).
+
+Business ToU (LVTOU): peak 9am to 9pm weekdays (confirmed against United Energy's own TSS compliance document text), off-peak all other times.
 
 ---
 
@@ -387,8 +400,9 @@ Tariff 017 (New Residential TOU):
 - **Off-peak**: All other times
 
 Tariff 023 (New Residential Demand):
-- **Demand (High)**: 5pm–9pm every day during winter (Jun-Aug)
-- **Demand (Low)**: 5pm–9pm every day during non-winter
+- **Demand (High)**: 5pm–9pm every day during winter (Jun-Aug), 21.808 c/kW/day
+- **Demand (Low)**: 5pm–9pm every day during non-winter, 13.083 c/kW/day
+- **Off-peak demand**: 9pm–9am every day, 2.076 c/kW/day
 - **Solar Soak**: 11am–3pm every day
 - **Off-peak**: All other times
 - **Winter months**: June to August. The schedule of charges does not define them; the revised TSS 2024-29 does (pp. 7, 15: `knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29.md` in the OEC root)
@@ -400,6 +414,8 @@ Business (090, 101):
 - **Peak**: 7am–5pm weekdays
 - **Shoulder**: 5pm–10pm weekdays
 - **Off-peak**: All other times
+- **101 demand**: Peak kVA Demand 44.217 c/kVA/day, 7am–5pm weekdays (`unit` `kVA`)
+- **Time basis**: `standard` for every Evoenergy tariff. The schedule heads each tariff table "Charge applicability (times in AEST)" (`knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27.md` in the OEC root). In daylight saving each window runs one hour later on the Canberra clock, so 101's 7am-5pm peak is 8am-6pm AEDT (#68)
 
 ---
 
@@ -431,7 +447,8 @@ Smart meter tariffs (T3A/B/C):
 Demand tariffs (T5, T6):
 - **On Season demand**: 3pm–9pm weekdays, October–March
 - **Off Season demand**: 3pm–9pm weekdays, April–September
-- **Unit**: the price list gives $/kVA without a period; read as per month (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md`), seeded without conversion
+- **Demand rates**: T5 On Season 16.7014 and Off Season 3.9297 $/kVA; T6 8.8419 and 2.6154 $/kVA. Both seasons include public holidays
+- **Unit**: the price list gives $/kVA without a period; read as per month (`knowledge/findings/2026-10-21-tariff-service-source-gaps-resolved-2026-27.md`), seeded without conversion as `unit` `kVA`
 - **Note**: NT uses UTC+9:30, no daylight saving
 
 ---
@@ -505,9 +522,33 @@ Business ToU demand (3800, 7200), from the Energex Network Tariff Guide 2026-27 
 - **Peak**: 5pm–8pm (17:00–20:00) weekdays; no peak on weekends; also the peak demand window
 - **Shoulder**: 1pm–5pm and 8pm–11am weekdays, 1pm–11am weekends
 - **Off-peak**: 11am–1pm (11:00–13:00) every day
-- **7200 demand**: $/kVA/month by default (kW variant seeded), with shoulder and off-peak demand charges the schema cannot hold
+- **Public holidays**: weekdays and weekends each include the public holidays that fall on them
+- **7200 demand**: $/kVA/month by default; the kW variant (15.459 $/kW/month peak) is seeded on purpose, because OEC measures and plans in kW (decided 2026-11-10). The shoulder demand charge is not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70). Off-peak demand is 0
 
-Small Demand (8300): anytime demand on the highest 30-minute kVA in the month.
+Small Demand (8300): anytime demand on the highest 30-minute kVA in the month, priced per kVA (`unit` `kVA`).
+
+## Time Basis and Public Holidays
+
+- **Time basis**: every tariff version carries `time_basis`. `local` windows follow the distributor's clock with daylight saving. `standard` windows follow standard time all year. Each DNSP's captured 2026-27 source was checked for its time basis on 2026-11-10 (#68), as the table below records. A tariff is `standard` only where its source states standard time. Where the source is silent or ambiguous, the tariff stays `local`. Entry paths are under `knowledge/documents/` in the OEC root.
+
+| DNSP | Source entry | Source wording | Seeded basis |
+|---|---|---|---|
+| Ausgrid | `ausgrid/2026-10-21-network-price-list-2026-27.md`, `ausgrid/2026-10-21-revised-tss-explanatory-statement-2024-29.md` | Source silent | `local` |
+| Endeavour Energy | `endeavour-energy/2026-10-21-network-price-list-2026-27.md`, sections 6.1 and 6.7 | Periods "apply during both Eastern Standard Time (EST) and Daylight Saving Time (DST)"; "billing data is adjusted by shifting the data forward an hour to accommodate for the time shift during DST" | `local` |
+| Essential Energy | `essential-energy/2026-10-21-price-list-explanatory-notes-2026-27.md`, section 4 | "DAYLIGHT SAVINGS TIME will be applied to all customers with interval read meters and unmetered supplies in determining Network charges." Far West region: "based on either Eastern Standard Time or Summer Time depending on when the meter was installed or programmed" (ambiguous, not modelled) | `local` |
+| SA Power Networks | `sa-power-networks/2026-10-21-customer-overview-2026-27.md` and its `.pdf`, Tables 2, 3, 4, 5 | "Interval meter tariff structures are based on local time: ACST/ ACDT." BSR is accumulation-metered and Table 4 says "Accumulation meter tariff structures are based on ACST." (the wording is in the `.pdf`, not the `.md`). RSR is accumulation-metered and Table 2 states nothing for accumulation meters (source silent). Table 3 says "Tariff structures are based on ACST." for OPCL and CL, which are not seeded | BSR `standard`, all other SAPN tariffs `local` (RSR included) |
+| Jemena | `jemena/2026-10-21-network-tariff-schedule-2026-27.md` | A180: "11 pm to 7 am AEST all days". A130, A10E, A210, A230: "(local time)" on each window. A100: "Single rate all times", no window | A180 `standard`, others `local` |
+| AusNet Services | `ausnet/2026-10-21-network-tariff-schedule-2026-27.md`, sheet "Tariff structures" | NASS11, RCER11, NAST12 (structures 21, 20, 17): "* Based on local time". NEE11, NEE33 (structures 1, 19): no window, source silent. NASN12 (structure 15): "3:00PM to 9:00PM ADST Monday to Friday" (ambiguous) | `local` |
+| CitiPower | `citipower/2026-10-21-pricing-2026-27.md`, Tables 4 and 5; `citipower/2026-11-10-tariff-summary-2026-27.md` | "All times are local time, except for C2U which is in AEST". C2U is not seeded | `local` |
+| Powercor | `powercor/2026-10-21-pricing-2026-27.md`, Tables 4 and 5; `powercor/2026-11-10-tariff-summary-2026-27.md` | "All times are local time, except for PL2 which is in AEST". PL2 is not seeded | `local` |
+| United Energy | `united-energy/2026-10-21-pricing-2026-27.md`, Tables 4 and 5 | "All times are local time, except for UNMET which is in AEST". UNMET is not seeded | `local` |
+| Evoenergy | `evoenergy/2026-10-21-schedule-of-charges-2026-27.md` | "Charge applicability (times in AEST)" on every tariff table | `standard` (017, 023, 060, 090, 101) |
+| Power and Water | `power-and-water/2026-10-21-network-tariffs-2026-27.md` | Source silent. NT has no daylight saving, so both bases agree | `local` |
+| Energex | `energex/2026-10-21-network-tariff-guide-2026-27.md`, `energex/2026-10-21-residential-tariffs-page.md` | Source silent. Queensland has no daylight saving, so both bases agree | `local` |
+
+- **Public holidays**: looked up by the DNSP's state with the `holidays` Python package (MIT, pinned in `pyproject.toml`), state-wide only. The captured price lists do not name a holiday list, so regional holidays are not modelled.
+- **Treatment**: `public_holidays` on a weekday or weekend window is `excluded` (the window does not apply on a holiday) or `included` (a weekday window applies on a weekday holiday only, a weekend window applies on any holiday). Ausgrid, Endeavour, CitiPower, Powercor and United Energy weekdays are `excluded`, Power and Water weekdays are `included`. Essential and Energex sources keep weekday times on a weekday holiday, so their weekdays are `included`. The AusNet and Evoenergy sources state no treatment for their weekday demand windows, which keep the seeded `included`. Other weekday windows are not checked against their sources here.
+- **Prices expected until**: `prices_expected_until` is 2027-07-01 on every seeded tariff, the day after the 2026-27 price lists end and the next annual price change.
 
 ## Notes
 - **Authoritative source**: Energex Network Price List spreadsheet (AER-approved)
@@ -515,7 +556,7 @@ Small Demand (8300): anytime demand on the highest 30-minute kVA in the month.
 - Spreadsheet breaks down: NUOS (total) = DUOS (distribution) + TUOS (transmission) + JS (jurisdictional) + Metering
 - We use **NUOS** (the bundled total) as this is what retailers pass through
 - Rates are in **$/kWh** and **$/day** — already in the correct unit for the API
-- Demand charges are in **$/kW/month**
+- Demand charges are in **$/kW/month**, or **$/kVA/month** where `unit` is `kVA` (8300)
 - Amber zone suffixes (50/70/00/20) = different supply voltage/connection types; all share the same NTC rate
 - Tariffs marked with * are closed to new customers but still active for existing customers
 - The demand measurement window (peak 4pm–9pm, 30-min average) is NOT in the price list — sourced from Energex tariff descriptions page

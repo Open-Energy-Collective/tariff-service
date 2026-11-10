@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.database import engine
 from app.main import app
-from app.models.tariff import Dnsp, Tariff, TariffDemand, TariffRate
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge, TariffRate
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Health
@@ -600,6 +600,7 @@ def test_current_rate_resolution_is_order_independent():
         start_time="15:00",
         end_time="21:00",
         days="all",
+        public_holidays=None,
         season_months=None,
     )
     catchall = SimpleNamespace(
@@ -608,14 +609,16 @@ def test_current_rate_resolution_is_order_independent():
         start_time="00:00",
         end_time="00:00",
         days="all",
+        public_holidays=None,
         season_months=None,
     )
+    dnsp = SimpleNamespace(timezone="Australia/Brisbane", state="QLD")
     at_peak_time = datetime.fromisoformat("2026-07-20T18:00:00+10:00")
 
     # Catch-all listed first...
-    tariff_a = SimpleNamespace(rates=[catchall, specific])
+    tariff_a = SimpleNamespace(rates=[catchall, specific], dnsp=dnsp, time_basis="local")
     # ...and specific window listed first.
-    tariff_b = SimpleNamespace(rates=[specific, catchall])
+    tariff_b = SimpleNamespace(rates=[specific, catchall], dnsp=dnsp, time_basis="local")
 
     assert get_current_rate(tariff_a, at_peak_time) == ("peak", 0.32516)
     assert get_current_rate(tariff_b, at_peak_time) == ("peak", 0.32516)
@@ -643,7 +646,9 @@ def test_rate_limit_enforced_per_ip():
 # ─────────────────────────────────────────────────────────────────────────────
 
 DEMAND_WINDOWS = "/api/v1/calculate/demand-windows"
-DAY_3800 = [{"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00"}]
+DAY_3800 = [
+    {"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00", "rate": 7.0}
+]
 
 
 @pytest.fixture
@@ -663,14 +668,17 @@ def energex_3800():
         session.add(tariff)
         session.flush()
         session.add(
-            TariffDemand(
+            TariffDemandCharge(
+                period="peak",
+                unit="kW",
+                peak_period="month",
                 tariff_id=tariff.id,
                 rate=7.0,
-                window_start="17:00",
-                window_end="20:00",
+                start="17:00",
+                end="20:00",
                 measurement_method="30min_avg",
                 days="weekdays",
-                season_months=None,
+                months=None,
             )
         )
         session.commit()
@@ -963,11 +971,14 @@ def demand_versions():
             session.add(tariff)
             session.flush()
             session.add(
-                TariffDemand(
+                TariffDemandCharge(
+                    period="peak",
+                    unit="kW",
+                    peak_period="month",
                     tariff_id=tariff.id,
                     rate=10.0,
-                    window_start=window_start,
-                    window_end=window_end,
+                    start=window_start,
+                    end=window_end,
                     measurement_method="peak_kw",
                 )
             )
@@ -987,7 +998,7 @@ def demand_windows_for(client, tariff: str, start: str, end: str):
 
 
 def window(day: str, start: str, end: str) -> dict:
-    return {"start": f"{day}T{start}:00+10:00", "end": f"{day}T{end}:00+10:00"}
+    return {"start": f"{day}T{start}:00+10:00", "end": f"{day}T{end}:00+10:00", "rate": 10.0}
 
 
 def test_demand_windows_use_the_version_of_the_requested_range(
@@ -1016,7 +1027,7 @@ def test_demand_windows_range_across_two_versions_uses_each_days_version(client,
 def test_demand_windows_merge_across_a_version_boundary(client, demand_versions):
     response = demand_windows_for(client, "DA", "2026-06-30", "2026-07-02")
     assert response.json()["windows"] == [
-        {"start": "2026-06-30T00:00:00+10:00", "end": "2026-07-02T00:00:00+10:00"}
+        {"start": "2026-06-30T00:00:00+10:00", "end": "2026-07-02T00:00:00+10:00", "rate": 10.0}
     ]
 
 
@@ -1056,3 +1067,98 @@ def test_demand_windows_unknown_tariff_is_404_before_bad_dates_are_400(client, d
         params={"dnsp": "energex", "tariff": "NOPE", "start": "bad", "end": "bad"},
     )
     assert response.status_code == 404
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Tariff detail: demand charges, time basis, export allowance terms
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_detail_has_demand_charges_and_keeps_demand(seed_client):
+    body = seed_client.get("/api/v1/tariffs/ausnet/NASN12").json()
+    charges = body["demand_charges"]
+    assert [c["rate"] for c in charges] == [11.473, 2.862]
+    assert charges[0] == {
+        "period": "peak",
+        "rate": 11.473,
+        "unit": "kW",
+        "start": "15:00",
+        "end": "21:00",
+        "days": "weekdays",
+        "public_holidays": "included",
+        "months": [1, 2, 3, 12],
+        "measurement_method": "monthly_peak",
+        "peak_period": "month",
+    }
+    assert charges[1]["months"] == [4, 5, 6, 7, 8, 9, 10, 11]
+    assert body["demand"]["rate"] == 11.473
+    assert body["demand"]["window_start"] == "15:00"
+    assert body["demand"]["season_months"] == [1, 2, 3, 12]
+
+
+def test_detail_demand_charges_single_charge_and_none(client):
+    body = client.get("/api/v1/tariffs/energex/T12A").json()
+    assert body["demand"] is not None
+    assert len(body["demand_charges"]) == 1
+    assert body["demand_charges"][0]["months"] is None
+    flat = client.get("/api/v1/tariffs/ausgrid/EA025").json()
+    assert flat["demand"] is None
+    assert flat["demand_charges"] == []
+
+
+def test_detail_time_basis_and_prices_expected_until(seed_client):
+    nasn12 = seed_client.get("/api/v1/tariffs/ausnet/NASN12").json()
+    assert nasn12["time_basis"] == "local"
+    assert nasn12["prices_expected_until"] == "2027-07-01"
+    a180 = seed_client.get("/api/v1/tariffs/jemena/A180").json()
+    assert a180["time_basis"] == "standard"
+    for rate in nasn12["rates"]:
+        assert "public_holidays" in rate
+
+
+def test_rate_public_holidays_published(seed_client):
+    rates = seed_client.get("/api/v1/tariffs/ausgrid/EA302").json()["rates"]
+    weekday = [r for r in rates if r["days"] == "weekdays"]
+    assert weekday and {r["public_holidays"] for r in weekday} == {"excluded"}
+
+
+@pytest.mark.parametrize(
+    ("dnsp", "code", "rollover"),
+    [
+        ("sapn", "RSR", "billing_period"),
+        ("sapn", "SBTOU", "billing_period_like_days"),
+        ("ausnet", "RCER11", "none"),
+    ],
+)
+def test_export_rollover(seed_client, dnsp, code, rollover):
+    (export,) = seed_client.get(f"/api/v1/tariffs/{dnsp}/{code}").json()["export"]
+    assert export["free_threshold_period"] == "day"
+    assert export["free_threshold_rollover"] == rollover
+    assert "public_holidays" in export
+
+
+def test_changing_prices_expected_until_keeps_version_in_force(client):
+    url = "/api/v1/tariffs/energex/T12A"
+    with Session(engine) as session:
+        tariff = session.query(Tariff).filter_by(code="T12A").one()
+        tariff.prices_expected_until = "2027-07-01"
+        session.commit()
+    before = client.get(url).json()
+    with Session(engine) as session:
+        tariff = session.query(Tariff).filter_by(code="T12A").one()
+        tariff.prices_expected_until = "2020-01-01"
+        session.commit()
+    after = client.get(url).json()
+    assert before["prices_expected_until"] == "2027-07-01"
+    assert after["prices_expected_until"] == "2020-01-01"
+    assert after["effective_from"] == before["effective_from"]
+    assert after["effective_to"] == before["effective_to"]
+    assert len(client.get(url + "/history").json()) == 1
+
+
+def test_tariff_type_description_says_read_export(client):
+    schemas = client.get("/openapi.json").json()["components"]["schemas"]
+    for name in ("TariffDetailResponse", "TariffSummaryResponse"):
+        description = schemas[name]["properties"]["tariff_type"]["description"]
+        assert "does not indicate" in description
+        assert "export" in description

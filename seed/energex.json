@@ -21,13 +21,15 @@
       "name": "Residential ToU Energy",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.774,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -65,20 +67,28 @@
       "name": "Residential ToU Demand & Energy",
       "tariff_class": "residential",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.574,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": {
-        "rate": 7.0,
-        "window_start": "16:00",
-        "window_end": "21:00",
-        "measurement_method": "30min_avg",
-        "days": "all",
-        "season_months": null
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (peak demand 7 $/kW/month) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3: the single highest 30-minute average kW in 16:00-21:00, weekdays and weekends).",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 7.0,
+          "unit": "kW",
+          "start": "16:00",
+          "end": "21:00",
+          "days": "all",
+          "months": null,
+          "measurement_method": "30min_avg",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -116,14 +126,16 @@
       "name": "Residential Flat",
       "tariff_class": "residential",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.994,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
       "closed_to_new_customers": true,
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -143,13 +155,15 @@
       "name": "Economy (Controlled Load)",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "controlled_load",
@@ -169,13 +183,15 @@
       "name": "Super Economy (Controlled Load)",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "controlled_load",
@@ -195,13 +211,15 @@
       "name": "Small Business ToU Energy",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 1.344,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -239,20 +257,29 @@
       "name": "Small Business ToU Demand & Energy",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.986,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": {
-        "rate": 7.0,
-        "window_start": "17:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_avg",
-        "days": "weekdays",
-        "season_months": null
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (peak demand 7 $/kW/month) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3 and Table 6: the single highest 30-minute average kW in 17:00-20:00 weekdays; weekdays include public holidays).",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 7.0,
+          "unit": "kW",
+          "start": "17:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": null,
+          "measurement_method": "30min_avg",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -260,6 +287,7 @@
           "start_time": "17:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -290,14 +318,16 @@
       "name": "Business Flat",
       "tariff_class": "business",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 1.347,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
       "closed_to_new_customers": true,
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -317,13 +347,15 @@
       "name": "Small Business Primary Load Control",
       "tariff_class": "business",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.986,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "controlled_load",
@@ -343,21 +375,29 @@
       "name": "Large ToU Demand & Energy",
       "tariff_class": "large",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 9.257,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA by default (peak 13.913 $/kVA/month; kW variant 15.459 $/kW/month when the meter cannot publish kVA); extra demand charges, shoulder demand 3.672 $/kVA/month (4.08 $/kW/month) in 13:00-17:00 and 20:00-11:00 weekdays and 13:00-11:00 weekends, off-peak demand 0; seeded as the kW peak demand charge only, 15.459 $/kW/month 17:00-20:00 weekdays.",
-      "demand": {
-        "rate": 15.459,
-        "window_start": "17:00",
-        "window_end": "20:00",
-        "measurement_method": "30min_avg",
-        "days": "weekdays",
-        "season_months": null
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (peak demand 13.913 $/kVA/month or 15.459 $/kW/month, shoulder demand 3.672 $/kVA/month or 4.08 $/kW/month, off-peak demand 0) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3 and Table 6: kVA by default, the kW variant when the meter cannot publish kVA; single highest 30-minute average; peak 17:00-20:00 weekdays, weekdays include public holidays; shoulder 13:00-17:00 and 20:00-11:00 weekdays and 13:00-11:00 weekends; off-peak 11:00-13:00 every day). Seeded as the kW variant's peak charge on purpose: OEC measures and plans in kW (decided 2026-11-10). The shoulder charge is not seeded: one charge over two windows, and a weekend window that ignores weekday public holidays, have no place in the model (#70). The off-peak demand charge is 0.",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 15.459,
+          "unit": "kW",
+          "start": "17:00",
+          "end": "20:00",
+          "days": "weekdays",
+          "public_holidays": "included",
+          "months": null,
+          "measurement_method": "30min_avg",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -365,6 +405,7 @@
           "start_time": "17:00",
           "end_time": "20:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -395,21 +436,28 @@
       "name": "Demand Small",
       "tariff_class": "large",
       "tariff_type": "demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 10.44,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): anytime demand priced per kVA (13.913 $/kVA/month on the highest 30-minute kVA in the month; no kW version); seeded as 13.913 $/kW/month.",
-      "demand": {
-        "rate": 13.913,
-        "window_start": "00:00",
-        "window_end": "00:00",
-        "measurement_method": "30min_avg",
-        "days": "all",
-        "season_months": null
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/energex/2026-10-21-network-price-list-2026-27 (anytime demand 13.913 $/kVA/month) and knowledge/documents/energex/2026-10-21-network-tariff-guide-2026-27 (s 3.3: the single highest 30-minute kVA in the month; no kW version).",
+      "demand_charges": [
+        {
+          "period": "anytime",
+          "rate": 13.913,
+          "unit": "kVA",
+          "start": "00:00",
+          "end": "00:00",
+          "days": "all",
+          "months": null,
+          "measurement_method": "30min_avg",
+          "peak_period": "month"
+        }
+      ],
       "rates": [
         {
           "period_name": "anytime",
@@ -429,13 +477,15 @@
       "name": "Large Business Energy",
       "tariff_class": "large",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 8.882,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -455,13 +505,15 @@
       "name": "Large ToU Energy",
       "tariff_class": "large",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 7.9,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -499,13 +551,15 @@
       "name": "Large Business Primary Load Control",
       "tariff_class": "large",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 9.257,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "controlled_load",
@@ -525,13 +579,15 @@
       "name": "Large Business Secondary Load Control",
       "tariff_class": "large",
       "tariff_type": "controlled_load",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.0,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "controlled_load",
@@ -551,13 +607,15 @@
       "name": "Residential Two-Way Tariff Trial",
       "tariff_class": "residential",
       "tariff_type": "tou_export",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.651,
       "source_url": "https://www.energex.com.au/__data/assets/excel_doc/0010/1985968/Energex-2026-27-Network-Price-List-Updated-for-Sch-8.xlsx",
       "last_verified": "2026-07-20T00:00:00+10:00",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -598,6 +656,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": null,
+          "free_threshold_period": null,
+          "free_threshold_rollover": null,
           "days": "all"
         }
       ]

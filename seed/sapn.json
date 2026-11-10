@@ -3,7 +3,6 @@
     "source": "SA Power Networks Annual Pricing Proposal Overview 2026-27",
     "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
     "effective_from": "2026-07-01",
-    "effective_to": "2027-06-30",
     "extracted_date": "2026-07-20",
     "notes": "Prices exclude GST. Rates already in $/kWh and $/day. Windows per tariff: DATA_SOURCES.md. Demand: $/kVA/day."
   },
@@ -22,13 +21,15 @@
       "name": "Residential Single Rate",
       "tariff_class": "residential",
       "tariff_type": "flat",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
       "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -51,6 +52,8 @@
           "charge_window_end": null,
           "charge_season_months": null,
           "free_threshold_kwh": 11.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period",
           "days": "all"
         }
       ]
@@ -61,13 +64,15 @@
       "name": "Residential Time of Use",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
       "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "off_peak",
@@ -108,6 +113,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": 9.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period",
           "days": "all"
         }
       ]
@@ -118,13 +125,15 @@
       "name": "Residential Electrify",
       "tariff_class": "residential",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.6553,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
       "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -165,6 +174,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": 9.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period",
           "days": "all"
         }
       ]
@@ -175,13 +186,16 @@
       "name": "Business Single Rate",
       "tariff_class": "business",
       "tariff_type": "flat",
+      "time_basis": "standard",
+      "notes": "time_basis standard: Table 4 of knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27.pdf states \"Accumulation meter tariff structures are based on ACST.\" BSR is accumulation-metered, so the 11 kWh/day free export allowance runs 00:00-24:00 ACST (01:00 ACDT to 01:00 ACDT in daylight saving).",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-11-09T00:00:00+10:30",
+      "last_verified": "2026-11-10T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "anytime",
@@ -204,6 +218,8 @@
           "charge_window_end": null,
           "charge_season_months": null,
           "free_threshold_kwh": 11.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period",
           "days": "all"
         }
       ]
@@ -214,13 +230,15 @@
       "name": "Small Business Time of Use",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
       "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -243,6 +261,7 @@
           "start_time": "07:00",
           "end_time": "17:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "high",
           "season_months": [
             11,
@@ -258,6 +277,7 @@
           "start_time": "07:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "low",
           "season_months": [
             4,
@@ -290,6 +310,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": 9.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period_like_days",
           "days": "all"
         }
       ]
@@ -300,13 +322,15 @@
       "name": "Small Business Electrify",
       "tariff_class": "business",
       "tariff_type": "tou",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 0.6645,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
       "last_verified": "2026-11-09T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "demand": null,
+      "demand_charges": [],
       "rates": [
         {
           "period_name": "peak",
@@ -323,6 +347,7 @@
           "start_time": "07:00",
           "end_time": "10:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -332,6 +357,7 @@
           "start_time": "16:00",
           "end_time": "17:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },
@@ -356,6 +382,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": 9.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period_like_days",
           "days": "all"
         }
       ]
@@ -366,21 +394,28 @@
       "name": "Medium Business Time of Use Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 1.5082,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-11-09T00:00:00+10:30",
+      "last_verified": "2026-11-10T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (0.0861 $/kVA/day); rolling 12-month peak (annual charge on the highest 30-minute demand interval in the last 12 months); seeded as 2.583 $/kW/month (0.0861 x 30) on the billing month's highest 30-minute interval, any time, all year.",
-      "demand": {
-        "rate": 2.583,
-        "window_start": "00:00",
-        "window_end": "00:00",
-        "measurement_method": "30min_max",
-        "days": "all",
-        "season_months": null
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27 (Table 4 and Table 9): annual demand 0.0861 $/kVA/day (x 30) on the highest 30-minute demand interval of the last 12 months, with no time window or season.",
+      "demand_charges": [
+        {
+          "period": "anytime",
+          "rate": 2.583,
+          "unit": "kVA",
+          "start": "00:00",
+          "end": "00:00",
+          "days": "all",
+          "months": null,
+          "measurement_method": "30min_max",
+          "peak_period": "rolling_12_months"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -403,6 +438,7 @@
           "start_time": "07:00",
           "end_time": "17:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "high",
           "season_months": [
             11,
@@ -418,6 +454,7 @@
           "start_time": "07:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "low",
           "season_months": [
             4,
@@ -450,6 +487,8 @@
           "charge_window_end": "16:00",
           "charge_season_months": null,
           "free_threshold_kwh": 9.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period_like_days",
           "days": "all"
         }
       ]
@@ -460,27 +499,45 @@
       "name": "Large LV Business Annual Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
+      "time_basis": "local",
       "effective_from": "2026-07-01",
       "effective_to": null,
+      "prices_expected_until": "2027-07-01",
       "daily_supply_charge": 8.6002,
       "source_url": "https://www.sapowernetworks.com.au/industry/pricing-and-tariffs/",
-      "last_verified": "2026-10-21T00:00:00+11:00",
+      "last_verified": "2026-11-10T00:00:00+10:30",
       "verified_by": "official_price_list",
-      "notes": "Schema gap (feat/0.8.0): demand priced per kVA (peak 0.3408 $/kVA/day); rolling 12-month peak (highest daily average demand in the 17:00-21:00 window, November to March, over the last 12 months, billed all year round); extra demand charge (anytime 0.0630 $/kVA/day on the highest 30-minute interval in the last 12 months, any time, all year); seeded as 10.224 $/kW/month (0.3408 x 30) on the 30-minute maximum 17:00-21:00 all days, charged November to March only, with no anytime charge. CBD sites (LBADCBD) use an 11:00-17:00 workday peak demand window instead.",
-      "demand": {
-        "rate": 10.224,
-        "window_start": "17:00",
-        "window_end": "21:00",
-        "measurement_method": "30min_max",
-        "days": "all",
-        "season_months": [
-          11,
-          12,
-          1,
-          2,
-          3
-        ]
-      },
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/sa-power-networks/2026-10-21-customer-overview-2026-27 (Table 5 and Table 9): peak annual demand 0.3408 $/kVA/day (x 30) on the highest daily average demand of the last 12 months in 17:00-21:00 all days, November to March (non-CBD), billed all year; anytime annual demand 0.0630 $/kVA/day (x 30) on the highest 30-minute demand interval of the last 12 months. The peak charge keeps measurement_method 30min_max: no value names a daily average (#70). CBD sites (LBADCBD) use an 11:00-17:00 workday peak window instead.",
+      "demand_charges": [
+        {
+          "period": "peak",
+          "rate": 10.224,
+          "unit": "kVA",
+          "start": "17:00",
+          "end": "21:00",
+          "days": "all",
+          "months": [
+            11,
+            12,
+            1,
+            2,
+            3
+          ],
+          "measurement_method": "30min_max",
+          "peak_period": "rolling_12_months"
+        },
+        {
+          "period": "anytime",
+          "rate": 1.89,
+          "unit": "kVA",
+          "start": "00:00",
+          "end": "00:00",
+          "days": "all",
+          "months": null,
+          "measurement_method": "30min_max",
+          "peak_period": "rolling_12_months"
+        }
+      ],
       "rates": [
         {
           "period_name": "peak",
@@ -488,6 +545,7 @@
           "start_time": "07:00",
           "end_time": "21:00",
           "days": "weekdays",
+          "public_holidays": "included",
           "season": "all",
           "season_months": null
         },

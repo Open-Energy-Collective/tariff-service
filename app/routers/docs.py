@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.tariff import Dnsp, Tariff, TariffDemand
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge
 
 router = APIRouter(prefix="/api/v1/docs", tags=["Documentation"])
 
@@ -30,7 +30,11 @@ class DnspDemandMethodology(BaseModel):
         default=None, description="When demand charges apply across the year"
     )
     rate_unit: str = Field(
-        default="$/kW/month", description="Unit for the demand rate"
+        default="$/kW/month",
+        description=(
+            "Unit for the demand rate: '$/kW/month' or '$/kVA/month', following the "
+            "demand unit of the tariff source_url points to"
+        ),
     )
     calculation_example: str | None = Field(
         default=None, description="Worked example of how the demand charge is calculated"
@@ -50,17 +54,28 @@ class DemandMethodologyResponse(BaseModel):
 
 MEASUREMENT_EXPLANATIONS = {
     "30min_avg": (
-        "The average power draw (kW) over the highest 30-minute interval within "
+        "The average power draw ({unit}) over the highest 30-minute interval within "
         "the demand window during the billing month. Your meter records consumption "
         "in 30-minute blocks; the block with the highest average is your peak demand "
         "for that month."
     ),
     "30min_max": (
-        "The maximum power draw (kW) recorded in any 30-minute interval within "
+        "The maximum power draw ({unit}) recorded in any 30-minute interval within "
         "the demand window during the billing month. This is typically the single "
         "highest 30-minute reading your meter records during peak hours."
     ),
 }
+
+MEASUREMENT_QUANTITY = {"kW": "power draw", "kVA": "apparent power"}
+
+
+def measurement_explanation(method: str | None, unit: str) -> str | None:
+    """The measurement text for `method`, worded in the tariff's demand unit."""
+    template = MEASUREMENT_EXPLANATIONS.get(method)
+    if template is None:
+        return None
+    return template.replace("power draw ({unit})", f"{MEASUREMENT_QUANTITY[unit]} ({unit})")
+
 
 SEASON_EXPLANATIONS = {
     None: "Year-round — demand charges apply every month.",
@@ -90,6 +105,25 @@ CALCULATION_EXAMPLES = {
 }
 
 
+STANDARD_TIME_NAMES = {
+    "Australia/Sydney": "AEST",
+    "Australia/Melbourne": "AEST",
+    "Australia/Brisbane": "AEST",
+    "Australia/Hobart": "AEST",
+    "Australia/Adelaide": "ACST",
+    "Australia/Darwin": "ACST",
+    "Australia/Perth": "AWST",
+}
+
+
+def window_basis(time_basis: str, timezone: str) -> str:
+    """Names the clock a demand window runs on: local time, or the zone's standard time."""
+    if time_basis != "standard":
+        return "local time"
+    name = STANDARD_TIME_NAMES.get(timezone)
+    return f"{name}, standard time" if name else "standard time"
+
+
 @router.get("/demand-methodology", response_model=DemandMethodologyResponse)
 def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyResponse:
     """Explains how demand charges are calculated for each DNSP.
@@ -106,7 +140,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
         # Find a representative demand tariff for this DNSP
         demand_tariff = (
             db.query(Tariff)
-            .join(TariffDemand)
+            .join(TariffDemandCharge)
             .filter(Tariff.dnsp_id == dnsp.id)
             .first()
         )
@@ -122,7 +156,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
             continue
 
         demand = demand_tariff.demand
-        season_key = demand.season_months if demand.season_months else None
+        season_key = demand.months if demand.months else None
 
         dnsp_methods.append(
             DnspDemandMethodology(
@@ -130,10 +164,13 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
                 dnsp_name=dnsp.name,
                 has_demand_tariffs=True,
                 measurement_method=demand.measurement_method,
-                measurement_explanation=MEASUREMENT_EXPLANATIONS.get(
-                    demand.measurement_method
+                measurement_explanation=measurement_explanation(
+                    demand.measurement_method, demand.unit
                 ),
-                window=f"{demand.window_start} to {demand.window_end} (local time)",
+                window=(
+                    f"{demand.start} to {demand.end} "
+                    f"({window_basis(demand_tariff.time_basis, dnsp.timezone)})"
+                ),
                 days=(
                     "All days (including weekends)"
                     if demand.days == "all"
@@ -143,7 +180,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
                     season_key,
                     f"Applies in months: {season_key}",
                 ),
-                rate_unit="$/kW/month",
+                rate_unit=f"$/{demand.unit}/month",
                 calculation_example=CALCULATION_EXAMPLES.get(dnsp.code),
                 source_url=demand_tariff.source_url,
             )
@@ -153,8 +190,9 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
         title="Demand Charge Methodology by DNSP",
         description=(
             "Demand charges are a component of certain network tariffs that charge "
-            "customers based on their peak electricity demand (measured in kW) during "
-            "specified time windows. Unlike energy charges ($/kWh) which are based on "
+            "customers based on their peak electricity demand (measured in kW or kVA, "
+            "as each tariff states) during specified time windows. Unlike energy charges "
+            "($/kWh) which are based on "
             "total consumption, demand charges incentivise reducing peak usage — "
             "the single highest draw during the billing period determines the charge. "
             "This means running multiple high-power appliances simultaneously during "

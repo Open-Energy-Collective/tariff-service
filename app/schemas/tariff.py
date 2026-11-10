@@ -18,8 +18,15 @@ class DnspResponse(BaseModel):
 class TariffDemandResponse(BaseModel):
     rate: float = Field(
         description=(
-            "Demand charge rate in $/kW/month. This is the monthly cost per kW "
-            "of peak demand measured during the demand window."
+            "Demand charge rate in $ per unit per month, unit being kW or kVA as "
+            "given by unit. This is the monthly cost per unit of peak demand measured "
+            "during the demand window."
+        )
+    )
+    unit: str = Field(
+        description=(
+            "Billing unit of rate: 'kW' or 'kVA', taken from the demand charge this "
+            "object is built from"
         )
     )
     window_start: str = Field(
@@ -35,7 +42,7 @@ class TariffDemandResponse(BaseModel):
             "(used by Energex); "
             "'30min_max' = maximum demand in any 30-minute interval "
             "(used by Ausgrid). "
-            "The measured value (in kW) is multiplied by the rate to produce "
+            "The measured value (in unit, kW or kVA) is multiplied by the rate to produce "
             "the monthly demand charge."
         )
     )
@@ -43,7 +50,8 @@ class TariffDemandResponse(BaseModel):
         description=(
             "Which days the demand window applies. Values: "
             "'all' = every day including weekends; "
-            "'weekdays' = Monday to Friday only (excludes public holidays)"
+            "'weekdays' = Monday to Friday. Public holiday treatment is given by "
+            "demand_charges[].public_holidays"
         )
     )
     season_months: list[int] | None = Field(
@@ -55,6 +63,32 @@ class TariffDemandResponse(BaseModel):
             "Outside these months, no demand charge is levied."
         ),
     )
+
+    model_config = {"from_attributes": True}
+
+
+class DemandChargeResponse(BaseModel):
+    period: str = Field(description="Demand period, e.g. 'peak'")
+    rate: float = Field(description="Demand charge rate per unit per month (excluding GST)")
+    unit: str = Field(description="Billing unit: 'kW' or 'kVA'")
+    start: str = Field(description="Start of the demand window (HH:MM, tariff clock)")
+    end: str = Field(
+        description="End of the demand window (HH:MM, tariff clock); equal to start means all day"
+    )
+    days: str = Field(description="Days the window applies: 'all', 'weekdays' or 'weekends'")
+    public_holidays: str | None = Field(
+        default=None,
+        description=(
+            "How public holidays treat a weekday or weekend window: 'included' or "
+            "'excluded'. null for a window on every day"
+        ),
+    )
+    months: list[int] | None = Field(
+        default=None,
+        description="Months (1-12) when the charge applies. null = all months",
+    )
+    measurement_method: str = Field(description="How the peak is measured, e.g. 'monthly_peak'")
+    peak_period: str = Field(description="Period over which the peak is measured, e.g. 'month'")
 
     model_config = {"from_attributes": True}
 
@@ -97,6 +131,15 @@ class TariffRateResponse(BaseModel):
         ),
     )
 
+    public_holidays: str | None = Field(
+        default=None,
+        description=(
+            "How public holidays treat a weekday or weekend window: 'included' = the window "
+            "applies on a public holiday as on any other day of its kind; 'excluded' = a "
+            "public holiday is not part of the window. null for a window on every day"
+        ),
+    )
+
     model_config = {"from_attributes": True}
 
 
@@ -128,6 +171,28 @@ class TariffExportResponse(BaseModel):
     )
     days: str = Field(description="Days this export pricing applies")
 
+    free_threshold_period: str | None = Field(
+        default=None,
+        description="Period the free export allowance is counted over, e.g. 'day'",
+    )
+    free_threshold_rollover: str | None = Field(
+        default=None,
+        description=(
+            "Whether unused allowance carries over: 'none' = no carry over; "
+            "'billing_period' = the allowance pools across the billing period; "
+            "'billing_period_like_days' = it pools across days of the same kind in the "
+            "billing period"
+        ),
+    )
+    public_holidays: str | None = Field(
+        default=None,
+        description=(
+            "How public holidays treat a weekday or weekend window: 'included' = the window "
+            "applies on a public holiday as on any other day of its kind; 'excluded' = a "
+            "public holiday is not part of the window. null for a window on every day"
+        ),
+    )
+
     model_config = {"from_attributes": True}
 
 
@@ -138,7 +203,8 @@ class TariffSummaryResponse(BaseModel):
         description=(
             "Tariff structure type: 'flat', 'tou' (time-of-use), "
             "'tou_demand' (time-of-use + demand), 'demand', "
-            "'controlled_load', 'tou_export' (two-way/solar)"
+            "'controlled_load', 'tou_export' (two-way/solar). It does not indicate "
+            "exports: read the export list for those."
         )
     )
     effective_from: str = Field(description="Date tariff became effective (YYYY-MM-DD)")
@@ -156,7 +222,8 @@ class TariffDetailResponse(BaseModel):
     tariff_type: str = Field(
         description=(
             "Tariff structure type: 'flat', 'tou', 'tou_demand', "
-            "'demand', 'controlled_load', 'tou_export'"
+            "'demand', 'controlled_load', 'tou_export'. It does not indicate "
+            "exports: read the export list for those."
         )
     )
     effective_from: str = Field(description="Date tariff became effective (YYYY-MM-DD)")
@@ -173,6 +240,26 @@ class TariffDetailResponse(BaseModel):
             "Demand charge component. Present only for tariff types "
             "'tou_demand' and 'demand'. See /api/v1/docs/demand-methodology "
             "for per-DNSP calculation details."
+        ),
+    )
+    demand_charges: list[DemandChargeResponse] = Field(
+        description=(
+            "Every demand charge of the tariff, highest rate first and then earliest start. "
+            "Empty when the tariff has none. Supersedes demand, which stays until a later "
+            "release removes it"
+        ),
+    )
+    time_basis: str = Field(
+        description=(
+            "Clock every window of the tariff is written in: 'local' = local time, "
+            "daylight saving included; 'standard' = standard time all year"
+        )
+    )
+    prices_expected_until: str | None = Field(
+        default=None,
+        description=(
+            "Date (YYYY-MM-DD) until which these prices are expected to hold. "
+            "Informational: it does not change which version is in force"
         ),
     )
     rates: list[TariffRateResponse] = Field(
@@ -199,6 +286,14 @@ class CurrentRateRequest(BaseModel):
     datetime: str  # ISO 8601
 
 
+class DemandChargeInForce(BaseModel):
+    period: str = Field(description="Demand period, e.g. 'peak'")
+    rate: float = Field(description="Demand charge rate per unit per month")
+    unit: str = Field(description="Billing unit: 'kW' or 'kVA'")
+    peak_period: str = Field(description="Period over which the peak is measured")
+    active: bool = Field(description="Whether the datetime falls inside this charge's window")
+
+
 class CurrentRateResponse(BaseModel):
     dnsp: str = Field(description="DNSP code")
     tariff: str = Field(description="Tariff code")
@@ -221,8 +316,12 @@ class CurrentRateResponse(BaseModel):
             "Whether the given datetime falls within the demand measurement window. "
             "If true, consumption at this time contributes to the monthly peak demand "
             "calculation (which determines the demand charge). "
-            "Only relevant for 'tou_demand' and 'demand' tariff types."
+            "Only relevant for 'tou_demand' and 'demand' tariff types. "
+            "True when any entry of demand_charges is active."
         )
+    )
+    demand_charges: list[DemandChargeInForce] = Field(
+        description="Every demand charge whose months cover the date on the tariff's clock"
     )
     unit: str = Field(default="$/kWh", description="Unit for the rate field")
 
@@ -237,9 +336,15 @@ class DemandSurchargeResponse(BaseModel):
     dnsp: str = Field(description="DNSP code")
     tariff: str = Field(description="Tariff code")
     peak_demand_kw: float = Field(
-        description="The peak demand value (kW) used for calculation"
+        description=(
+            "The peak demand value used for calculation, read in demand_unit (kW or kVA). "
+            "The name is kept for compatibility"
+        )
     )
-    demand_rate: float = Field(description="Demand charge rate in $/kW/month")
+    demand_rate: float = Field(description="Demand charge rate in $ per demand_unit per month")
+    demand_unit: str = Field(
+        description="Billing unit of demand_rate and peak_demand_kw: 'kW' or 'kVA'"
+    )
     demand_window_hours_per_month: float = Field(
         description=(
             "Total hours per month the demand window is active, in a 30-day month: "
@@ -270,6 +375,9 @@ class DemandWindow(BaseModel):
     end: str = Field(
         description="Window end, ISO 8601 in the DNSP's local offset; exclusive"
     )
+    rate: float = Field(
+        description="Demand rate of this stretch, the highest charge covering it"
+    )
 
 
 class DemandWindowsResponse(BaseModel):
@@ -280,8 +388,9 @@ class DemandWindowsResponse(BaseModel):
     windows: list[DemandWindow] = Field(
         description=(
             "Demand windows within [start, end): half-open, clipped to the range, "
-            "sorted, merged when adjacent or overlapping. Empty for a tariff with "
-            "no demand charge."
+            "sorted. Where charges overlap the higher rate takes the stretch; "
+            "adjacent stretches merge only at an equal rate. Empty for a tariff "
+            "with no demand charge."
         )
     )
 
