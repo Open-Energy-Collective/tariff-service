@@ -47,15 +47,20 @@ def test_demand_methodology_matches_0_8_0(seed_client):
     assert {k: v for k, v in body.items() if k not in ("dnsps", "description")} == {
         k: v for k, v in expected.items() if k not in ("dnsps", "description")
     }
+    assert body["description"] == expected["description"].replace(
+        "measured in kW", "measured in kW or kVA, as each tariff states"
+    )
     assert len(body["dnsps"]) == len(expected["dnsps"])
     for got, want in zip(body["dnsps"], expected["dnsps"], strict=True):
         assert got["rate_unit"] in ("$/kW/month", "$/kVA/month"), got["dnsp_code"]
-        skip = ("rate_unit",)
-        if got["rate_unit"] == "$/kVA/month":
-            skip += ("measurement_explanation",)
+        skip = ("rate_unit", "measurement_explanation")
         assert {k: v for k, v in got.items() if k not in skip} == {
             k: v for k, v in want.items() if k not in skip
         }
+        text = want["measurement_explanation"]
+        if got["rate_unit"] == "$/kVA/month" and text is not None:
+            text = text.replace("power draw (kW)", "apparent power (kVA)")
+        assert got["measurement_explanation"] == text, got["dnsp_code"]
 
 
 def _charge(rate: float, start: str) -> TariffDemandCharge:
