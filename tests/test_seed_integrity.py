@@ -390,22 +390,22 @@ def test_n90_still_lists_both_blocks(seed_client):
 
 # Sources are knowledge/documents/<entry> in the OEC root, ex GST. Expected values are
 # written in the source's own units and were read from the source, not from the seed.
-# CitiPower, Powercor and United Energy have captured 2026-27 rates for their residential ToU
-# tariffs only (#46); their other tariffs keep the AER January 2025 indicative figures.
+# CitiPower, Powercor and United Energy rows other than residential ToU (#73) are also in
+# findings/2026-11-10-victorian-2026-27-non-tou-network-rates.md.
 AUSGRID = "ausgrid/2026-10-21-network-price-list-2026-27.pdf"
 AUSNET = "ausnet/2026-10-21-network-tariff-schedule-2026-27.xlsx, sheet Network 2026-27"
-CITIPOWER = "citipower/2026-11-10-tariff-summary-2026-27.xlsx, sheet CP_2026-27_NUOS row 7"
+CITIPOWER = "citipower/2026-11-10-tariff-summary-2026-27.xlsx, sheet CP_2026-27_NUOS row {}"
 ENDEAVOUR = "endeavour-energy/2026-10-21-network-price-list-2026-27.pdf"
 ENERGEX = "energex/2026-10-21-network-price-list-2026-27.xlsx"
 ESSENTIAL = "essential-energy/2026-10-21-price-list-explanatory-notes-2026-27.pdf"
 EVOENERGY = "evoenergy/2026-10-21-schedule-of-charges-2026-27.pdf, excluding metering"
 JEMENA = "jemena/2026-10-21-network-tariff-schedule-2026-27.pdf"
-POWERCOR = "powercor/2026-11-10-tariff-summary-2026-27.xlsx, sheet PAL_2026-27_NUOS row 7"
+POWERCOR = "powercor/2026-11-10-tariff-summary-2026-27.xlsx, sheet PAL_2026-27_NUOS row {}"
 POWERWATER = "power-and-water/2026-10-21-network-tariffs-2026-27.pdf"
 SAPN = "sa-power-networks/2026-10-21-tariff-price-list-2026-27.pdf, Table 1"
 UNITED_ENERGY = (
     "united-energy/2026-11-10-scs-pricing-model-2026-27.xlsm, sheet Tariff schedule, "
-    "Tariff schedule 3, row 88"
+    "Tariff schedule 3, row {}"
 )
 
 
@@ -477,10 +477,21 @@ SOURCE_PRICES = [
     SourcePrices(
         "citipower",
         "CRSTOU",
-        CITIPOWER,
+        CITIPOWER.format(7),
         cents(31.51),
         (("peak", cents(19.76)), ("off_peak", cents(4.95)), ("saver", cents(1.00))),
     ),
+    flat("citipower", "C1R", CITIPOWER.format(8), cents(31.51), cents(9.09)),
+    # The source gives the dedicated circuit rate in its off-peak column, with no window.
+    flat("citipower", "CDS", CITIPOWER.format(10), 0.0, cents(1.00), period="controlled_load"),
+    SourcePrices(
+        "citipower",
+        "CGTOU",
+        CITIPOWER.format(11),
+        cents(58.32),
+        (("peak", cents(15.39)), ("off_peak", cents(3.84))),
+    ),
+    flat("citipower", "C1G", CITIPOWER.format(12), cents(58.32), cents(10.10)),
     flat("endeavour", "N70", ENDEAVOUR, cents(70.1921), cents(12.0348)),
     SourcePrices(
         "endeavour",
@@ -584,10 +595,20 @@ SOURCE_PRICES = [
     SourcePrices(
         "powercor",
         "PRSTOU",
-        POWERCOR,
+        POWERCOR.format(7),
         cents(43.84),
         (("peak", cents(22.09)), ("off_peak", cents(5.52)), ("saver", cents(1.00))),
     ),
+    flat("powercor", "D1", POWERCOR.format(8), cents(43.84), cents(10.47)),
+    flat("powercor", "DD1", POWERCOR.format(10), 0.0, cents(1.00), period="controlled_load"),
+    SourcePrices(
+        "powercor",
+        "NDTOU",
+        POWERCOR.format(11),
+        cents(71.24),
+        (("peak", cents(19.66)), ("off_peak", cents(4.91))),
+    ),
+    flat("powercor", "ND1", POWERCOR.format(12), cents(71.24), cents(11.95)),
     flat("powerwater", "T1", POWERWATER, 2.4599, 0.0659),
     SourcePrices(
         "powerwater",
@@ -615,9 +636,26 @@ SOURCE_PRICES = [
     SourcePrices(
         "united_energy",
         "URSTOU",
-        UNITED_ENERGY,
+        UNITED_ENERGY.format(88),
         cents(31.51),
         (("peak", cents(20.92)), ("off_peak", cents(5.22)), ("saver", cents(1.00))),
+    ),
+    flat("united_energy", "LVS1R", UNITED_ENERGY.format(86), cents(31.51), cents(9.72)),
+    flat(
+        "united_energy",
+        "LVDed",
+        UNITED_ENERGY.format(87),
+        0.0,
+        cents(1.00),
+        period="controlled_load",
+    ),
+    flat("united_energy", "LVM1R", UNITED_ENERGY.format(91), cents(61.64), cents(10.40)),
+    SourcePrices(
+        "united_energy",
+        "LVTOU",
+        UNITED_ENERGY.format(92),
+        cents(61.64),
+        (("peak", cents(15.54)), ("off_peak", cents(3.89))),
     ),
 ]
 
@@ -659,6 +697,15 @@ def test_each_dnsp_and_type_with_captured_rates_has_a_source_check():
         for t in SEED_TARIFFS
         if t["verified_by"] != "aer_tss01_indicative_jan2025"
     } == covered
+
+
+def test_no_tariff_keeps_the_january_2025_indicative_rates():
+    """#73: every Victorian tariff seeded from the AER indicative figures has 2026-27 rates."""
+    assert [
+        (t["dnsp"], t["code"])
+        for t in SEED_TARIFFS
+        if t["verified_by"] == "aer_tss01_indicative_jan2025"
+    ] == []
 
 
 VICTORIAN_RESIDENTIAL_TOU = [

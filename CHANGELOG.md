@@ -5,6 +5,14 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
+## [0.9.1] - Unreleased
+
+### Fixed
+- 12 CitiPower, Powercor and United Energy tariffs (C1R, CDS, CGTOU, C1G, D1, DD1, NDTOU, ND1,
+  LVS1R, LVDed, LVM1R, LVTOU) carry their approved 2026-27 rates and daily charges, replacing the
+  January 2025 AER indicative figures. CitiPower C1R anytime is now 0.0909 $/kWh, was 0.087583.
+  Windows are unchanged (#73).
+
 ## [0.9.0] - 2026-11-10
 
 ### Added
