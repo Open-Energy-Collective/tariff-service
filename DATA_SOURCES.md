@@ -290,7 +290,7 @@ Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-
 
 ### Tariff Codes (CitiPower) — seeded subset only
 
-Only tariffs with an unambiguous single rate/period mapping in the indicative-prices sheet were seeded. **Not seeded**: CRCER (two-way/CER export tariff — indicative sheet only populates its off-peak column, peak/export/seasonal components are blank/zero, not enough to model faithfully); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs (demand charge is split across two seasonal windows — summer Dec-Mar, non-summer Apr-Nov — but this schema's `TariffDemand` supports only one window, so seeding these would require an unmade modeling decision, not a data gap).
+Only tariffs with an unambiguous single rate/period mapping in the 2026-27 sources were seeded. **Not seeded**: CRCER (two-way/CER export tariff; priced in the 2026-27 Tariff Summary and SCS pricing model workbooks but not yet seeded, tracked separately); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs (demand charge is split across two seasonal windows — summer Dec-Mar, non-summer Apr-Nov — but this schema's `TariffDemand` supports only one window, so seeding these would require an unmade modeling decision, not a data gap).
 
 | Code | Name | Type |
 |------|------|------|
@@ -324,7 +324,7 @@ Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-
 
 ### Tariff Codes (Powercor) — seeded subset only
 
-Same exclusions as CitiPower (see above): PRCER, NDD/NDM/NDMO, and all large/HV/sub-transmission tariffs not seeded.
+Same exclusions as CitiPower (see above): PRCER (priced in the 2026-27 sources, not yet seeded, tracked separately), NDD/NDM/NDMO, and all large/HV/sub-transmission tariffs not seeded.
 
 | Code | Name | Type |
 |------|------|------|
@@ -353,7 +353,7 @@ Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-
 
 ### Tariff Codes (United Energy) — seeded subset only
 
-Same exclusions as CitiPower/Powercor: URCER, LVMKW1R/UMBD/UMBO, and all large/HV tariffs not seeded.
+Same exclusions as CitiPower/Powercor: URCER (priced in the 2026-27 sources, not yet seeded, tracked separately), LVMKW1R/UMBD/UMBO, and all large/HV tariffs not seeded.
 
 | Code | Name | Type |
 |------|------|------|
