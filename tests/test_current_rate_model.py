@@ -148,3 +148,12 @@ def test_out_of_season_charge_not_listed(seed_client):
     body = current(seed_client, "ausgrid", "EA251", "2027-05-12T17:00:00+10:00")
     assert body["demand_charges"] == []
     assert body["in_demand_window"] is False
+
+
+def test_sapn_bsr_summer_current_rate_unchanged(seed_client):
+    # BSR is standard time (#68); its single anytime rate holds across the daylight saving day.
+    # The 11 kWh/day export allowance boundary (00:00 ACST = 01:00 ACDT) is not exposed by the API.
+    instants = ("2026-11-11T00:30+10:30", "2026-11-11T01:30+10:30", "2026-07-15T12:00+09:30")
+    for instant in instants:
+        body = current(seed_client, "sapn", "BSR", instant)
+        assert (body["period"], body["rate"]) == ("anytime", 0.1914)

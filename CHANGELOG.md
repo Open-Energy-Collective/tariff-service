@@ -49,7 +49,7 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
   repeated time is in the window both times. No seeded window has such a bound, so no result changes (#63).
 - Evoenergy 017, 023, 060, 090 and 101 run on standard time, as the 2026-27 schedule states its times in AEST.
   In daylight saving each window is one hour later on the Canberra clock: 101's peak and demand window is
-  08:00-18:00 AEDT. Every other DNSP's source was checked and its tariffs stay `local` (#68).
+  08:00-18:00 AEDT. SA Power Networks BSR also runs on standard time (Table 4: accumulation meter structures are based on ACST), so its 11 kWh/day free export allowance resets at 01:00 ACDT in daylight saving. Every other DNSP's source was checked and its remaining tariffs stay `local` (#68).
 
 ## [0.8.0] - 2026-11-09
 

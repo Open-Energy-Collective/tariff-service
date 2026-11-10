@@ -98,7 +98,7 @@ def test_nasn12_has_both_seasons(seed_session):
 
 
 def test_standard_time_tariffs(seed_session):
-    # Jemena A180 and every Evoenergy tariff state their windows in AEST (#68).
+    # Jemena A180, SAPN BSR (ACST) and every Evoenergy tariff state standard time (#68).
     tariffs = seed_session.execute(select(Tariff).join(Dnsp)).scalars().all()
     standard = sorted((t.dnsp.code, t.code) for t in tariffs if t.time_basis == "standard")
     assert standard == [
@@ -108,6 +108,7 @@ def test_standard_time_tariffs(seed_session):
         ("evoenergy", "090"),
         ("evoenergy", "101"),
         ("jemena", "A180"),
+        ("sapn", "BSR"),
     ]
     assert {t.time_basis for t in tariffs} == {"local", "standard"}
 
