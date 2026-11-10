@@ -324,8 +324,13 @@ def test_demand_tariff_unit_peak_period_and_off_season(seed_client, case):
 # ── 2. Property sweep ──
 
 
+# A `standard` tariff's clock: the zone's standard offset all year (Etc/GMT-10 is UTC+10).
+STANDARD_CLOCK = {"Australia/Sydney": "Etc/GMT-10", "Australia/Melbourne": "Etc/GMT-10"}
+
+
 def seeded_demand_tariffs() -> list[tuple[str, str, str, dict]]:
-    """(dnsp, code, timezone, demand) for every seeded demand tariff."""
+    """(dnsp, code, timezone, demand) for every seeded demand tariff. The timezone is
+    the tariff's clock: the DNSP zone, or its standard offset for a `standard` tariff."""
     found = []
     for f in sorted(SEED_DIR.glob("*.json")):
         data = json.loads(f.read_text())
@@ -339,7 +344,10 @@ def seeded_demand_tariffs() -> list[tuple[str, str, str, dict]]:
                     "window_end": charge["end"],
                     "season_months": charge["months"],
                 }
-                found.append((t["dnsp"], t["code"], zones[t["dnsp"]], demand))
+                zone = zones[t["dnsp"]]
+                if t["time_basis"] == "standard":
+                    zone = STANDARD_CLOCK[zone]
+                found.append((t["dnsp"], t["code"], zone, demand))
     return found
 
 

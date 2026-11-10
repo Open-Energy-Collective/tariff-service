@@ -21,7 +21,7 @@
       "name": "New Residential TOU",
       "tariff_class": "residential",
       "tariff_type": "tou",
-      "time_basis": "local",
+      "time_basis": "standard",
       "effective_from": "2026-07-01",
       "effective_to": null,
       "prices_expected_until": "2027-07-01",
@@ -29,6 +29,7 @@
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "time_basis standard: the schedule heads every tariff table \"Charge applicability (times in AEST)\" in knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27 (checked 2026-11-10, #68).",
       "demand_charges": [],
       "rates": [
         {
@@ -76,7 +77,7 @@
       "name": "New Residential Demand",
       "tariff_class": "residential",
       "tariff_type": "tou_demand",
-      "time_basis": "local",
+      "time_basis": "standard",
       "effective_from": "2026-07-01",
       "effective_to": null,
       "prices_expected_until": "2027-07-01",
@@ -84,7 +85,7 @@
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Demand checked 2026-11-10 against knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27: Seasonal kW Demand (High) 21.808 c/kW/day, 17:00-21:00 every day in winter months; Seasonal kW Demand (Low) 13.083 c/kW/day, 17:00-21:00 every day in the other months; Off-peak kW Demand 2.076 c/kW/day, 21:00-09:00 every day; each x 30 / 100 on the highest clocked 30-minute interval. Winter months June to August per knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29. The schedule states its times in AEST; the tariff resolves them on the local clock until #68 sets Evoenergy's time basis.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27: Seasonal kW Demand (High) 21.808 c/kW/day, 17:00-21:00 every day in winter months; Seasonal kW Demand (Low) 13.083 c/kW/day, 17:00-21:00 every day in the other months; Off-peak kW Demand 2.076 c/kW/day, 21:00-09:00 every day; each x 30 / 100 on the highest clocked 30-minute interval. Winter months June to August per knowledge/documents/evoenergy/2026-10-23-revised-tss-2024-29. time_basis standard: the schedule heads every tariff table \"Charge applicability (times in AEST)\" in knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27 (checked 2026-11-10, #68).",
       "demand_charges": [
         {
           "period": "peak",
@@ -162,7 +163,7 @@
       "name": "Controlled Load 1",
       "tariff_class": "residential",
       "tariff_type": "controlled_load",
-      "time_basis": "local",
+      "time_basis": "standard",
       "effective_from": "2026-07-01",
       "effective_to": null,
       "prices_expected_until": "2027-07-01",
@@ -170,6 +171,7 @@
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-10-21T00:00:00+11:00",
       "verified_by": "official_price_list",
+      "notes": "time_basis standard: the schedule heads every tariff table \"Charge applicability (times in AEST)\" in knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27 (checked 2026-11-10, #68). The seeded anytime rate has no window bound.",
       "demand_charges": [],
       "rates": [
         {
@@ -190,7 +192,7 @@
       "name": "General TOU",
       "tariff_class": "business",
       "tariff_type": "tou",
-      "time_basis": "local",
+      "time_basis": "standard",
       "effective_from": "2026-07-01",
       "effective_to": null,
       "prices_expected_until": "2027-07-01",
@@ -198,6 +200,7 @@
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-07-21T00:00:00+10:00",
       "verified_by": "official_price_list",
+      "notes": "time_basis standard: the schedule heads every tariff table \"Charge applicability (times in AEST)\" in knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27 (checked 2026-11-10, #68).",
       "demand_charges": [],
       "rates": [
         {
@@ -238,7 +241,7 @@
       "name": "LV TOU kVA Demand",
       "tariff_class": "business",
       "tariff_type": "tou_demand",
-      "time_basis": "local",
+      "time_basis": "standard",
       "effective_from": "2026-07-01",
       "effective_to": null,
       "prices_expected_until": "2027-07-01",
@@ -246,7 +249,7 @@
       "source_url": "https://www.evoenergy.com.au/Your-Energy/Pricing-and-tariffs",
       "last_verified": "2026-11-10T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Demand checked 2026-11-10 against knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27: Peak kVA Demand 44.217 c/kVA/day (x 30 / 100), 07:00-17:00 weekdays, on the highest clocked 30-minute interval. The schedule states no public holiday treatment; included is kept as seeded. The schedule states its times in AEST; see #68.",
+      "notes": "Demand checked 2026-11-10 against knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27: Peak kVA Demand 44.217 c/kVA/day (x 30 / 100), 07:00-17:00 weekdays, on the highest clocked 30-minute interval. The schedule states no public holiday treatment; included is kept as seeded. time_basis standard: the schedule heads every tariff table \"Charge applicability (times in AEST)\" in knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27 (checked 2026-11-10, #68).",
       "demand_charges": [
         {
           "period": "peak",

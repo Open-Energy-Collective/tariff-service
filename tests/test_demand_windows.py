@@ -271,8 +271,9 @@ SHAPES = [
         [(date(2026, 10, 24), 16, 21)],
     ),
     (
+        # 07:00-17:00 AEST is 08:00-18:00 on the Canberra clock in daylight saving (#68).
         "evoenergy", "101", "Australia/Sydney", date(2026, 10, 23), 3,
-        [(date(2026, 10, 23), 7, 17)],
+        [(date(2026, 10, 23), 8, 18)],
     ),
     (
         "powerwater", "T5", "Australia/Darwin", date(2026, 9, 30), 2,

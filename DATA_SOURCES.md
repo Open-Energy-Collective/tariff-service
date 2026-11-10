@@ -415,7 +415,7 @@ Business (090, 101):
 - **Shoulder**: 5pm–10pm weekdays
 - **Off-peak**: All other times
 - **101 demand**: Peak kVA Demand 44.217 c/kVA/day, 7am–5pm weekdays (`unit` `kVA`)
-- **Time basis**: the schedule states its times in AEST. Evoenergy tariffs stay `local` until issue #68 checks them
+- **Time basis**: `standard` for every Evoenergy tariff. The schedule heads each tariff table "Charge applicability (times in AEST)" (`knowledge/documents/evoenergy/2026-10-21-schedule-of-charges-2026-27.md` in the OEC root). In daylight saving each window runs one hour later on the Canberra clock, so 101's 7am-5pm peak is 8am-6pm AEDT (#68)
 
 ---
 

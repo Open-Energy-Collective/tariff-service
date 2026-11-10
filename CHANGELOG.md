@@ -47,6 +47,9 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 - `/api/v1/calculate/demand-windows` agrees with `in_demand_window` when a window bound falls in the hour
   a daylight saving change skips or repeats. On a local clock a skipped time is in no window and a
   repeated time is in the window both times. No seeded window has such a bound, so no result changes (#63).
+- Evoenergy 017, 023, 060, 090 and 101 run on standard time, as the 2026-27 schedule states its times in AEST.
+  In daylight saving each window is one hour later on the Canberra clock: 101's peak and demand window is
+  08:00-18:00 AEDT. Every other DNSP's source was checked and its tariffs stay `local` (#68).
 
 ## [0.8.0] - 2026-11-09
 
