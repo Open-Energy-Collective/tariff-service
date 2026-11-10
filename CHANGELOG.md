@@ -13,6 +13,9 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
   `free_threshold_period` and `free_threshold_rollover` on `export`.
 - `/api/v1/calculate/current-rate` returns `demand_charges`, each with `active`.
 - `/api/v1/calculate/demand-windows` returns a `rate` on each window.
+- Tariff detail `demand` gains `unit` (`kW` or `kVA`), the unit of the charge it is built from, and
+  `/api/v1/calculate/demand-surcharge` gains `demand_unit`, the unit of `demand_rate`. `peak_demand_kw`
+  keeps its name and is read in that unit (#71).
 
 ### Changed
 - `/api/v1/calculate/current-rate` and `/api/v1/calculate/demand-windows` follow public holidays by the
@@ -20,7 +23,10 @@ that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 - Both endpoints judge windows on the tariff's `time_basis`. Jemena A180 is now correct during daylight saving.
 - `/api/v1/calculate/demand-windows` returns every demand charge in force, with higher rates taking overlaps.
   AusNet NASN12 now has its April to November rate of 2.862 $/kW/month.
-- No field is removed. `demand` is unchanged and is due for removal in a later release. Read
+- `/api/v1/docs/demand-methodology` `rate_unit` follows the tariff: `$/kVA/month` for a kVA tariff
+  and `$/kW/month` for a kW tariff. Essential, Power and Water and SA Power Networks now read `$/kVA/month`,
+  from the one tariff each DNSP's entry describes (#71).
+- No field is removed or renamed. `demand` keeps its 0.8.0 fields and is due for removal in a later release. Read
   `demand_charges` instead.
 
 ### Fixed

@@ -136,7 +136,11 @@ def demand_surcharge(
         json_schema_extra={"example": "3900"},
     ),
     peak_demand_kw: float = Query(
-        ..., description="Peak demand in kW",
+        ...,
+        description=(
+            "Peak demand, read in the tariff's demand unit (kW or kVA, returned as "
+            "demand_unit). The name is kept for compatibility"
+        ),
         json_schema_extra={"example": 4.5},
     ),
     db: Session = Depends(get_db),
@@ -163,6 +167,7 @@ def demand_surcharge(
         tariff=tariff,
         peak_demand_kw=peak_demand_kw,
         demand_rate=tariff_obj.demand.rate,
+        demand_unit=tariff_obj.demand.unit,
         demand_window_hours_per_month=window_hours,
         surcharge_per_kwh=round(surcharge, 5),
         monthly_demand_charge=round(monthly_charge, 2),

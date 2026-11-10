@@ -33,6 +33,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
     if demand:
         demand_resp = TariffDemandResponse(
             rate=demand.rate,
+            unit=demand.unit,
             window_start=demand.start,
             window_end=demand.end,
             measurement_method=demand.measurement_method,

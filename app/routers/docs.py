@@ -30,7 +30,11 @@ class DnspDemandMethodology(BaseModel):
         default=None, description="When demand charges apply across the year"
     )
     rate_unit: str = Field(
-        default="$/kW/month", description="Unit for the demand rate"
+        default="$/kW/month",
+        description=(
+            "Unit for the demand rate: '$/kW/month' or '$/kVA/month', following the "
+            "demand unit of the tariff source_url points to"
+        ),
     )
     calculation_example: str | None = Field(
         default=None, description="Worked example of how the demand charge is calculated"
@@ -143,7 +147,7 @@ def demand_methodology(db: Session = Depends(get_db)) -> DemandMethodologyRespon
                     season_key,
                     f"Applies in months: {season_key}",
                 ),
-                rate_unit="$/kW/month",
+                rate_unit=f"$/{demand.unit}/month",
                 calculation_example=CALCULATION_EXAMPLES.get(dnsp.code),
                 source_url=demand_tariff.source_url,
             )

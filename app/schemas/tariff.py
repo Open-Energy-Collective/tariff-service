@@ -18,8 +18,15 @@ class DnspResponse(BaseModel):
 class TariffDemandResponse(BaseModel):
     rate: float = Field(
         description=(
-            "Demand charge rate in $/kW/month. This is the monthly cost per kW "
-            "of peak demand measured during the demand window."
+            "Demand charge rate in $ per unit per month, unit being kW or kVA as "
+            "given by unit. This is the monthly cost per unit of peak demand measured "
+            "during the demand window."
+        )
+    )
+    unit: str = Field(
+        description=(
+            "Billing unit of rate: 'kW' or 'kVA', taken from the demand charge this "
+            "object is built from"
         )
     )
     window_start: str = Field(
@@ -35,7 +42,7 @@ class TariffDemandResponse(BaseModel):
             "(used by Energex); "
             "'30min_max' = maximum demand in any 30-minute interval "
             "(used by Ausgrid). "
-            "The measured value (in kW) is multiplied by the rate to produce "
+            "The measured value (in unit, kW or kVA) is multiplied by the rate to produce "
             "the monthly demand charge."
         )
     )
@@ -329,9 +336,15 @@ class DemandSurchargeResponse(BaseModel):
     dnsp: str = Field(description="DNSP code")
     tariff: str = Field(description="Tariff code")
     peak_demand_kw: float = Field(
-        description="The peak demand value (kW) used for calculation"
+        description=(
+            "The peak demand value used for calculation, read in demand_unit (kW or kVA). "
+            "The name is kept for compatibility"
+        )
     )
-    demand_rate: float = Field(description="Demand charge rate in $/kW/month")
+    demand_rate: float = Field(description="Demand charge rate in $ per demand_unit per month")
+    demand_unit: str = Field(
+        description="Billing unit of demand_rate and peak_demand_kw: 'kW' or 'kVA'"
+    )
     demand_window_hours_per_month: float = Field(
         description=(
             "Total hours per month the demand window is active, in a 30-day month: "

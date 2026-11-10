@@ -29,13 +29,30 @@ def seeded(session: Session, dnsp: str, code: str) -> Tariff:
 
 
 def test_demand_object_matches_0_8_0_for_every_tariff(seed_client):
+    """0.9.0 adds `unit` to `demand` (#71); every 0.8.0 field is unchanged."""
     assert len(FIXTURE["demand"]) == 102
     for key, expected in FIXTURE["demand"].items():
-        assert seed_client.get(f"/api/v1/tariffs/{key}").json()["demand"] == expected, key
+        demand = seed_client.get(f"/api/v1/tariffs/{key}").json()["demand"]
+        if expected is None:
+            assert demand is None, key
+            continue
+        assert demand["unit"] in ("kW", "kVA"), key
+        assert {k: v for k, v in demand.items() if k != "unit"} == expected, key
 
 
 def test_demand_methodology_matches_0_8_0(seed_client):
-    assert seed_client.get("/api/v1/docs/demand-methodology").json() == FIXTURE["methodology"]
+    """0.9.0 sets `rate_unit` from the tariff's demand unit (#71); the rest is unchanged."""
+    body = seed_client.get("/api/v1/docs/demand-methodology").json()
+    expected = FIXTURE["methodology"]
+    assert {k: v for k, v in body.items() if k != "dnsps"} == {
+        k: v for k, v in expected.items() if k != "dnsps"
+    }
+    assert len(body["dnsps"]) == len(expected["dnsps"])
+    for got, want in zip(body["dnsps"], expected["dnsps"], strict=True):
+        assert got["rate_unit"] in ("$/kW/month", "$/kVA/month"), got["dnsp_code"]
+        assert {k: v for k, v in got.items() if k != "rate_unit"} == {
+            k: v for k, v in want.items() if k != "rate_unit"
+        }
 
 
 def _charge(rate: float, start: str) -> TariffDemandCharge:
@@ -244,3 +261,83 @@ def test_new_columns_exist():
     assert {"public_holidays", "free_threshold_period", "free_threshold_rollover"} <= set(
         TariffExport.__table__.columns.keys()
     )
+
+
+# ── Demand unit on the compatibility outputs (#71) ──
+# Essential BLND1AR is priced per kVA, Energex 7200 per kW, Energex 8400 has no demand charge
+# (seed/essential.json, seed/energex.json; checked against knowledge/documents/essential/ and
+# knowledge/documents/energex/ under #62).
+
+UNIT_CASES = [
+    ("essential", "BLND1AR", "kVA", 5.1925, 25.96),
+    ("energex", "7200", "kW", 15.459, 77.30),
+]
+
+
+@pytest.mark.parametrize(("dnsp", "code", "unit", "rate", "monthly"), UNIT_CASES)
+def test_demand_object_states_its_charge_unit(seed_client, dnsp, code, unit, rate, monthly):
+    body = seed_client.get(f"/api/v1/tariffs/{dnsp}/{code}").json()
+    assert body["demand"]["rate"] == rate
+    assert body["demand"]["unit"] == unit
+    assert body["demand_charges"][0]["unit"] == unit
+
+
+@pytest.mark.parametrize(("dnsp", "code", "unit", "rate", "monthly"), UNIT_CASES)
+def test_demand_surcharge_states_the_unit_of_its_rate(
+    seed_client, dnsp, code, unit, rate, monthly
+):
+    response = seed_client.get(
+        "/api/v1/calculate/demand-surcharge",
+        params={"dnsp": dnsp, "tariff": code, "peak_demand_kw": 5},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["demand_rate"] == rate
+    assert data["monthly_demand_charge"] == monthly
+    assert data["demand_unit"] == unit
+    assert data["unit"] == "$/kWh"
+
+
+def test_methodology_rate_unit_follows_the_tariff(seed_client):
+    """Essential's demand tariffs are all per kVA; Jemena's are all per kW."""
+    dnsps = {
+        d["dnsp_code"]: d
+        for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]
+    }
+    assert dnsps["essential"]["rate_unit"] == "$/kVA/month"
+    assert dnsps["jemena"]["rate_unit"] == "$/kW/month"
+
+
+def test_methodology_rate_unit_matches_its_tariffs_demand_unit(seed_client):
+    """Each DNSP's rate_unit is the unit of the tariff whose source_url it reports."""
+    for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]:
+        if not d["has_demand_tariffs"]:
+            continue
+        unit = d["rate_unit"].split("/")[1]
+        dnsp = d["dnsp_code"]
+        codes = [t["code"] for t in seed_client.get(f"/api/v1/tariffs/{dnsp}").json()]
+        units = {
+            c["unit"]
+            for code in codes
+            for c in seed_client.get(f"/api/v1/tariffs/{dnsp}/{code}").json()["demand_charges"]
+        }
+        assert unit in units, dnsp
+
+
+def test_no_demand_charge_has_no_demand_unit(seed_client):
+    """With no demand charge, `demand` is null, so no unit is stated; the surcharge is a 400."""
+    body = seed_client.get("/api/v1/tariffs/energex/8400").json()
+    assert body["demand"] is None
+    assert body["demand_charges"] == []
+    response = seed_client.get(
+        "/api/v1/calculate/demand-surcharge",
+        params={"dnsp": "energex", "tariff": "8400", "peak_demand_kw": 5},
+    )
+    assert response.status_code == 400
+
+
+def test_methodology_without_demand_tariffs_keeps_the_0_8_0_rate_unit(seed_client):
+    """Additive only (#71): a DNSP with no demand tariff keeps its 0.8.0 rate_unit."""
+    for d in seed_client.get("/api/v1/docs/demand-methodology").json()["dnsps"]:
+        if not d["has_demand_tariffs"]:
+            assert d["rate_unit"] == "$/kW/month", d["dnsp_code"]
