@@ -58,6 +58,8 @@ that it does not indicate exports: consumers read the `export` list.
 ### Rules
 
 - Date, weekday, month and holiday are all judged on the tariff's clock.
+- On a local clock a time the clock skips matches no instant, and a time it repeats matches
+  both readings. Window listings and window checks follow this one rule (#63).
 - The `demand` response object is built from the charge with the highest rate. A tie goes to
   the earliest `start`. It is not stored.
 - The seed load rejects a tariff with no `time_basis`, a window with no required
