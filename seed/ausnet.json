@@ -192,7 +192,7 @@
       "source_url": "https://www.ausnetservices.com.au/electricity/tariffs-and-charges/network-tariffs",
       "last_verified": "2026-11-18T00:00:00+11:00",
       "verified_by": "official_price_list",
-      "notes": "Peak window from knowledge/documents/ausnet/2026-10-21-network-tariff-schedule-2026-27 (sheet Tariff structures E83, structure 17): 9:00 AM to 9:00 PM Monday to Friday, local time. Rates from sheet Network 2026-27 D32.",
+      "notes": "Peak window from knowledge/documents/ausnet/2026-10-21-network-tariff-schedule-2026-27 (sheet Tariff structures E83, structure 17): 9:00 AM to 9:00 PM Monday to Friday, local time. Rates from sheet Network 2026-27 row 32: G standing $/year, K peak and P off-peak c/kWh.",
       "demand_charges": [],
       "rates": [
         {
