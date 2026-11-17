@@ -5,15 +5,15 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
-## [0.9.1] - Unreleased
+## [0.9.1] - 2026-11-18
 
 ### Fixed
 - 12 CitiPower, Powercor and United Energy tariffs (C1R, CDS, CGTOU, C1G, D1, DD1, NDTOU, ND1,
   LVS1R, LVDed, LVM1R, LVTOU) carry their approved 2026-27 rates and daily charges, replacing the
   January 2025 AER indicative figures. CitiPower C1R anytime is now 0.0909 $/kWh, was 0.087583.
-  Windows are unchanged (#73).
-- AusNet NAST12 peak runs 09:00 to 21:00 on weekdays, as the 2026-27 tariff schedule states; it
-  was seeded 07:00 to 23:00, pricing four off-peak hours a weekday at the peak rate (#78).
+  Time windows are unchanged.
+- AusNet NAST12 peak runs 09:00 to 21:00 on weekdays, as the 2026-27 tariff schedule states. It
+  was 07:00 to 23:00, which priced four off-peak hours each weekday at the peak rate.
 
 ## [0.9.0] - 2026-11-10
 
