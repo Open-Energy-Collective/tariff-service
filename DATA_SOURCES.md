@@ -290,7 +290,7 @@ Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-
 
 ### Tariff Codes (CitiPower) — seeded subset only
 
-Only tariffs with an unambiguous single rate/period mapping in the 2026-27 sources were seeded. **Not seeded**: CRCER (two-way/CER export tariff; priced in the 2026-27 Tariff Summary and SCS pricing model workbooks but not yet seeded, tracked separately); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs (demand charge is split across two seasonal windows — summer Dec-Mar, non-summer Apr-Nov — but this schema's `TariffDemand` supports only one window, so seeding these would require an unmade modeling decision, not a data gap).
+Only tariffs with an unambiguous single rate/period mapping in the 2026-27 sources were seeded. **Not seeded**: CRCER (two-way/CER export tariff; priced in the 2026-27 Tariff Summary and SCS pricing model workbooks but not yet seeded, tracked separately); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs. Their demand charge is split across two seasonal windows, summer Dec-Mar and non-summer Apr-Nov. Seeding them waits on a modelling decision, not on data.
 
 | Code | Name | Type |
 |------|------|------|
