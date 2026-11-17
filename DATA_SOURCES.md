@@ -268,8 +268,8 @@ Export (RCER11, sheet "Tariff structures", structure 20):
 - **Export charge**: 11am–4pm every day, 1 c/kWh above a basic export level of 1 kWh per day
 - **Export reward**: 4pm–9pm every day, 10 c/kWh
 
-Business ToU (NAST12):
-- **Peak**: 7am–11pm weekdays
+Business ToU (NAST12, sheet "Tariff structures" E83, structure 17):
+- **Peak**: 9am–9pm (09:00–21:00) weekdays, local time
 - **Off-peak**: All other times
 
 Demand (NASN12):

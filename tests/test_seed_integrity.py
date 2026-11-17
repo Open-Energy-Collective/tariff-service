@@ -469,6 +469,13 @@ SOURCE_PRICES = [
     flat("ausnet", "NEE33", AUSNET, 0.0, cents(4.90046)),
     SourcePrices(
         "ausnet",
+        "NAST12",
+        AUSNET,
+        per_year(148.93785),
+        (("peak", cents(20.77312)), ("off_peak", cents(4.87913))),
+    ),
+    SourcePrices(
+        "ausnet",
         "NASN12",
         AUSNET,
         per_year(148.93785),

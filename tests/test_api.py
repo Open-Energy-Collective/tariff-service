@@ -560,6 +560,37 @@ def test_sapn_off_peak(client):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# AusNet NAST12: peak 09:00-21:00 Monday to Friday, local time (#78)
+# ─────────────────────────────────────────────────────────────────────────────
+# Source: knowledge/documents/ausnet/2026-10-21-network-tariff-schedule-2026-27.xlsx,
+# sheet "Tariff structures" E83, structure 17: "9:00 AM to 9:00 PM Monday to Friday*".
+
+
+@pytest.mark.parametrize(
+    ("when", "period", "rate"),
+    [
+        ("2026-11-11T08:00:00+11:00", "off_peak", 0.04879),
+        ("2026-11-11T08:59:00+11:00", "off_peak", 0.04879),
+        ("2026-11-11T09:00:00+11:00", "peak", 0.20773),
+        ("2026-11-11T20:59:00+11:00", "peak", 0.20773),
+        ("2026-11-11T21:00:00+11:00", "off_peak", 0.04879),
+        ("2026-11-11T22:00:00+11:00", "off_peak", 0.04879),
+        ("2026-07-15T08:00:00+10:00", "off_peak", 0.04879),
+        ("2026-11-14T12:00:00+11:00", "off_peak", 0.04879),
+    ],
+)
+def test_ausnet_nast12_peak_window(seed_client, when, period, rate):
+    """Peak runs 09:00 to 21:00 on weekdays; 2026-11-14 is a Saturday."""
+    response = seed_client.get(
+        "/api/v1/calculate/current-rate",
+        params={"dnsp": "ausnet", "tariff": "NAST12", "datetime": when},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert (data["period"], data["rate"]) == (period, rate)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # All-day (00:00-00:00) catch-all window — regression coverage
 # ─────────────────────────────────────────────────────────────────────────────
 # Real seed data (Ausgrid EA025 off_peak, Jemena A230, Energex 8300, AusNet
