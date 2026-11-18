@@ -133,7 +133,7 @@ def test_prices_expected_until_on_every_last_version(seed_session):
     last: dict[tuple[int, str], Tariff] = {}
     for tariff in sorted(tariffs, key=lambda t: t.effective_from):
         last[(tariff.dnsp_id, tariff.code)] = tariff
-    assert len(last) == 102
+    assert len(last) == 105
     assert {t.prices_expected_until for t in last.values()} == {"2027-07-01"}
 
 

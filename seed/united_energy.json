@@ -46,6 +46,108 @@
     },
     {
       "dnsp": "united_energy",
+      "code": "URCER",
+      "name": "Residential CER",
+      "tariff_class": "residential",
+      "tariff_type": "tou_export",
+      "time_basis": "local",
+      "effective_from": "2026-07-01",
+      "effective_to": null,
+      "prices_expected_until": "2027-07-01",
+      "daily_supply_charge": 0.3151,
+      "source_url": "https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20SCS%20pricing%20model%20%E2%80%93%207%20May%202026.xlsm",
+      "last_verified": "2026-11-18T00:00:00+11:00",
+      "verified_by": "official_price_list",
+      "notes": "Rates checked 2026-11-18 against knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27 (sheet Tariff schedule, Tariff schedule 3, row 89, excluding GST): fixed 31.51 c/day, peak 26.24 c/kWh December to February and June to August, peak 20.10 c/kWh March to May and September to November, off-peak 4.08, saver 1.00, peak export credit 7 c/kWh, saver export charge 1 c/kWh. Windows from knowledge/documents/united-energy/2026-10-21-pricing-2026-27 Table 4, all days, local time: peak and the peak export credit 16:00-21:00, saver and the saver export charge 11:00-16:00, off-peak 21:00-11:00. The export charge applies September to May above a basic export level of 1 kWh per day, pooled across the billing period (page numbered 5). Rows recorded in knowledge/findings/2026-11-18-victorian-2026-27-residential-cer-network-rates (#75).",
+      "demand_charges": [],
+      "rates": [
+        {
+          "period_name": "peak",
+          "rate": 0.2624,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "high",
+          "season_months": [
+            1,
+            2,
+            6,
+            7,
+            8,
+            12
+          ]
+        },
+        {
+          "period_name": "peak",
+          "rate": 0.201,
+          "start_time": "16:00",
+          "end_time": "21:00",
+          "days": "all",
+          "season": "low",
+          "season_months": [
+            3,
+            4,
+            5,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "period_name": "saver",
+          "rate": 0.01,
+          "start_time": "11:00",
+          "end_time": "16:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        },
+        {
+          "period_name": "off_peak",
+          "rate": 0.0408,
+          "start_time": "21:00",
+          "end_time": "11:00",
+          "days": "all",
+          "season": "all",
+          "season_months": null
+        }
+      ],
+      "exports": [
+        {
+          "credit_rate": 0.07,
+          "credit_window_start": "16:00",
+          "credit_window_end": "21:00",
+          "credit_season_months": [
+            1,
+            2,
+            6,
+            7,
+            8,
+            12
+          ],
+          "charge_rate": 0.01,
+          "charge_window_start": "11:00",
+          "charge_window_end": "16:00",
+          "charge_season_months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            9,
+            10,
+            11,
+            12
+          ],
+          "free_threshold_kwh": 1.0,
+          "free_threshold_period": "day",
+          "free_threshold_rollover": "billing_period",
+          "days": "all"
+        }
+      ]
+    },
+    {
+      "dnsp": "united_energy",
       "code": "URSTOU",
       "name": "Residential ToU",
       "tariff_class": "residential",

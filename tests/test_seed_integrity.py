@@ -601,6 +601,19 @@ SOURCE_PRICES = [
         (("peak", cents(9.809)), ("off_peak", cents(3.442))),
     ),
     SourcePrices(
+        "citipower",
+        "CRCER",
+        CITIPOWER.format(9),
+        cents(31.51),
+        (
+            ("off_peak", cents(3.27)),
+            ("peak", cents(27.81)),
+            ("peak", cents(19.33)),
+            ("saver", cents(1.00)),
+        ),
+        export=(cents(7), cents(1)),
+    ),
+    SourcePrices(
         "powercor",
         "PRSTOU",
         POWERCOR.format(7),
@@ -608,6 +621,19 @@ SOURCE_PRICES = [
         (("peak", cents(22.09)), ("off_peak", cents(5.52)), ("saver", cents(1.00))),
     ),
     flat("powercor", "D1", POWERCOR.format(8), cents(43.84), cents(10.47)),
+    SourcePrices(
+        "powercor",
+        "PRCER",
+        POWERCOR.format(9),
+        cents(43.84),
+        (
+            ("off_peak", cents(4.20)),
+            ("peak", cents(27.86)),
+            ("peak", cents(20.80)),
+            ("saver", cents(1.00)),
+        ),
+        export=(cents(7), cents(1)),
+    ),
     flat("powercor", "DD1", POWERCOR.format(10), 0.0, cents(1.00), period="controlled_load"),
     SourcePrices(
         "powercor",
@@ -649,6 +675,19 @@ SOURCE_PRICES = [
         (("peak", cents(20.92)), ("off_peak", cents(5.22)), ("saver", cents(1.00))),
     ),
     flat("united_energy", "LVS1R", UNITED_ENERGY.format(86), cents(31.51), cents(9.72)),
+    SourcePrices(
+        "united_energy",
+        "URCER",
+        UNITED_ENERGY.format(89),
+        cents(31.51),
+        (
+            ("off_peak", cents(4.08)),
+            ("peak", cents(26.24)),
+            ("peak", cents(20.10)),
+            ("saver", cents(1.00)),
+        ),
+        export=(cents(7), cents(1)),
+    ),
     flat(
         "united_energy",
         "LVDed",
@@ -751,6 +790,58 @@ VICTORIAN_TOU_PERIODS = [
 @pytest.mark.parametrize(("at", "period"), VICTORIAN_TOU_PERIODS)
 def test_victorian_residential_tou_periods_match_the_source(seed_client, dnsp, tariff, at, period):
     assert current_rate(seed_client, dnsp, tariff, at).json()["period"] == period
+
+
+VICTORIAN_CER = [
+    ("citipower", "CRCER", 0.2781, 0.1933, 0.0327),
+    ("powercor", "PRCER", 0.2786, 0.2080, 0.0420),
+    ("united_energy", "URCER", 0.2624, 0.2010, 0.0408),
+]
+# <dnsp>/2026-10-21-pricing-2026-27.pdf Table 4, residential CER, every day, local time:
+# peak 4pm to 9pm (Dec-Feb and Jun-Aug at one rate, Mar-May and Sep-Nov at another),
+# saver 11am to 4pm, off-peak 9pm to 11am.
+CER_PERIODS = [
+    ("2026-12-16T15:59:00+11:00", "saver", None),
+    ("2026-12-16T16:00:00+11:00", "peak", "high"),
+    ("2026-07-15T20:59:00+10:00", "peak", "high"),
+    ("2026-11-18T16:00:00+11:00", "peak", "low"),
+    ("2027-04-14T18:00:00+10:00", "peak", "low"),
+    ("2026-11-18T21:00:00+11:00", "off_peak", None),
+    ("2026-11-19T10:59:00+11:00", "off_peak", None),
+    ("2026-11-19T11:00:00+11:00", "saver", None),
+    ("2026-11-21T12:00:00+11:00", "saver", None),  # a Saturday
+]
+
+
+@pytest.mark.parametrize(("dnsp", "tariff", "high", "low", "off_peak"), VICTORIAN_CER)
+@pytest.mark.parametrize(("at", "period", "season"), CER_PERIODS)
+def test_victorian_cer_periods_match_the_source(
+    seed_client, dnsp, tariff, high, low, off_peak, at, period, season
+):
+    body = current_rate(seed_client, dnsp, tariff, at).json()
+    rate = {"high": high, "low": low}.get(season) or (
+        off_peak if period == "off_peak" else cents(1.00)
+    )
+    assert (body["period"], body["rate"]) == (period, pytest.approx(rate))
+
+
+@pytest.mark.parametrize(("dnsp", "tariff", "high", "low", "off_peak"), VICTORIAN_CER)
+def test_victorian_cer_export_terms_match_the_source(
+    seed_client, dnsp, tariff, high, low, off_peak
+):
+    """Table 4 and its notes: peak export credit 4pm to 9pm Dec-Feb and Jun-Aug; saver
+    export charge 11am to 4pm Sep-May above 1 kWh per day, pooled over the billing period."""
+    (export,) = seed_client.get(f"/api/v1/tariffs/{dnsp}/{tariff}").json()["export"]
+    assert (export["credit_window_start"], export["credit_window_end"]) == ("16:00", "21:00")
+    assert export["credit_season_months"] == [1, 2, 6, 7, 8, 12]
+    assert (export["charge_window_start"], export["charge_window_end"]) == ("11:00", "16:00")
+    assert export["charge_season_months"] == [1, 2, 3, 4, 5, 9, 10, 11, 12]
+    assert export["free_threshold_kwh"] == 1
+    assert (export["free_threshold_period"], export["free_threshold_rollover"]) == (
+        "day",
+        "billing_period",
+    )
+    assert export["days"] == "all"
 
 
 def test_rcer11_export_windows_match_the_source(seed_client):
