@@ -133,7 +133,7 @@ def test_prices_expected_until_on_every_last_version(seed_session):
     last: dict[tuple[int, str], Tariff] = {}
     for tariff in sorted(tariffs, key=lambda t: t.effective_from):
         last[(tariff.dnsp_id, tariff.code)] = tariff
-    assert len(last) == 102
+    assert len(last) == 105
     assert {t.prices_expected_until for t in last.values()} == {"2027-07-01"}
 
 
@@ -290,7 +290,10 @@ def test_populate_applies_the_field_checks(mutation, message):
 
 def test_new_columns_exist():
     assert {"public_holidays"} <= set(TariffRate.__table__.columns.keys())
-    assert {"public_holidays", "free_threshold_period", "free_threshold_rollover"} <= set(
+    assert {
+        "public_holidays", "free_threshold_period", "free_threshold_rollover",
+        "charge_season_months",
+    } <= set(
         TariffExport.__table__.columns.keys()
     )
 
@@ -405,3 +408,25 @@ def test_methodology_explanation_is_unchanged_for_a_kw_entry(seed_client):
 def test_methodology_description_states_both_units(seed_client):
     description = seed_client.get("/api/v1/docs/demand-methodology").json()["description"]
     assert "kW or kVA" in description
+
+
+# ── Export charge season (#81) ──
+
+CER_EXPORT_MONTHS = [1, 2, 3, 4, 5, 9, 10, 11, 12]
+
+
+@pytest.mark.parametrize("months", [CER_EXPORT_MONTHS, None])
+def test_export_charge_season_round_trips(months):
+    from app.routers.tariffs import _build_detail_response
+
+    def seasonal(tariff):
+        tariff["exports"][0]["charge_season_months"] = months
+
+    engine = create_engine("sqlite://")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        populate(session, [_seed(seasonal)])
+        session.commit()
+        tariff = session.execute(select(Tariff)).scalars().one()
+        (export,) = _build_detail_response(tariff).export
+    assert export.charge_season_months == months

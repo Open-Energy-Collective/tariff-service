@@ -1,10 +1,14 @@
-name: Test & Deploy
+name: Deploy
+# Every push to main: test the merge commit, deploy, then check the live API serves VERSION.
 on:
   push:
-    branches: [main, "feat/**"]
-  pull_request:
+    branches: [main]
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
 env:
   AWS_REGION: ap-southeast-2
+  HEALTH_URL: https://api.openenergy.org.au/api/v1/health
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,36 +27,8 @@ jobs:
         run: pytest --cov=app --cov-report=term-missing
       - name: Build SQLite from seed
         run: python seed/build_db.py
-  deploy-check:
-    needs: test
-    if: startsWith(github.ref, 'refs/heads/feat/') && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
-        with:
-          python-version: "3.12"
-      - uses: aws-actions/setup-sam@341eee193f458fa5aae5d52c94b0c5cf3a1c5a52 # v3
-      - name: Install dependencies
-        run: pip install -e .
-      - name: Build SQLite
-        run: python seed/build_db.py
-      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
-        with:
-          role-to-assume: ${{ secrets.AWS_CHECK_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-      - name: Check deploy identity
-        run: aws sts get-caller-identity --query Arn --output text
-      - name: SAM Validate
-        run: sam validate --template-file infra/template.yaml --region ${{ env.AWS_REGION }}
-      - name: SAM Build
-        run: sam build --template-file infra/template.yaml
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -62,7 +38,6 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.12"
-
       - uses: aws-actions/setup-sam@341eee193f458fa5aae5d52c94b0c5cf3a1c5a52 # v3
       - name: Install dependencies
         run: pip install -e .
@@ -84,3 +59,16 @@ jobs:
             --resolve-s3 \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
+      - name: Smoke check, /health reports VERSION
+        run: |
+          expected="$(tr -d '[:space:]' < VERSION)"
+          for attempt in 1 2 3 4 5 6; do
+            served="$(curl -fsS --max-time 10 "${HEALTH_URL}" | jq -r .version || true)"
+            if [ "${served}" = "${expected}" ]; then
+              echo "Live version ${served}"
+              exit 0
+            fi
+            echo "Attempt ${attempt}: live version '${served}', expected '${expected}'"
+            sleep 10
+          done
+          exit 1

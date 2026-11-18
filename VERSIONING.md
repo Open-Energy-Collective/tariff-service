@@ -32,11 +32,13 @@ Each release is a GitHub milestone `feat/X.Y.Z` worked on its own release branch
 same name.
 
 1. Cut `feat/X.Y.Z` from `main` at the previous release's merge commit.
-2. Commit work directly to `feat/X.Y.Z`. CI runs the tests on every push.
+2. Commit work directly to `feat/X.Y.Z`. Pushes to it run no CI. CI runs on the pull request
+   into `main` (`ci.yml`: `test` and `deploy-check`) and again on the merge to `main` (`deploy.yml`).
 3. On the release branch, set `VERSION` to `X.Y.Z` and add the `X.Y.Z` section to
    `CHANGELOG.md`. The maintainer approves the release notes before they are pushed.
 4. Close the milestone's issues and the milestone.
-5. Merge `feat/X.Y.Z` into `main` with one pull request. The push to `main` deploys.
+5. Merge `feat/X.Y.Z` into `main` with one pull request. The push to `main` tests, deploys and
+   checks that `/api/v1/health` reports `VERSION`.
 6. Tag the merge commit and push the tag:
    ```bash
    git tag -a X.Y.Z <merge-commit> -m "feat/X.Y.Z: <capability>"

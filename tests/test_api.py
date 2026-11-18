@@ -731,6 +731,23 @@ def test_demand_windows(client, energex_3800):
         "start": "2026-10-23T00:00:00+10:00",
         "end": "2026-10-24T00:00:00+10:00",
         "windows": DAY_3800,
+        "charges": [
+            {
+                "period": "peak",
+                "rate": 7.0,
+                "unit": "kW",
+                "start": "17:00",
+                "end": "20:00",
+                "days": "weekdays",
+                "public_holidays": None,
+                "months": None,
+                "measurement_method": "30min_avg",
+                "peak_period": "month",
+                "windows": [
+                    {"start": "2026-10-23T17:00:00+10:00", "end": "2026-10-23T20:00:00+10:00"}
+                ],
+            }
+        ],
     }
 
 
@@ -790,7 +807,7 @@ def test_openapi_documents_demand_windows(client):
     spec = client.get("/openapi.json").json()
     op = spec["paths"][DEMAND_WINDOWS]["get"]
     assert "31 days" in op["description"]
-    for name in ("DemandWindowsResponse", "DemandWindow"):
+    for name in ("DemandWindowsResponse", "DemandWindow", "DemandChargeWindows", "ChargeWindow"):
         props = spec["components"]["schemas"][name]["properties"]
         assert all(p.get("description") for p in props.values()), name
 

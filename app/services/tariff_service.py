@@ -6,8 +6,13 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.tariff import Dnsp, Tariff
-from app.services.rate_calculator import demand_windows, merge_demand_stretches
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge
+from app.services.rate_calculator import (
+    charge_windows,
+    demand_charge_order,
+    join_spans,
+    merge_demand_stretches,
+)
 
 
 def get_all_dnsps(db: Session) -> list[Dnsp]:
@@ -61,18 +66,53 @@ def get_tariff_detail(
     return result.scalars().first()
 
 
+def merge_charge_windows(
+    per_charge: list[tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]], tz: ZoneInfo
+) -> list[tuple[datetime, datetime, float]]:
+    """Per-charge windows merged into rated stretches, as `/calculate/demand-windows` `windows`.
+
+    The higher rate takes an overlap; neighbours merge at an equal rate, across a
+    version boundary too.
+    """
+    return merge_demand_stretches(
+        [(s, e, charge.rate) for charge, spans in per_charge for s, e in spans], tz
+    )
+
+
 def demand_windows_in_force(
     db: Session, dnsp_code: str, tariff_code: str, tz: ZoneInfo, start: datetime, end: datetime
 ) -> list[tuple[datetime, datetime, float]] | None:
     """Demand windows over [start, end), each local date using the version in force that day.
 
-    Each window carries its rate. Neighbours merge at an equal rate, across a version
-    boundary too. None when any date in the range has no version in force.
+    merge_charge_windows over demand_charge_windows_in_force, the path the endpoint
+    uses. None when any date in the range has no version in force.
+    """
+    per_charge = demand_charge_windows_in_force(db, dnsp_code, tariff_code, tz, start, end)
+    return None if per_charge is None else merge_charge_windows(per_charge, tz)
+
+
+def _charge_key(charge: TariffDemandCharge) -> tuple:
+    """The published fields of a demand charge: equal keys are the same charge."""
+    return (
+        charge.period, charge.rate, charge.unit, charge.start, charge.end, charge.days,
+        charge.public_holidays, charge.months, charge.measurement_method, charge.peak_period,
+    )
+
+
+def demand_charge_windows_in_force(
+    db: Session, dnsp_code: str, tariff_code: str, tz: ZoneInfo, start: datetime, end: datetime
+) -> list[tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]] | None:
+    """Each demand charge with its own windows over [start, end), by the version in force.
+
+    Each local date uses the version in force that day. A charge whose published
+    fields are the same in two versions is one entry; one that changes is an entry
+    per version. Entries follow demand_charge_order, then their first window.
+    None when any date in the range has no version in force.
     """
     lo, hi = start.astimezone(UTC), end.astimezone(UTC)
     last = hi.astimezone(tz).date()
     day = lo.astimezone(tz).date()
-    parts: list[tuple[datetime, datetime, float]] = []
+    entries: dict[tuple, tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]] = {}
     while day <= last:
         next_day = day + timedelta(days=1)
         day_start = datetime.combine(day, time(0, 0), tzinfo=tz).astimezone(UTC)
@@ -82,9 +122,13 @@ def demand_windows_in_force(
             version = get_tariff_detail(db, dnsp_code, tariff_code, on=day)
             if version is None:
                 return None
-            parts.extend(demand_windows(version, s, e))
+            for charge, spans in charge_windows(version, s, e):
+                entries.setdefault(_charge_key(charge), (charge, []))[1].extend(spans)
         day = next_day
-    return merge_demand_stretches(parts, tz)
+    joined = [(charge, join_spans(spans, tz)) for charge, spans in entries.values()]
+    return sorted(
+        joined, key=lambda cs: (*demand_charge_order(cs[0]), cs[1][0][0].astimezone(UTC))
+    )
 
 
 def get_tariff_history(db: Session, dnsp_code: str, tariff_code: str) -> list[Tariff]:

@@ -18,16 +18,16 @@ Public REST API serving curated Australian DNSP network tariff data, including t
 |------|-------|---------|--------|
 | Ausgrid | NSW | 16 | 2026-27 Network Price List |
 | AusNet Services | VIC | 6 | 2026-27 Network Tariff Schedule |
-| CitiPower | VIC | 5 | 2026-27 Pricing + Tariff Summary |
+| CitiPower | VIC | 6 | 2026-27 Pricing + Tariff Summary |
 | Endeavour Energy | NSW | 14 | 2026-27 NUOS Price List |
 | Energex | QLD | 16 | 2026-27 Network Price List |
 | Essential Energy | NSW | 9 | 2026-27 Price List & Explanatory Notes |
 | Evoenergy | ACT | 5 | 2026-27 Schedule of Charges |
 | Jemena | VIC | 6 | 2026-27 Network Tariff Schedule |
-| Powercor | VIC | 5 | 2026-27 Pricing + Tariff Summary |
+| Powercor | VIC | 6 | 2026-27 Pricing + Tariff Summary |
 | Power and Water Corporation | NT | 7 | 2026-27 Network Tariffs |
 | SA Power Networks | SA | 8 | 2026-27 Annual Pricing Proposal |
-| United Energy | VIC | 5 | 2026-27 Pricing + AER SCS Pricing Model |
+| United Energy | VIC | 6 | 2026-27 Pricing + AER SCS Pricing Model |
 
 ## Endpoints
 
@@ -58,6 +58,7 @@ rate depends on consumption.
 | `time_basis` | `local` (daylight saving applies) or `standard` (standard time all year). Applies to every energy, demand and export window of the tariff |
 | `prices_expected_until` | Date until which the prices are expected to hold, or null. Informational. It does not change which version is in force |
 | `rates[].public_holidays`, `export[].public_holidays` | `included` or `excluded`, or null for an all-days window. Whether a weekday or weekend window applies on a public holiday |
+| `export[].charge_season_months` | Months (1 to 12) when the export charge applies, beside `credit_season_months` for the credit. null means every month |
 | `export[].free_threshold_period`, `export[].free_threshold_rollover` | The period the free export allowance is counted over (`day` or `year`), and whether unused allowance carries over (`none`, `billing_period`, `billing_period_like_days`). Both are null when there is no allowance |
 
 `tariff_type` does not indicate exports. Read the `export` list. The service describes export
@@ -74,7 +75,10 @@ no demand charge returns 400. `/api/v1/docs/demand-methodology` gives `rate_unit
 
 `/api/v1/calculate/demand-windows` returns every demand charge in force, and each window has a `rate`.
 Where charges overlap, the higher rate takes the stretch. Adjacent stretches merge only at an equal rate.
-Each date uses the version in force that date.
+Each date uses the version in force that date. `charges` lists each demand charge that has a window in
+the range, with every field of its `demand_charges` entry and its own `windows`. These are not merged with
+other charges, so a client can measure each charge's peak. A charge that changes between versions in the
+range has one entry per version.
 
 Windows, months and public holidays are judged on the tariff's `time_basis` clock. A request with no UTC
 offset is read on the distributor's local clock.

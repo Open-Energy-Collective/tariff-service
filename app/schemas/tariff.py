@@ -166,6 +166,9 @@ class TariffExportResponse(BaseModel):
     charge_window_end: str | None = Field(
         default=None, description="End of export charge window (HH:MM)"
     )
+    charge_season_months: list[int] | None = Field(
+        default=None, description="Months when the export charge applies; null = every month"
+    )
     free_threshold_kwh: float | None = Field(
         default=None, description="Export threshold below which no charge applies"
     )
@@ -380,6 +383,24 @@ class DemandWindow(BaseModel):
     )
 
 
+class ChargeWindow(BaseModel):
+    start: str = Field(
+        description="Window start, ISO 8601 in the DNSP's local offset; inclusive"
+    )
+    end: str = Field(
+        description="Window end, ISO 8601 in the DNSP's local offset; exclusive"
+    )
+
+
+class DemandChargeWindows(DemandChargeResponse):
+    windows: list[ChargeWindow] = Field(
+        description=(
+            "This charge's own windows within [start, end): half-open, clipped to the "
+            "range, sorted, not merged with other charges"
+        )
+    )
+
+
 class DemandWindowsResponse(BaseModel):
     dnsp: str = Field(description="DNSP code")
     tariff: str = Field(description="Tariff code")
@@ -391,6 +412,14 @@ class DemandWindowsResponse(BaseModel):
             "sorted. Where charges overlap the higher rate takes the stretch; "
             "adjacent stretches merge only at an equal rate. Empty for a tariff "
             "with no demand charge."
+        )
+    )
+    charges: list[DemandChargeWindows] = Field(
+        description=(
+            "Each demand charge with a window in the range, with its own windows. "
+            "Highest rate first, then earliest start. A charge that changes between "
+            "tariff versions in the range has one entry per version. The full charge "
+            "list is on /tariffs/{dnsp}/{code}."
         )
     )
 

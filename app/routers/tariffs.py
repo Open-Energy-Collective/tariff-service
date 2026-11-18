@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.models.tariff import TariffDemandCharge
 from app.schemas.tariff import (
     DemandChargeResponse,
     TariffDemandResponse,
@@ -24,6 +25,26 @@ def _parse_season_months(raw: str | None) -> list[int] | None:
     if raw is None:
         return None
     return json.loads(raw)
+
+
+def demand_charge_fields(c: TariffDemandCharge) -> dict:
+    """The published fields of a stored demand charge."""
+    return {
+        "period": c.period,
+        "rate": c.rate,
+        "unit": c.unit,
+        "start": c.start,
+        "end": c.end,
+        "days": c.days,
+        "public_holidays": c.public_holidays,
+        "months": _parse_season_months(c.months),
+        "measurement_method": c.measurement_method,
+        "peak_period": c.peak_period,
+    }
+
+
+def demand_charge_response(c: TariffDemandCharge) -> DemandChargeResponse:
+    return DemandChargeResponse(**demand_charge_fields(c))
 
 
 def _build_detail_response(tariff) -> TariffDetailResponse:
@@ -64,6 +85,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
             charge_rate=e.charge_rate,
             charge_window_start=e.charge_window_start,
             charge_window_end=e.charge_window_end,
+            charge_season_months=_parse_season_months(e.charge_season_months),
             free_threshold_kwh=e.free_threshold_kwh,
             days=e.days,
             free_threshold_period=e.free_threshold_period,
@@ -74,19 +96,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
     ]
 
     charges_resp = [
-        DemandChargeResponse(
-            period=c.period,
-            rate=c.rate,
-            unit=c.unit,
-            start=c.start,
-            end=c.end,
-            days=c.days,
-            public_holidays=c.public_holidays,
-            months=_parse_season_months(c.months),
-            measurement_method=c.measurement_method,
-            peak_period=c.peak_period,
-        )
-        for c in sorted(tariff.demand_charges, key=demand_charge_order)
+        demand_charge_response(c) for c in sorted(tariff.demand_charges, key=demand_charge_order)
     ]
 
     return TariffDetailResponse(

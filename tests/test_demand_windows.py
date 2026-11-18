@@ -9,7 +9,12 @@ import pytest
 
 from app.models.tariff import Dnsp, Tariff, TariffDemandCharge
 from app.services import tariff_service
-from app.services.rate_calculator import demand_charges_at, demand_windows
+from app.services.rate_calculator import (
+    charge_windows,
+    demand_charges_at,
+    demand_windows,
+    merge_demand_stretches,
+)
 from tests.test_seed_data import load_tariff
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
@@ -441,3 +446,86 @@ def test_windows_agree_with_active_every_15_minutes_across_transitions(start, en
         active = any(on for _, on in demand_charges_at(tariff, t))
         assert inside == active, t.astimezone(MEL).isoformat()
         t += timedelta(minutes=15)
+
+
+# Per-charge windows (#80).
+
+
+def test_overlapping_charges_each_keep_their_own_windows():
+    # SAPN LBAD: peak 10.224 17:00-21:00 over anytime 1.89 all day, November to March.
+    t = load_tariff("sapn", "LBAD")
+    adl = ZoneInfo("Australia/Adelaide")
+    s, e = datetime(2026, 11, 1, tzinfo=adl), datetime(2026, 11, 3, tzinfo=adl)
+    got = [(c.period, c.rate, spans) for c, spans in charge_windows(t, s, e)]
+    assert got == [
+        ("peak", 10.224, [
+            (datetime(2026, 11, 1, 17, tzinfo=adl), datetime(2026, 11, 1, 21, tzinfo=adl)),
+            (datetime(2026, 11, 2, 17, tzinfo=adl), datetime(2026, 11, 2, 21, tzinfo=adl)),
+        ]),
+        ("anytime", 1.89, [(s, e)]),
+    ]
+
+
+def test_charge_with_no_window_in_the_range_is_left_out():
+    # NASN12 in December: only the summer charge applies.
+    t = load_tariff("ausnet", "NASN12")
+    s, e = datetime(2026, 12, 1, tzinfo=MEL), datetime(2026, 12, 2, tzinfo=MEL)
+    assert [c.rate for c, _ in charge_windows(t, s, e)] == [11.473]
+
+
+def charges_across_june_30(monkeypatch, *versions):
+    versions_by_date(monkeypatch, *versions)
+    return tariff_service.demand_charge_windows_in_force(
+        None, "d", "T", MEL,
+        datetime(2026, 6, 30, tzinfo=MEL), datetime(2026, 7, 2, tzinfo=MEL),
+    )
+
+
+def test_version_change_splits_a_charge_into_one_entry_per_version(monkeypatch):
+    boundary = datetime(2026, 7, 1, tzinfo=MEL)
+    got = charges_across_june_30(monkeypatch, *versions_of(5.0, 7.0))
+    assert [(c.rate, spans) for c, spans in got] == [
+        (7.0, [(boundary, datetime(2026, 7, 2, tzinfo=MEL))]),
+        (5.0, [(datetime(2026, 6, 30, tzinfo=MEL), boundary)]),
+    ]
+
+
+def test_unchanged_charge_across_versions_is_one_entry(monkeypatch):
+    got = charges_across_june_30(monkeypatch, *versions_of(5.0, 5.0))
+    assert [(c.rate, spans) for c, spans in got] == [
+        (5.0, [(datetime(2026, 6, 30, tzinfo=MEL), datetime(2026, 7, 2, tzinfo=MEL))]),
+    ]
+
+
+@pytest.mark.parametrize("range_name", RANGES)
+@pytest.mark.parametrize(("dnsp_file", "code", "tz_name"), seed_demand_tariffs())
+def test_charge_windows_merge_to_the_demand_windows(dnsp_file, code, tz_name, range_name):
+    t = load_tariff(dnsp_file, code)
+    start, end = RANGES[range_name](ZoneInfo(tz_name))
+    per_charge = charge_windows(t, start, end)
+    parts = [(s, e, c.rate) for c, spans in per_charge for s, e in spans]
+    assert merge_demand_stretches(parts, ZoneInfo(tz_name)) == demand_windows(t, start, end)
+    for _, spans in per_charge:
+        assert spans == sorted(spans)
+        assert all(start <= s < e <= end for s, e in spans)
+
+
+def test_api_lists_each_charge_with_its_windows(seed_client):
+    response = seed_client.get(
+        "/api/v1/calculate/demand-windows",
+        params={
+            "dnsp": "sapn",
+            "tariff": "LBAD",
+            "start": "2026-11-01T00:00:00+10:30",
+            "end": "2026-11-02T00:00:00+10:30",
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    detail = seed_client.get("/api/v1/tariffs/sapn/LBAD").json()["demand_charges"]
+    assert [{k: v for k, v in c.items() if k != "windows"} for c in body["charges"]] == detail
+    assert [c["windows"] for c in body["charges"]] == [
+        [{"start": "2026-11-01T17:00:00+10:30", "end": "2026-11-01T21:00:00+10:30"}],
+        [{"start": "2026-11-01T00:00:00+10:30", "end": "2026-11-02T00:00:00+10:30"}],
+    ]
+    assert [w["rate"] for w in body["windows"]] == [1.89, 10.224, 1.89]
