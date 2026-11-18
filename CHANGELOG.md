@@ -5,6 +5,22 @@ All notable changes to this project are documented here. Versioning follows
 2026-08-11 from git history for versions 0.2.0–0.6.0 — no tags existed before
 that date (see `tariff-service@2486cff:.agent/status.md`'s 2026-08-11 entry).
 
+## [0.10.0] - 2026-11-19
+
+### Added
+- `/api/v1/calculate/demand-windows` returns `charges`: each demand charge with a window in the
+  range, with its tariff detail fields and its own windows, not merged with other charges. A client
+  can measure each charge's peak where charges overlap, such as SA Power Networks LBAD's peak charge
+  over its anytime charge. A charge that changes between tariff versions in the range is listed once
+  per version. `windows` is unchanged.
+- Tariff detail `export` gains `charge_season_months`, the months the export charge applies. null
+  means every month.
+- CitiPower CRCER, Powercor PRCER and United Energy URCER, the 2026-27 Residential CER tariffs. Peak
+  16:00 to 21:00 at one rate December to February and June to August and another March to May and
+  September to November, saver 11:00 to 16:00, off-peak 21:00 to 11:00. Exports earn 7 c/kWh from
+  16:00 to 21:00 December to February and June to August, and pay 1 c/kWh from 11:00 to 16:00
+  September to May above 1 kWh per day, pooled across the billing period.
+
 ## [0.9.1] - 2026-11-18
 
 ### Fixed
