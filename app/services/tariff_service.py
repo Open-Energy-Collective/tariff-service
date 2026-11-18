@@ -10,7 +10,6 @@ from app.models.tariff import Dnsp, Tariff, TariffDemandCharge
 from app.services.rate_calculator import (
     charge_windows,
     demand_charge_order,
-    demand_windows,
     join_spans,
     merge_demand_stretches,
 )
@@ -67,30 +66,29 @@ def get_tariff_detail(
     return result.scalars().first()
 
 
+def merge_charge_windows(
+    per_charge: list[tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]], tz: ZoneInfo
+) -> list[tuple[datetime, datetime, float]]:
+    """Per-charge windows merged into rated stretches, as `/calculate/demand-windows` `windows`.
+
+    The higher rate takes an overlap; neighbours merge at an equal rate, across a
+    version boundary too.
+    """
+    return merge_demand_stretches(
+        [(s, e, charge.rate) for charge, spans in per_charge for s, e in spans], tz
+    )
+
+
 def demand_windows_in_force(
     db: Session, dnsp_code: str, tariff_code: str, tz: ZoneInfo, start: datetime, end: datetime
 ) -> list[tuple[datetime, datetime, float]] | None:
     """Demand windows over [start, end), each local date using the version in force that day.
 
-    Each window carries its rate. Neighbours merge at an equal rate, across a version
-    boundary too. None when any date in the range has no version in force.
+    merge_charge_windows over demand_charge_windows_in_force, the path the endpoint
+    uses. None when any date in the range has no version in force.
     """
-    lo, hi = start.astimezone(UTC), end.astimezone(UTC)
-    last = hi.astimezone(tz).date()
-    day = lo.astimezone(tz).date()
-    parts: list[tuple[datetime, datetime, float]] = []
-    while day <= last:
-        next_day = day + timedelta(days=1)
-        day_start = datetime.combine(day, time(0, 0), tzinfo=tz).astimezone(UTC)
-        day_end = datetime.combine(next_day, time(0, 0), tzinfo=tz).astimezone(UTC)
-        s, e = max(lo, day_start), min(hi, day_end)
-        if s < e:
-            version = get_tariff_detail(db, dnsp_code, tariff_code, on=day)
-            if version is None:
-                return None
-            parts.extend(demand_windows(version, s, e))
-        day = next_day
-    return merge_demand_stretches(parts, tz)
+    per_charge = demand_charge_windows_in_force(db, dnsp_code, tariff_code, tz, start, end)
+    return None if per_charge is None else merge_charge_windows(per_charge, tz)
 
 
 def _charge_key(charge: TariffDemandCharge) -> tuple:

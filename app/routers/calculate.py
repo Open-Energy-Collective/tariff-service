@@ -23,13 +23,13 @@ from app.services.rate_calculator import (
     demand_charge_order,
     demand_charges_at,
     get_current_rate,
-    merge_demand_stretches,
 )
 from app.services.tariff_service import (
     demand_charge_windows_in_force,
     get_dnsp,
     get_tariff_detail,
     get_tariff_history,
+    merge_charge_windows,
 )
 
 router = APIRouter(prefix="/api/v1/calculate", tags=["Calculate"])
@@ -272,9 +272,7 @@ def demand_windows_in_range(
         end=end,
         windows=[
             DemandWindow(start=s.isoformat(), end=e.isoformat(), rate=rate)
-            for s, e, rate in merge_demand_stretches(
-                [(s, e, c.rate) for c, spans in per_charge for s, e in spans], tz
-            )
+            for s, e, rate in merge_charge_windows(per_charge, tz)
         ],
         charges=[
             DemandChargeWindows(
