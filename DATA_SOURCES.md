@@ -268,8 +268,8 @@ Export (RCER11, sheet "Tariff structures", structure 20):
 - **Export charge**: 11am–4pm every day, 1 c/kWh above a basic export level of 1 kWh per day
 - **Export reward**: 4pm–9pm every day, 10 c/kWh
 
-Business ToU (NAST12):
-- **Peak**: 7am–11pm weekdays
+Business ToU (NAST12, sheet "Tariff structures" E83, structure 17):
+- **Peak**: 9am–9pm (09:00–21:00) weekdays, local time
 - **Off-peak**: All other times
 
 Demand (NASN12):
@@ -284,14 +284,13 @@ Demand (NASN12):
 | Source | URL | Notes |
 |--------|-----|-------|
 | **CitiPower 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/CitiPower%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Tariff codes, eligibility, and time-window structure. PDF. Does **not** contain $ rates. It defers them to a separate "CitiPower - 2026-27 Tariff Summary" attachment (next row). Knowledge entry: `knowledge/documents/citipower/2026-10-21-pricing-2026-27.md`. |
-| **CitiPower 2026-27 Tariff Summary (rates for CRSTOU)** | https://media.powercor.com.au/documents/Network-pricing/CitiPower-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `CP_2026-27_NUOS` row 7 gives CRSTOU: fixed 31.51 c/day, peak 19.76, off-peak 4.95, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/citipower/2026-11-10-tariff-summary-2026-27.md`. |
-| **AER TSS.01, SCS indicative prices (rates for every tariff except CRSTOU)** | https://www.aer.gov.au/system/files/2025-02/CP%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Regulator-hosted Excel attachment to CitiPower's 2026-31 Tariff Structure Statement (Jan2025 proposal). Contains the actual `$`/`c` figures by tariff code and year, including 2026-27. Tariff codes match the structural PDF above exactly. **Caveat**: these are TSS "indicative" prices from the regulatory proposal, not a DNSP-published final price list. A revised Dec2025 TSS compliance document exists and may carry updated figures not re-verified here. |
+| **CitiPower 2026-27 Tariff Summary (rates)** | https://media.powercor.com.au/documents/Network-pricing/CitiPower-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `CP_2026-27_NUOS`, fixed c/day then c/kWh: row 7 CRSTOU 31.51, peak 19.76, off-peak 4.95, saver 1.00; row 8 C1R 31.51, anytime 9.09; row 10 CDS 0, off-peak column 1.00; row 11 CGTOU 58.32, peak 15.39, off-peak 3.84; row 12 C1G 58.32, anytime 10.10. Knowledge entry: `knowledge/documents/citipower/2026-11-10-tariff-summary-2026-27.md`. |
 
-CRSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the Tariff Summary.
+Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary: CRSTOU in `knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` (#46), the other four in `knowledge/findings/2026-11-10-victorian-2026-27-non-tou-network-rates.md` (#73), both in the OEC root. CDS keeps its all-day `controlled_load` window: the source gives its rate in the off-peak column with no window.
 
 ### Tariff Codes (CitiPower) — seeded subset only
 
-Only tariffs with an unambiguous single rate/period mapping in the indicative-prices sheet were seeded. **Not seeded**: CRCER (two-way/CER export tariff — indicative sheet only populates its off-peak column, peak/export/seasonal components are blank/zero, not enough to model faithfully); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs (demand charge is split across two seasonal windows — summer Dec-Mar, non-summer Apr-Nov — but this schema's `TariffDemand` supports only one window, so seeding these would require an unmade modeling decision, not a data gap).
+Only tariffs with an unambiguous single rate/period mapping in the 2026-27 sources were seeded. **Not seeded**: CRCER (two-way/CER export tariff; priced in the 2026-27 Tariff Summary and SCS pricing model workbooks but not yet seeded, tracked separately); CG/CMG/CMGO21 and all large/HV/sub-transmission tariffs. Their demand charge is split across two seasonal windows, summer Dec-Mar and non-summer Apr-Nov. Seeding them waits on a modelling decision, not on data.
 
 | Code | Name | Type |
 |------|------|------|
@@ -319,14 +318,13 @@ Business ToU (CGTOU):
 | Source | URL | Notes |
 |--------|-----|-------|
 | **Powercor 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/Powercor%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower's PDF (see above) — Powercor and CitiPower are commonly-owned/co-filed with near-identical document templates, confirmed by direct side-by-side comparison, not assumed. |
-| **Powercor 2026-27 Tariff Summary (rates for PRSTOU)** | https://media.powercor.com.au/documents/Network-pricing/Powercor-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `PAL_2026-27_NUOS` row 7 gives PRSTOU: fixed 43.84 c/day, peak 22.09, off-peak 5.52, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/powercor/2026-11-10-tariff-summary-2026-27.md`. |
-| **AER TSS.01, SCS indicative prices (rates for every tariff except PRSTOU)** | https://www.aer.gov.au/system/files/2025-02/PAL%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025_0.xlsx | Same provenance/caveats as CitiPower's TSS.01 sheet above. Tariff codes match the structural PDF exactly. |
+| **Powercor 2026-27 Tariff Summary (rates)** | https://media.powercor.com.au/documents/Network-pricing/Powercor-FINAL-2026-27-Tariff-Summary-07-May-2026-PUBLIC.xlsx | Final workbook, 7 May 2026, excluding GST. Sheet `PAL_2026-27_NUOS`, fixed c/day then c/kWh: row 7 PRSTOU 43.84, peak 22.09, off-peak 5.52, saver 1.00; row 8 D1 43.84, anytime 10.47; row 10 DD1 0, off-peak column 1.00; row 11 NDTOU 71.24, peak 19.66, off-peak 4.91; row 12 ND1 71.24, anytime 11.95. Knowledge entry: `knowledge/documents/powercor/2026-11-10-tariff-summary-2026-27.md`. |
 
-PRSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the Tariff Summary.
+Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-10 against the Tariff Summary: PRSTOU in `knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` (#46), the other four in `knowledge/findings/2026-11-10-victorian-2026-27-non-tou-network-rates.md` (#73), both in the OEC root. DD1 keeps its all-day `controlled_load` window: the source gives its rate in the off-peak column with no window.
 
 ### Tariff Codes (Powercor) — seeded subset only
 
-Same exclusions as CitiPower (see above): PRCER, NDD/NDM/NDMO, and all large/HV/sub-transmission tariffs not seeded.
+Same exclusions as CitiPower (see above): PRCER (priced in the 2026-27 sources, not yet seeded, tracked separately), NDD/NDM/NDMO, and all large/HV/sub-transmission tariffs not seeded.
 
 | Code | Name | Type |
 |------|------|------|
@@ -349,14 +347,13 @@ Business ToU (NDTOU): peak 9am to 9pm weekdays (confirmed against Powercor's own
 | Source | URL | Notes |
 |--------|-----|-------|
 | **United Energy 2026/27 Pricing (structure)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20Pricing%20%E2%80%93%207%20May%202026.pdf | Same structure-only gap as CitiPower/Powercor's PDFs. |
-| **United Energy 2026-27 SCS pricing model (rates for URSTOU)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20SCS%20pricing%20model%20%E2%80%93%207%20May%202026.xlsm | United Energy's pricing model filed with the AER, 7 May 2026, excluding GST. United Energy's own Tariff Summary was not found. Sheet `Tariff schedule`, Tariff schedule 3, row 88 gives URSTOU: fixed 31.51 c/day, peak 20.92, off-peak 5.22, saver 1.00 c/kWh. Knowledge entry: `knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27.md`. |
-| **AER TSS.01, SCS indicative prices (rates for every tariff except URSTOU)** | https://www.aer.gov.au/system/files/2025-02/UE%20ATT%20TSS.01%20-%20SCS%20indicative%20prices%20-%20Jan2025%20-%20Public.xlsx | Same provenance/caveats as above. Tariff codes match the structural PDF exactly. |
+| **United Energy 2026-27 SCS pricing model (rates)** | https://www.aer.gov.au/system/files/2026-05/United%20Energy%20%E2%80%93%202026%E2%80%9327%20%E2%80%93%20SCS%20pricing%20model%20%E2%80%93%207%20May%202026.xlsm | United Energy's pricing model filed with the AER, 7 May 2026, excluding GST. United Energy's own Tariff Summary was not found. Sheet `Tariff schedule`, Tariff schedule 3, fixed c/day then c/kWh: row 86 LVS1R 31.51, anytime 9.72; row 87 LVDed 0, off-peak 1.00; row 88 URSTOU 31.51, peak 20.92, off-peak 5.22, saver 1.00; row 91 LVM1R 61.64, anytime 10.40; row 92 LVTOU 61.64, peak 15.54, off-peak 3.89. Knowledge entry: `knowledge/documents/united-energy/2026-11-10-scs-pricing-model-2026-27.md`. |
 
-URSTOU carries `verified_by: official_price_list`, checked 2026-11-10 against the AER SCS pricing model (`knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` in the OEC root, #46). The other seeded tariffs carry `verified_by: aer_tss01_indicative_jan2025`: the AER January 2025 TSS.01 indicative prices stand in until they are checked against the SCS pricing model.
+Every seeded tariff carries `verified_by: official_price_list`, checked 2026-11-10 against the AER SCS pricing model: URSTOU in `knowledge/findings/2026-11-10-victorian-2026-27-network-rates-found.md` (#46), the other four in `knowledge/findings/2026-11-10-victorian-2026-27-non-tou-network-rates.md` (#73), both in the OEC root. LVDed keeps its all-day `controlled_load` window: the source gives its rate in the off-peak column with no window.
 
 ### Tariff Codes (United Energy) — seeded subset only
 
-Same exclusions as CitiPower/Powercor: URCER, LVMKW1R/UMBD/UMBO, and all large/HV tariffs not seeded.
+Same exclusions as CitiPower/Powercor: URCER (priced in the 2026-27 sources, not yet seeded, tracked separately), LVMKW1R/UMBD/UMBO, and all large/HV tariffs not seeded.
 
 | Code | Name | Type |
 |------|------|------|
