@@ -810,6 +810,15 @@ CER_PERIODS = [
     ("2026-11-19T10:59:00+11:00", "off_peak", None),
     ("2026-11-19T11:00:00+11:00", "saver", None),
     ("2026-11-21T12:00:00+11:00", "saver", None),  # a Saturday
+    # Season edges of the two peak rates.
+    ("2026-08-31T17:00:00+10:00", "peak", "high"),
+    ("2026-09-01T17:00:00+10:00", "peak", "low"),
+    ("2026-11-30T17:00:00+11:00", "peak", "low"),
+    ("2026-12-01T17:00:00+11:00", "peak", "high"),
+    ("2027-02-28T17:00:00+11:00", "peak", "high"),
+    ("2027-03-01T17:00:00+11:00", "peak", "low"),
+    ("2027-05-31T17:00:00+10:00", "peak", "low"),
+    ("2027-06-01T17:00:00+10:00", "peak", "high"),
 ]
 
 
@@ -831,7 +840,10 @@ def test_victorian_cer_export_terms_match_the_source(
 ):
     """Table 4 and its notes: peak export credit 4pm to 9pm Dec-Feb and Jun-Aug; saver
     export charge 11am to 4pm Sep-May above 1 kWh per day, pooled over the billing period."""
-    (export,) = seed_client.get(f"/api/v1/tariffs/{dnsp}/{tariff}").json()["export"]
+    body = seed_client.get(f"/api/v1/tariffs/{dnsp}/{tariff}").json()
+    peaks = {r["season"]: r["season_months"] for r in body["rates"] if r["period"] == "peak"}
+    assert peaks == {"high": [1, 2, 6, 7, 8, 12], "low": [3, 4, 5, 9, 10, 11]}
+    (export,) = body["export"]
     assert (export["credit_window_start"], export["credit_window_end"]) == ("16:00", "21:00")
     assert export["credit_season_months"] == [1, 2, 6, 7, 8, 12]
     assert (export["charge_window_start"], export["charge_window_end"]) == ("11:00", "16:00")
