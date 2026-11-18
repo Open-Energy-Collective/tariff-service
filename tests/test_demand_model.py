@@ -430,4 +430,3 @@ def test_export_charge_season_round_trips(months):
         tariff = session.execute(select(Tariff)).scalars().one()
         (export,) = _build_detail_response(tariff).export
     assert export.charge_season_months == months
-
