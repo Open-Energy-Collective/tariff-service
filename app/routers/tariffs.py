@@ -85,6 +85,7 @@ def _build_detail_response(tariff) -> TariffDetailResponse:
             charge_rate=e.charge_rate,
             charge_window_start=e.charge_window_start,
             charge_window_end=e.charge_window_end,
+            charge_season_months=_parse_season_months(e.charge_season_months),
             free_threshold_kwh=e.free_threshold_kwh,
             days=e.days,
             free_threshold_period=e.free_threshold_period,

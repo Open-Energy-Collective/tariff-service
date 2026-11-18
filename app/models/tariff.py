@@ -109,6 +109,7 @@ class TariffExport(Base):
     charge_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     charge_window_start: Mapped[str | None] = mapped_column(String, nullable=True)
     charge_window_end: Mapped[str | None] = mapped_column(String, nullable=True)
+    charge_season_months: Mapped[str | None] = mapped_column(Text, nullable=True)
     free_threshold_kwh: Mapped[float | None] = mapped_column(Float, nullable=True)
     free_threshold_period: Mapped[str | None] = mapped_column(String(10), nullable=True)
     free_threshold_rollover: Mapped[str | None] = mapped_column(String(30), nullable=True)

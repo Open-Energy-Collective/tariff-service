@@ -240,6 +240,7 @@ def expected_export(export: dict) -> dict:
     return {
         **{field: export.get(field) for field in EXPORT_FIELDS},
         "credit_season_months": export.get("credit_season_months") or None,
+        "charge_season_months": export.get("charge_season_months") or None,
         "days": export.get("days", "all"),
     }
 

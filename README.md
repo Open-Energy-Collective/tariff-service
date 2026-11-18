@@ -58,6 +58,7 @@ rate depends on consumption.
 | `time_basis` | `local` (daylight saving applies) or `standard` (standard time all year). Applies to every energy, demand and export window of the tariff |
 | `prices_expected_until` | Date until which the prices are expected to hold, or null. Informational. It does not change which version is in force |
 | `rates[].public_holidays`, `export[].public_holidays` | `included` or `excluded`, or null for an all-days window. Whether a weekday or weekend window applies on a public holiday |
+| `export[].charge_season_months` | Months (1 to 12) when the export charge applies, beside `credit_season_months` for the credit. null means every month |
 | `export[].free_threshold_period`, `export[].free_threshold_rollover` | The period the free export allowance is counted over (`day` or `year`), and whether unused allowance carries over (`none`, `billing_period`, `billing_period_like_days`). Both are null when there is no allowance |
 
 `tariff_type` does not indicate exports. Read the `export` list. The service describes export

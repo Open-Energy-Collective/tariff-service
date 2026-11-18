@@ -203,6 +203,11 @@ def populate(session: Session, seed_files: list[dict]) -> None:
                     charge_rate=export_data.get("charge_rate"),
                     charge_window_start=export_data.get("charge_window_start"),
                     charge_window_end=export_data.get("charge_window_end"),
+                    charge_season_months=(
+                        json.dumps(export_data["charge_season_months"])
+                        if export_data.get("charge_season_months")
+                        else None
+                    ),
                     free_threshold_kwh=export_data.get("free_threshold_kwh"),
                     free_threshold_period=export_data.get("free_threshold_period"),
                     free_threshold_rollover=export_data.get("free_threshold_rollover"),

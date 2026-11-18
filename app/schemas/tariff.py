@@ -166,6 +166,9 @@ class TariffExportResponse(BaseModel):
     charge_window_end: str | None = Field(
         default=None, description="End of export charge window (HH:MM)"
     )
+    charge_season_months: list[int] | None = Field(
+        default=None, description="Months when the export charge applies; null = every month"
+    )
     free_threshold_kwh: float | None = Field(
         default=None, description="Export threshold below which no charge applies"
     )
