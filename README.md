@@ -74,7 +74,10 @@ no demand charge returns 400. `/api/v1/docs/demand-methodology` gives `rate_unit
 
 `/api/v1/calculate/demand-windows` returns every demand charge in force, and each window has a `rate`.
 Where charges overlap, the higher rate takes the stretch. Adjacent stretches merge only at an equal rate.
-Each date uses the version in force that date.
+Each date uses the version in force that date. `charges` lists each demand charge that has a window in
+the range, with every field of its `demand_charges` entry and its own `windows`. These are not merged with
+other charges, so a client can measure each charge's peak. A charge that changes between versions in the
+range has one entry per version.
 
 Windows, months and public holidays are judged on the tariff's `time_basis` clock. A request with no UTC
 offset is read on the distributor's local clock.

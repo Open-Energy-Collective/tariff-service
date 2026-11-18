@@ -6,8 +6,14 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.tariff import Dnsp, Tariff
-from app.services.rate_calculator import demand_windows, merge_demand_stretches
+from app.models.tariff import Dnsp, Tariff, TariffDemandCharge
+from app.services.rate_calculator import (
+    charge_windows,
+    demand_charge_order,
+    demand_windows,
+    join_spans,
+    merge_demand_stretches,
+)
 
 
 def get_all_dnsps(db: Session) -> list[Dnsp]:
@@ -85,6 +91,46 @@ def demand_windows_in_force(
             parts.extend(demand_windows(version, s, e))
         day = next_day
     return merge_demand_stretches(parts, tz)
+
+
+def _charge_key(charge: TariffDemandCharge) -> tuple:
+    """The published fields of a demand charge: equal keys are the same charge."""
+    return (
+        charge.period, charge.rate, charge.unit, charge.start, charge.end, charge.days,
+        charge.public_holidays, charge.months, charge.measurement_method, charge.peak_period,
+    )
+
+
+def demand_charge_windows_in_force(
+    db: Session, dnsp_code: str, tariff_code: str, tz: ZoneInfo, start: datetime, end: datetime
+) -> list[tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]] | None:
+    """Each demand charge with its own windows over [start, end), by the version in force.
+
+    Each local date uses the version in force that day. A charge whose published
+    fields are the same in two versions is one entry; one that changes is an entry
+    per version. Entries follow demand_charge_order, then their first window.
+    None when any date in the range has no version in force.
+    """
+    lo, hi = start.astimezone(UTC), end.astimezone(UTC)
+    last = hi.astimezone(tz).date()
+    day = lo.astimezone(tz).date()
+    entries: dict[tuple, tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]] = {}
+    while day <= last:
+        next_day = day + timedelta(days=1)
+        day_start = datetime.combine(day, time(0, 0), tzinfo=tz).astimezone(UTC)
+        day_end = datetime.combine(next_day, time(0, 0), tzinfo=tz).astimezone(UTC)
+        s, e = max(lo, day_start), min(hi, day_end)
+        if s < e:
+            version = get_tariff_detail(db, dnsp_code, tariff_code, on=day)
+            if version is None:
+                return None
+            for charge, spans in charge_windows(version, s, e):
+                entries.setdefault(_charge_key(charge), (charge, []))[1].extend(spans)
+        day = next_day
+    joined = [(charge, join_spans(spans, tz)) for charge, spans in entries.values()]
+    return sorted(
+        joined, key=lambda cs: (*demand_charge_order(cs[0]), cs[1][0][0].astimezone(UTC))
+    )
 
 
 def get_tariff_history(db: Session, dnsp_code: str, tariff_code: str) -> list[Tariff]:

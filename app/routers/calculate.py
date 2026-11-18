@@ -7,9 +7,12 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.routers.tariffs import demand_charge_fields
 from app.schemas.tariff import (
+    ChargeWindow,
     CurrentRateResponse,
     DemandChargeInForce,
+    DemandChargeWindows,
     DemandSurchargeResponse,
     DemandWindow,
     DemandWindowsResponse,
@@ -20,9 +23,10 @@ from app.services.rate_calculator import (
     demand_charge_order,
     demand_charges_at,
     get_current_rate,
+    merge_demand_stretches,
 )
 from app.services.tariff_service import (
-    demand_windows_in_force,
+    demand_charge_windows_in_force,
     get_dnsp,
     get_tariff_detail,
     get_tariff_history,
@@ -231,8 +235,10 @@ def demand_windows_in_range(
     Windows follow `/calculate/current-rate`'s `in_demand_window`, on the tariff's
     clock: half-open, clipped to the range, sorted, each bound in the DNSP's local
     offset. Where charges overlap the higher rate takes the stretch, and adjacent
-    stretches merge only at an equal rate. Each local date uses the tariff version
-    in force on that date; a range with a date no version covers returns 404.
+    stretches merge only at an equal rate. `charges` lists each demand charge with
+    its own windows, unmerged, so a client measures each charge's peak. Each local
+    date uses the tariff version in force on that date; a range with a date no
+    version covers returns 404.
     """
     not_found = HTTPException(
         status_code=404, detail=f"Tariff '{tariff}' not found for DNSP '{dnsp}'"
@@ -251,10 +257,10 @@ def demand_windows_in_range(
 
     tz = ZoneInfo(get_dnsp(db, dnsp).timezone)
     try:
-        spans = demand_windows_in_force(db, dnsp, tariff, tz, range_start, range_end)
+        per_charge = demand_charge_windows_in_force(db, dnsp, tariff, tz, range_start, range_end)
     except OverflowError:
         raise HTTPException(status_code=400, detail=OUT_OF_RANGE)
-    if spans is None:
+    if per_charge is None:
         raise HTTPException(
             status_code=404,
             detail=f"Tariff '{tariff}' has no version in force for every date in the range",
@@ -266,6 +272,15 @@ def demand_windows_in_range(
         end=end,
         windows=[
             DemandWindow(start=s.isoformat(), end=e.isoformat(), rate=rate)
-            for s, e, rate in spans
+            for s, e, rate in merge_demand_stretches(
+                [(s, e, c.rate) for c, spans in per_charge for s, e in spans], tz
+            )
+        ],
+        charges=[
+            DemandChargeWindows(
+                **demand_charge_fields(c),
+                windows=[ChargeWindow(start=s.isoformat(), end=e.isoformat()) for s, e in spans],
+            )
+            for c, spans in per_charge
         ],
     )

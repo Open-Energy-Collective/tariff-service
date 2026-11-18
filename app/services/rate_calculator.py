@@ -170,6 +170,48 @@ def demand_windows(
     return merge_demand_stretches(parts, clock.zone)
 
 
+def join_spans(
+    spans: list[tuple[datetime, datetime]], zone: ZoneInfo
+) -> list[tuple[datetime, datetime]]:
+    """Sort spans and join those that touch or overlap, back in `zone`.
+
+    Compares in UTC, as merge_demand_stretches does.
+    """
+    joined: list[tuple[datetime, datetime]] = []
+    for s, e in sorted((s.astimezone(UTC), e.astimezone(UTC)) for s, e in spans if s < e):
+        if joined and s <= joined[-1][1]:
+            joined[-1] = (joined[-1][0], max(e, joined[-1][1]))
+        else:
+            joined.append((s, e))
+    return [(s.astimezone(zone), e.astimezone(zone)) for s, e in joined]
+
+
+def charge_windows(
+    tariff: Tariff, start: datetime, end: datetime
+) -> list[tuple[TariffDemandCharge, list[tuple[datetime, datetime]]]]:
+    """Each demand charge with its own windows within [start, end), unmerged across charges.
+
+    A charge's windows are half-open, clipped to the range and sorted; spans of the
+    same charge that touch, as an overnight window at midnight, are one window.
+    Charges follow demand_charge_order; a charge with no window in the range is
+    left out. demand_windows is these windows merged across charges.
+    """
+    clock = clock_for(tariff)
+    lo, hi = start.astimezone(UTC), end.astimezone(UTC)
+    first, last = clock.wall(lo).date(), clock.wall(hi).date()
+    result = []
+    for charge in sorted(tariff.demand_charges, key=demand_charge_order):
+        spans: list[tuple[datetime, datetime]] = []
+        day = first
+        while day <= last:
+            spans += [(max(s, lo), min(e, hi)) for s, e in _charge_parts(charge, day, clock)]
+            day += timedelta(days=1)
+        spans = join_spans(spans, clock.zone)
+        if spans:
+            result.append((charge, spans))
+    return result
+
+
 def calculate_demand_surcharge(
     demand: TariffDemandCharge, peak_demand_kw: float, days_in_month: int = 30
 ) -> tuple[float, float, float]:
